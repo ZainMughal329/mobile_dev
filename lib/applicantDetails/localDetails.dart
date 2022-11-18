@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rustenburg/app_color.dart';
+import 'package:lesedi/app_color.dart';
 
 class LocalDetails extends StatefulWidget {
   Map<String, dynamic> map = Map<String, dynamic>();

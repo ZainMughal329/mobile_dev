@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/auth/Splash.dart';
+import 'package:lesedi/auth/Splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'helpers/local_storage.dart';
 

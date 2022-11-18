@@ -6,8 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rustenburg/helpers/local_storage.dart';
-import 'package:rustenburg/networkRequest/services_request.dart';
+import 'package:lesedi/helpers/local_storage.dart';
+import 'package:lesedi/networkRequest/services_request.dart';
 
 class Utils {
   static String convertFileToBase64(File file) {
@@ -66,7 +66,7 @@ class Utils {
     // camera exists in the path
     // print("Path of Image from camera is " + file.path);
     // print(await File(
-    //         "/data/user/0/rustenburg.com.rustenburg/cache/CAP697576584.jpg")
+    //         "/data/user/0/lesedi.com.lesedi/cache/CAP697576584.jpg")
     //     .exists());
 
     final path = Platform.isAndroid

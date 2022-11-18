@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/helpers/utils.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/helpers/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -91,7 +91,7 @@ class LocalStorage {
     // removeApplicationsIdList();
     bool fileStatus;
     String filePath =
-        "/data/user/0/rustenburg.com.rustenburg/cache/CAP1939108338.jpg";
+        "/data/user/0/lesedi.com.lesedi/cache/CAP1939108338.jpg";
 
     fileStatus = await File(filePath).exists();
     print("Check if previously captured file exists? ::::: $fileStatus ");

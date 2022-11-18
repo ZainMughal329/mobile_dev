@@ -1,6 +1,6 @@
-import 'package:rustenburg/forms/deathCertificate.dart';
-import 'package:rustenburg/forms/filePickerAdditionalFile.dart';
-import 'package:rustenburg/forms/filePickerMarriageCertificate.dart';
+import 'package:lesedi/forms/deathCertificate.dart';
+import 'package:lesedi/forms/filePickerAdditionalFile.dart';
+import 'package:lesedi/forms/filePickerMarriageCertificate.dart';
 
 class ApplicantInfo {
   String firstName;

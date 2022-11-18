@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:rustenburg/model/bank_details_model.dart';
+import 'package:lesedi/model/bank_details_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constans/Constants.dart';
 import '../global.dart';
@@ -51,7 +51,6 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
-    // checkInternetAvailability();
     // checkInternetAvailability();
     await request.ifInternetAvailable();
     // checkInternetAvailability();

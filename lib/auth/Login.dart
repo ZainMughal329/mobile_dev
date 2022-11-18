@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:rustenburg/Dashboard.dart';
-import 'package:rustenburg/app_color.dart';
-import 'package:rustenburg/auth/ForgotPassword.dart';
-import 'package:rustenburg/auth/Signup.dart';
-import 'package:rustenburg/applicants/allApplicants.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/global.dart';
+import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/app_color.dart';
+import 'package:lesedi/auth/ForgotPassword.dart';
+import 'package:lesedi/auth/Signup.dart';
+import 'package:lesedi/applicants/allApplicants.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/global.dart';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/globals.dart' as global;
+import 'package:lesedi/globals.dart' as global;
 //import 'package:flutter_svg/flutter_svg.dart';
 //import 'package:adobe_xd/blend_mask.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -205,7 +205,7 @@ class _LoginState extends State<Login> {
 //                          width: 150,
 
                         child:
-                        Image(image: AssetImage('assets/images/logo.jpg') , width: 200,),), // lesedi && // modimole
+                        Image(image: AssetImage('assets/images/logo_lesedi.png') , width: 200,),), // lesedi && // modimole
 
 
 

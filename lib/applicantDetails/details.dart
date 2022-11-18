@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:rustenburg/applicants/allApplicants.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/fieldWorker/fieldWorkerApplicant.dart';
-import 'package:rustenburg/global.dart';
-import 'package:rustenburg/model/applicantInfo.dart';
+import 'package:lesedi/applicants/allApplicants.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/fieldWorker/fieldWorkerApplicant.dart';
+import 'package:lesedi/global.dart';
+import 'package:lesedi/model/applicantInfo.dart';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/supervisor/supervisorAllApplicants.dart';
+import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:rustenburg/app_color.dart';
+import 'package:lesedi/app_color.dart';
 
 //Check
 

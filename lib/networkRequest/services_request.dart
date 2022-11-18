@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/helpers/local_storage.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/helpers/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 

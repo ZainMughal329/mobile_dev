@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:rustenburg/app_color.dart';
-import 'package:rustenburg/auth/Login.dart';
-import 'package:rustenburg/auth/resetPassword.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/global.dart';
+import 'package:lesedi/app_color.dart';
+import 'package:lesedi/auth/Login.dart';
+import 'package:lesedi/auth/resetPassword.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/global.dart';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/globals.dart' as global;
+import 'package:lesedi/globals.dart' as global;
 //import 'package:flutter_svg/flutter_svg.dart';
 //import 'package:adobe_xd/blend_mask.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -128,7 +128,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 //                          width: 150,
 
                       child:Image.asset(
-                        'assets/images/logo.jpg',
+                        'assets/images/logo_lesedi.png',
                         width: 250,
                       ),
                       // global.favicon_logo_square!=null? Image.network(global.favicon_logo_square ,

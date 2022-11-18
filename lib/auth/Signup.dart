@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:rustenburg/Dashboard.dart';
-import 'package:rustenburg/auth/Login.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/global.dart';
+import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/auth/Login.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/global.dart';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/globals.dart' as global;
+import 'package:lesedi/globals.dart' as global;
 //import 'package:flutter_svg/flutter_svg.dart';
 //import 'package:adobe_xd/blend_mask.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -178,7 +178,7 @@ class _SignUpState extends State<SignUp> {
                       // global.favicon_logo_square!=null? Image.network(global.favicon_logo_square ,
                       //   width: 200,
                       // ):
-                      Image.asset('assets/images/logo.jpg',
+                      Image.asset('assets/images/logo_lesedi.png',
                         width: 200,
                       )
                   ),

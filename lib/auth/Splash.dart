@@ -3,15 +3,15 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart';
-import 'package:rustenburg/Dashboard.dart';
-import 'package:rustenburg/auth/Login.dart';
+import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/auth/Login.dart';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/helpers/local_storage.dart';
-import 'package:rustenburg/helpers/utils.dart';
-import 'package:rustenburg/networkRequest/services_request.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/helpers/local_storage.dart';
+import 'package:lesedi/helpers/utils.dart';
+import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:rustenburg/globals.dart' as global;
+import 'package:lesedi/globals.dart' as global;
 
 class Splash extends StatefulWidget {
   @override
@@ -139,7 +139,7 @@ class _SplashState extends State<Splash> {
                         // )
                         //     :
                         Image.asset(
-                          'assets/images/logo.jpg',
+                          'assets/images/logo_lesedi.png',
                           width: 250,
                         ),
                       ),

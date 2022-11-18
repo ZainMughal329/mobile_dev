@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:rustenburg/Dashboard.dart';
-import 'package:rustenburg/applicantDetails/localDetails.dart';
-import 'package:rustenburg/constans/Constants.dart';
-import 'package:rustenburg/forms/Verifications.dart';
-import 'package:rustenburg/applicantDetails/details.dart';
-import 'package:rustenburg/global.dart';
-import 'package:rustenburg/helpers/local_storage.dart';
-import 'package:rustenburg/helpers/utils.dart';
-import 'package:rustenburg/model/applicants.dart';
+import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/applicantDetails/localDetails.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/forms/Verifications.dart';
+import 'package:lesedi/applicantDetails/details.dart';
+import 'package:lesedi/global.dart';
+import 'package:lesedi/helpers/local_storage.dart';
+import 'package:lesedi/helpers/utils.dart';
+import 'package:lesedi/model/applicants.dart';
 import 'package:flutter/material.dart';
-import 'package:rustenburg/networkRequest/services_request.dart';
+import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:rustenburg/app_color.dart';
+import 'package:lesedi/app_color.dart';
 
 class SuperVisorAllApplicants extends StatefulWidget {
   @override

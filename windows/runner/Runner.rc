@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "rustenburg.com" "\0"
+            VALUE "CompanyName", "lesedi.com" "\0"
             VALUE "FileDescription", "iimass" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "iimass" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 rustenburg.com. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 lesedi.com. All rights reserved." "\0"
             VALUE "OriginalFilename", "iimass.exe" "\0"
             VALUE "ProductName", "iimass" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
