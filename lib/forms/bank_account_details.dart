@@ -52,6 +52,7 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
     // checkInternetAvailability();
+    // checkInternetAvailability();
     await request.ifInternetAvailable();
     // checkInternetAvailability();
     // LocalStorage.localStorage.saveFormData(data);
