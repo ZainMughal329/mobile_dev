@@ -428,13 +428,13 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton (
       child: Text("Cancel"),
       onPressed: () {
         Navigator.of(context).pop(false);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton (
       child: Text("Okay"),
       onPressed: () {
 //        Navigator.of(context).pop(true);
@@ -470,11 +470,11 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
             title: new Text('Are you sure?'),
             content: new Text('Do you want to exit an App'),
             actions: <Widget>[
-              new FlatButton(
+              new TextButton (
                 onPressed: () => Navigator.of(context).pop(false),
                 child: new Text('No'),
               ),
-              new FlatButton(
+              new TextButton (
                 onPressed: () {
                   Navigator.of(context).pop(true);
                   exit(0);

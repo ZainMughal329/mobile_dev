@@ -9,6 +9,7 @@ import 'package:lesedi/forms/attachments.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
 import 'package:flutter/material.dart';
+
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lesedi/app_color.dart';
@@ -18,7 +19,9 @@ import 'helpers/local_storage.dart';
 class Dashboard extends StatefulWidget {
   var userRole;
   var applicant_id;
+
   Dashboard(this.userRole, this.applicant_id);
+
   @override
   _DashboardState createState() => _DashboardState();
 }
@@ -581,11 +584,11 @@ class _DashboardState extends State<Dashboard> {
             title: new Text('Are you sure?'),
             content: new Text('Do you want to exit an App'),
             actions: <Widget>[
-              new FlatButton(
+              new TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: new Text('No'),
               ),
-              new FlatButton(
+              new TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 child: new Text('Yes'),
               ),
