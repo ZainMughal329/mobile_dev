@@ -128,7 +128,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 //                          width: 150,
 
                       child:Image.asset(
-                        'assets/images/logo_lesedi.png',
+                        'assets/images/emfuleni.jpg',
                         width: 250,
                       ),
                       // global.favicon_logo_square!=null? Image.network(global.favicon_logo_square ,

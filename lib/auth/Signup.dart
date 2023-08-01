@@ -178,7 +178,7 @@ class _SignUpState extends State<SignUp> {
                       // global.favicon_logo_square!=null? Image.network(global.favicon_logo_square ,
                       //   width: 200,
                       // ):
-                      Image.asset('assets/images/logo_lesedi.png',
+                      Image.asset('assets/images/emfuleni.jpg',
                         width: 200,
                       )
                   ),

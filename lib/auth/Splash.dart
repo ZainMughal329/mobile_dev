@@ -139,7 +139,7 @@ class _SplashState extends State<Splash> {
                         // )
                         //     :
                         Image.asset(
-                          'assets/images/logo_lesedi.png',
+                          'assets/images/emfuleni.jpg',
                           width: 250,
                         ),
                       ),

@@ -1,4 +1,4 @@
-package lesedi.com.iimass
+package emfuleni.com.iimass
 
 import io.flutter.embedding.android.FlutterActivity
 

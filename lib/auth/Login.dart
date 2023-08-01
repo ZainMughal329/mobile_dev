@@ -205,7 +205,7 @@ class _LoginState extends State<Login> {
 //                          width: 150,
 
                         child:
-                        Image(image: AssetImage('assets/images/logo_lesedi.png') , width: 200,),), // lesedi && // modimole
+                        Image(image: AssetImage('assets/images/emfuleni.jpg') , width: 200,),), // lesedi && // modimole
 
 
 
