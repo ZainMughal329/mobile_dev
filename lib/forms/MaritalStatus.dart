@@ -25,13 +25,13 @@ class MaritalStatus extends StatefulWidget {
 
 class _MaritalStatusState extends State<MaritalStatus> {
   bool _isLoading = false;
-  bool _checked = true;
-  bool _checkedG = false;
-  bool _checkedUn = false;
-  bool _checkedEm = false;
-  bool _checkedCh = false;
-  bool _checkedESM = false;
-  bool _checkedDI = false;
+  bool? _checked = true;
+  bool? _checkedG = false;
+  bool? _checkedUn = false;
+  bool? _checkedEm = false;
+  bool? _checkedCh = false;
+  bool? _checkedESM = false;
+  bool? _checkedDI = false;
 
   String checkBoxValue = 'married';
   ServicesRequest request = ServicesRequest();
@@ -93,7 +93,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
     });
   }
 
-  Future<Null> submitForm(checkBoxValue) async {
+  void submitForm(checkBoxValue) async {
     await request.ifInternetAvailable();
     print("Widget.previousFormSubmitted :::: ${widget.previousFormSubmitted}");
     print("Widget.applicantId :::: ${widget.applicant_id}");
@@ -108,7 +108,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
     print('okay');
     print(applicant_id);
     print('okay');
-    Map<String, dynamic> data = {
+    Map<dynamic, dynamic>? data = {
       'application_id': applicant_id,
       'marital_status': checkBoxValue
 //      'role': _selectedType
@@ -116,26 +116,26 @@ class _MaritalStatusState extends State<MaritalStatus> {
     LocalStorage.localStorage.saveFormData(data);
     var jsonResponse;
     http.Response response;
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       if (widget.previousFormSubmitted) {
         response = await http.post(
             Uri.parse(
                 "${MyConstants.myConst.baseUrl}api/v1/users/update_application?application_id=${widget.applicant_id}&marital_status=$checkBoxValue"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID ?? "",
+              'Authentication': authToken ?? ""
             });
       } else {
         data = LocalStorage.localStorage
-            .getFormData(MyConstants.myConst.currentApplicantId);
+            .getFormData(MyConstants.myConst.currentApplicantId ?? "");
         response = await http.post(
             Uri.parse(
                 "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID ?? "",
+              'Authentication': authToken ?? ""
             },
             body: jsonEncode(data));
       }
@@ -153,13 +153,13 @@ class _MaritalStatusState extends State<MaritalStatus> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        await prefs.setBool('_checkedM', _checked);
-        await prefs.setBool('_checkedGM', _checkedG);
-        await prefs.setBool('_checkedUnM', _checkedUn);
-        await prefs.setBool('_checkedEmM', _checkedEm);
-        await prefs.setBool('_checkedChM', _checkedCh);
-        await prefs.setBool('_checkedESMM', _checkedESM);
-        await prefs.setBool('_checkedDIM', _checkedDI);
+        await prefs.setBool('_checkedM', _checked ?? false);
+        await prefs.setBool('_checkedGM', _checkedG ?? false);
+        await prefs.setBool('_checkedUnM', _checkedUn ?? false);
+        await prefs.setBool('_checkedEmM', _checkedEm ?? false);
+        await prefs.setBool('_checkedChM', _checkedCh ?? false);
+        await prefs.setBool('_checkedESMM', _checkedESM ?? false);
+        await prefs.setBool('_checkedDIM', _checkedDI ?? false);
 
         if (!widget.previousFormSubmitted) {
           var apid;
@@ -167,8 +167,8 @@ class _MaritalStatusState extends State<MaritalStatus> {
           sharedPreferences.setInt('applicant_id', apid['application_id']);
           widget.applicant_id = apid['application_id'];
         } else {
-          sharedPreferences.setInt('applicant_id', data['application_id']);
-          widget.applicant_id = data['application_id'];
+          sharedPreferences.setInt('applicant_id', data?['application_id']);
+          widget.applicant_id = data?['application_id'];
         }
 
 //      showToastMessage('Some thing Went Wrong try later');
@@ -184,13 +184,12 @@ class _MaritalStatusState extends State<MaritalStatus> {
               builder: (BuildContext context) => new BankAccountDetails(
                   widget.applicant_id,
                   widget.gross_monthly_income,
-                  widget.previousFormSubmitted
-              )
+                  widget.previousFormSubmitted)
               // new Attachments(
               //     widget.applicant_id,
               //     widget.gross_monthly_income,
               //     widget.previousFormSubmitted)
-          ));
+              ));
         });
       } else {
         setState(() {
@@ -208,9 +207,9 @@ class _MaritalStatusState extends State<MaritalStatus> {
       print("Marital Status Navigated from Else");
       Navigator.of(context).push(MaterialPageRoute(
           builder: (BuildContext context) => new Attachments(
-              widget.applicant_id,
-              widget.gross_monthly_income,
-              widget.previousFormSubmitted)));
+              applicant_id: widget.applicant_id,
+              gross_monthly_income: widget.gross_monthly_income,
+              previousFormSubmitted: widget.previousFormSubmitted)));
     }
   }
 
@@ -292,7 +291,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
                         ),
                         value: _checked,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checked = value;
                             _checkedG = false;
@@ -344,7 +343,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
                         ),
                         value: _checkedG,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedG = value;
                             _checked = false;
@@ -430,7 +429,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
                         ),
                         value: _checkedCh,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedCh = value;
                             _checkedG = false;
@@ -516,7 +515,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
                         ),
                         value: _checkedESM,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedCh = false;
                             _checkedG = false;
@@ -524,7 +523,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
                             _checkedDI = false;
                             _checkedUn = false;
                             _checkedEm = false;
-                            _checkedESM = value;
+                            _checkedESM = value ?? false;
                             checkBoxValue = 'divorced';
                           });
                         },
@@ -534,7 +533,6 @@ class _MaritalStatusState extends State<MaritalStatus> {
                 Container(
                   margin: EdgeInsets.only(left: 20, right: 20),
                   padding: EdgeInsets.only(top: 5),
-
                   decoration: BoxDecoration(
                     color: const Color(0xffffffff),
                     border: Border(
@@ -600,8 +598,9 @@ class _MaritalStatusState extends State<MaritalStatus> {
               ],
             ),
           ),
-
-          SizedBox(height: 90,),
+          SizedBox(
+            height: 90,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -642,18 +641,18 @@ class _MaritalStatusState extends State<MaritalStatus> {
                 ),
               ),
               InkWell(
-                onTap: (){
+                onTap: () {
                   print("Gesture Detector");
                   submitForm(checkBoxValue);
                 },
-              // onTap: (){
-              //     // {
-              //        // Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> Declaration(widget.applicant_id)));
-              //
-              //     // if (_isLoading) {
-              //     //   submitForm(checkBoxValue);
-              //     // }
-              //   },
+                // onTap: (){
+                //     // {
+                //        // Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> Declaration(widget.applicant_id)));
+                //
+                //     // if (_isLoading) {
+                //     //   submitForm(checkBoxValue);
+                //     // }
+                //   },
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Container(

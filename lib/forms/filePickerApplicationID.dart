@@ -26,8 +26,8 @@ class FileHolderApplicationID extends StatefulWidget {
 }
 
 class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
-  String _extension;
-  String profileType;
+  String? _extension;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
@@ -54,7 +54,7 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
     checkInternetAvailability();
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   var applicant_id_proof_storage;
@@ -76,127 +76,232 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
   void _filePicker() async {
     await request.ifInternetAvailable();
     applicant_id_list = <String>[];
-    File file = await FilePicker.getFile(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
+    // File file = await FilePicker.getFile(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
     // List<File> file = await FilePicker.getMultiFile(type: FileType.custom, allowedExtensions: ['jpg']);
     setState(() {
 
       Navigator.pop(context, true);
 //      _isLoadingSecondary = true;
     });
+    if(result!=null)
+      {
+        List<File> files = result.paths.map((path) => File(path!)).toList();
 
-    if (file != null) {
+        setState(() {
+          _isLoadingSecondary = true;
+          print('state');
+          print(_isLoadingSecondary);
+        });
+        for(var file in files)
+          {
+            try {
+              if (_isLoadingSecondary == true) {
+                print(widget.applicant_id);
+              }
+
+              Map<String, dynamic> data = {
+                "application_id": widget.applicant_id,
+                widget.image_name: await MultipartFile.fromFile(
+                    file.path,
+                    filename: 'applicantID.jpg')
+              };
+              FormData formData = new FormData.fromMap(data);
+              applicant_id_list.add(file.path);
+
+              Map<String, dynamic> map = {
+                "application_id": widget.applicant_id,
+                widget.image_name: file.path
+              };
+              LocalStorage.localStorage.saveFormData(map);
+
+              print(formData.toString());
+
+              if (MyConstants.myConst.internet??false) {
+                showToastMessage('File Uploading Please wait');
+                var dio = Dio(BaseOptions(
+                    receiveDataWhenStatusError: true,
+                    connectTimeout: Duration(minutes: 3), // 1 minutes
+                    receiveTimeout: Duration(minutes: 3) // 1 minuntes
+                ));
+                dio.interceptors.add(LogInterceptor(responseBody: true));
+                SharedPreferences sharedPreferences =
+                await SharedPreferences.getInstance();
+                var userID = sharedPreferences.getString('userID');
+                var authToken = sharedPreferences.getString('auth-token');
+                var jsonResponse;
+                Response response = await dio.post(
+                  '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+                  data: formData, // Post with Stream<List<int>>
+                  options: Options(
+                      headers: {'uuid': userID, 'Authentication': authToken},
+                      contentType: "*/*",
+                      responseType: ResponseType.json),
+                );
+                print("Something Something");
+                if (response.statusCode == 200) {
+                  // jsonResponse = json.decode(response.data);
+                  jsonResponse = response.data;
+                  print('data');
+                  print(
+                      "spouse id after affidavit :::: ${jsonResponse['data']['spouse_id']}");
+
+                  showToastMessage(jsonResponse['message']);
+//          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
+                  setState(() {
+                    _isLoadingSecondary = false;
+//            Navigator.pop(context, true);
+
+                    applicant_id_proof = jsonResponse['data']['applicant_id_proof'];
+                    String fileName = applicant_id_proof.split('/').last;
+                    print('filename');
+
+                    if (fileName.contains('.png') ||
+                        fileName.contains('.jpg') ||
+                        fileName.contains('.jpeg') ||
+                        fileName.contains('.gif')) {
+                      print('wiii');
+                      applicant_id_proof = jsonResponse['data']['applicant_id_proof'];
+                    } else {
+                      applicant_id_proof =
+                      'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+                    }
+                    sharedPreferences.setString(
+                        "applicant_id_proof", applicant_id_proof);
+
+                    getAttachment();
+                    print(applicant_id_proof);
+                  });
+
+                  showToastMessage('File Uploaded');
+                }
+              } else {
+                setState(() {});
+              }
+            } catch (e) {
+              Fluttertoast.showToast(msg: "Something went wrong");
+              setState(() {
+                _isLoading = false;
+              });
+              print('dsa');
+              print(e);
+            }
+          }
+      }
+
+    // if (file != null) {
       // print(file.paths.last);
       // File myFile = File(file.single.path);
       // Utils.createFile(myFile, "GalleryFile");
-      setState(() {
-        _isLoadingSecondary = true;
-        print('state');
-        print(_isLoadingSecondary);
-      });
+      // setState(() {
+      //   _isLoadingSecondary = true;
+      //   print('state');
+      //   print(_isLoadingSecondary);
+      // });
 
-      try {
-        if (_isLoadingSecondary == true) {
-          print(widget.applicant_id);
-        }
-
-        Map<String, dynamic> data = {
-          "application_id": widget.applicant_id,
-          widget.image_name: await MultipartFile.fromFile(
-              file.path,
-              filename: 'applicantID.jpg')
-        };
-        FormData formData = new FormData.fromMap(data);
-        applicant_id_list.add(file.path);
-
-        Map<String, dynamic> map = {
-          "application_id": widget.applicant_id,
-          widget.image_name: file.path
-        };
-        LocalStorage.localStorage.saveFormData(map);
-
-        print(formData.toString());
-
-        if (MyConstants.myConst.internet) {
-          showToastMessage('File Uploading Please wait');
-          var dio = Dio(BaseOptions(
-              receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 1 minutes
-              receiveTimeout: 60 * 1000 // 1 minuntes
-              ));
-          dio.interceptors.add(LogInterceptor(responseBody: true));
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          var userID = sharedPreferences.getString('userID');
-          var authToken = sharedPreferences.getString('auth-token');
-          var jsonResponse;
-          Response response = await dio.post(
-            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-            data: formData, // Post with Stream<List<int>>
-            options: Options(
-                headers: {'uuid': userID, 'Authentication': authToken},
-                contentType: "*/*",
-                responseType: ResponseType.json),
-          );
-          print("Something Something");
-          if (response.statusCode == 200) {
-            // jsonResponse = json.decode(response.data);
-            jsonResponse = response.data;
-            print('data');
-            print(
-                "spouse id after affidavit :::: ${jsonResponse['data']['spouse_id']}");
-
-            showToastMessage(jsonResponse['message']);
-//          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
-            setState(() {
-              _isLoadingSecondary = false;
-//            Navigator.pop(context, true);
-
-              applicant_id_proof = jsonResponse['data']['applicant_id_proof'];
-              String fileName = applicant_id_proof.split('/').last;
-              print('filename');
-
-              if (fileName.contains('.png') ||
-                  fileName.contains('.jpg') ||
-                  fileName.contains('.jpeg') ||
-                  fileName.contains('.gif')) {
-                print('wiii');
-                applicant_id_proof = jsonResponse['data']['applicant_id_proof'];
-              } else {
-                applicant_id_proof =
-                    'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-              }
-              sharedPreferences.setString(
-                  "applicant_id_proof", applicant_id_proof);
-
-              getAttachment();
-              print(applicant_id_proof);
-            });
-
-            showToastMessage('File Uploaded');
-          }
-        } else {
-          setState(() {});
-        }
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Something went wrong");
-        setState(() {
-          _isLoading = false;
-        });
-        print('dsa');
-        print(e);
-      }
-    }
+//       try {
+//         if (_isLoadingSecondary == true) {
+//           print(widget.applicant_id);
+//         }
+//
+//         Map<String, dynamic> data = {
+//           "application_id": widget.applicant_id,
+//           widget.image_name: await MultipartFile.fromFile(
+//               file.path,
+//               filename: 'applicantID.jpg')
+//         };
+//         FormData formData = new FormData.fromMap(data);
+//         applicant_id_list.add(file.path);
+//
+//         Map<String, dynamic> map = {
+//           "application_id": widget.applicant_id,
+//           widget.image_name: file.path
+//         };
+//         LocalStorage.localStorage.saveFormData(map);
+//
+//         print(formData.toString());
+//
+//         if (MyConstants.myConst.internet??false) {
+//           showToastMessage('File Uploading Please wait');
+//           var dio = Dio(BaseOptions(
+//               receiveDataWhenStatusError: true,
+//               connectTimeout: Duration(minutes: 3), // 1 minutes
+//               receiveTimeout: Duration(minutes: 3) // 1 minuntes
+//               ));
+//           dio.interceptors.add(LogInterceptor(responseBody: true));
+//           SharedPreferences sharedPreferences =
+//               await SharedPreferences.getInstance();
+//           var userID = sharedPreferences.getString('userID');
+//           var authToken = sharedPreferences.getString('auth-token');
+//           var jsonResponse;
+//           Response response = await dio.post(
+//             '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+//             data: formData, // Post with Stream<List<int>>
+//             options: Options(
+//                 headers: {'uuid': userID, 'Authentication': authToken},
+//                 contentType: "*/*",
+//                 responseType: ResponseType.json),
+//           );
+//           print("Something Something");
+//           if (response.statusCode == 200) {
+//             // jsonResponse = json.decode(response.data);
+//             jsonResponse = response.data;
+//             print('data');
+//             print(
+//                 "spouse id after affidavit :::: ${jsonResponse['data']['spouse_id']}");
+//
+//             showToastMessage(jsonResponse['message']);
+// //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
+//             setState(() {
+//               _isLoadingSecondary = false;
+// //            Navigator.pop(context, true);
+//
+//               applicant_id_proof = jsonResponse['data']['applicant_id_proof'];
+//               String fileName = applicant_id_proof.split('/').last;
+//               print('filename');
+//
+//               if (fileName.contains('.png') ||
+//                   fileName.contains('.jpg') ||
+//                   fileName.contains('.jpeg') ||
+//                   fileName.contains('.gif')) {
+//                 print('wiii');
+//                 applicant_id_proof = jsonResponse['data']['applicant_id_proof'];
+//               } else {
+//                 applicant_id_proof =
+//                     'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+//               }
+//               sharedPreferences.setString(
+//                   "applicant_id_proof", applicant_id_proof);
+//
+//               getAttachment();
+//               print(applicant_id_proof);
+//             });
+//
+//             showToastMessage('File Uploaded');
+//           }
+//         } else {
+//           setState(() {});
+//         }
+//       } catch (e) {
+//         Fluttertoast.showToast(msg: "Something went wrong");
+//         setState(() {
+//           _isLoading = false;
+//         });
+//         print('dsa');
+//         print(e);
+//       }
+//     }
   }
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
   void uploadImage() async {
     await request.ifInternetAvailable();
     applicant_id_list = <String>[];
-    File file;
+    File? file;
 
     Navigator.pop(context, true);
 
@@ -216,9 +321,9 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
                   cameraSide: CameraSide.all,
                 )));
     if (file != null) {
-      print("Picture Captured has the path " + file.path);
+      print("Picture Captured has the path " + file!.path);
     }
-    await Utils.createFile(file, widget.image_name);
+    await Utils.createFile(file!, widget.image_name);
 
     if (file != null) {
       setState(() {
@@ -229,14 +334,14 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
 
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file!.path);
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
           print(widget.applicant_id);
         }
-        var filePath = file.path;
-        applicant_id_list.add(file.path);
+        var filePath = file!.path;
+        applicant_id_list.add(file!.path);
 
         Map<String, dynamic> data = {
           "application_id": widget.applicant_id,
@@ -247,18 +352,18 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          widget.image_name: file.path
+          widget.image_name: file?.path
         };
         LocalStorage.localStorage.saveFormData(map);
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet??false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -488,7 +593,7 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
                               color: Colors.black,
                               size: 20,
                             )
-                          : MyConstants.myConst.internet
+                          : MyConstants.myConst.internet??false
                               ? Container(
                                   width: 20,
                                   height: 20,
@@ -513,7 +618,7 @@ class _FileHolderApplicationIDState extends State<FileHolderApplicationID> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet??false ? 'Uploading' : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,

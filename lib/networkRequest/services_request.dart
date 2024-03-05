@@ -10,10 +10,10 @@ import 'package:http/http.dart' as http;
 
 class ServicesRequest {
   bool ready = false;
-  Map myMap = Map();
-  Map tempMap = Map();
-  FormData tempformData;
-  Future<bool> submitForm() async {
+  Map<String,dynamic>? myMap = Map();
+  Map<String,dynamic>? tempMap = Map();
+  FormData? tempformData;
+  Future<bool?> submitForm() async {
     LocalStorage.localStorage.checkIfFileExists();
     ServicesRequest request = ServicesRequest();
     LocalStorage.localStorage.getApplicationsList();
@@ -21,7 +21,7 @@ class ServicesRequest {
 
     await request.ifInternetAvailable();
     var dio = Dio(BaseOptions(
-      connectTimeout: 90 * 1000,
+      connectTimeout: Duration(minutes: 3),
     ));
     dio.interceptors.add(LogInterceptor(responseBody: true));
 
@@ -30,11 +30,11 @@ class ServicesRequest {
     Map tempMap;
     var pathList;
 
-    String userID = LocalStorage.localStorage.getUserID();
-    String authToken = LocalStorage.localStorage.getAuthToken();
+    String? userID = LocalStorage.localStorage.getUserID();
+    String? authToken = LocalStorage.localStorage.getAuthToken();
 
     // MyConstants.myConst.internet = true;
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       if (MyConstants.myConst.applicationsList == null) {
         print("list is empty");
       } else {
@@ -43,25 +43,25 @@ class ServicesRequest {
 
         print(sharedPreferences.getStringList('applicationIds'));
         pathList = sharedPreferences.getStringList('applicationIds');
-        MyConstants.myConst.applicationsList.forEach((id) {
+        MyConstants.myConst.applicationsList?.forEach((id) {
           submissions.add(false);
         });
         print(
             "application id list :::: ${MyConstants.myConst.applicationsList}");
-        if (MyConstants.myConst.applicationsList.isNotEmpty) {
+        if ( MyConstants.myConst.applicationsList!=null && MyConstants.myConst.applicationsList!.isNotEmpty) {
           // MyConstants.myConst.applicationsList.removeAt(0);
           // MyConstants.myConst.applicationsList.removeAt(0);
           // MyConstants.myConst.applicationsList.removeAt(0);
-          await Future.forEach(MyConstants.myConst.applicationsList,
+          await Future.forEach(MyConstants.myConst.applicationsList??[],
               (appId) async {
             myMap = await getFormData(appId);
             if (myMap != null) {
-              tempMap = myMap;
+              tempMap = myMap!;
               log("Map key value pairings are " + myMap.toString());
-              if (myMap != null || myMap.isNotEmpty) {
-                FormData formData = new FormData.fromMap(myMap);
+              if (myMap != null || myMap!.isNotEmpty) {
+                FormData formData = new FormData.fromMap(myMap??{});
                 log(myMap.toString());
-                log("Only Services Linked :::: ${myMap['services_linked']}");
+                log("Only Services Linked :::: ${myMap?['services_linked']}");
                 // tempMap = myMap['services_linked'];
 
                 log("FormData fields " + formData.fields.toString());
@@ -84,7 +84,7 @@ class ServicesRequest {
                     int applicant_id = response.data['application_id'];
                     tempMap = {
                       'application_id': applicant_id,
-                      'services_linked': myMap['services_linked']
+                      'services_linked': myMap?['services_linked']
                     };
                     print("temporary Map is :::: $tempMap");
                     // update and send services
@@ -94,8 +94,8 @@ class ServicesRequest {
                             "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
                         headers: {
                           'Content-Type': 'application/json',
-                          'uuid': userID,
-                          'Authentication': authToken
+                          'uuid': userID??"",
+                          'Authentication': authToken??""
                         },
                         body: jsonEncode(tempMap));
                     if (updateServices.statusCode == 200) {
@@ -131,13 +131,13 @@ class ServicesRequest {
     }
   }
 
-  Future<Map<String, dynamic>> getFormData(String applicationId) async {
+  Future<Map<String, dynamic>?> getFormData(String applicationId) async {
     List<MultipartFile> imgList = <MultipartFile>[];
     List<String> imagePath = <String>[];
     List listOfDecodedPaths = [];
     MultipartFile checkFile;
 
-    Map map = Map();
+    Map<String,dynamic>? map = Map();
     int i = 0;
     imgList = <MultipartFile>[];
     var decodeSucceeded = false;
@@ -156,25 +156,25 @@ class ServicesRequest {
       'proof_of_incomes[]',
       'household[]',
     ];
-    map = LocalStorage.localStorage.getFormData(applicationId);
-    if (map.isNotEmpty) {
+    map = LocalStorage.localStorage.getFormData(applicationId).cast<String,dynamic>();
+    if (map !=null && map.isNotEmpty) {
       print("map from sharedPref ::: $map");
       String singleFilePath;
 
       await Future.forEach(keys, (key) async {
         bool filesExists = false;
         MultipartFile multiPartImage;
-        if (map[key] != null) {
-          filesExists = await File(map[key]).exists();
+        if (map?[key] != null) {
+          filesExists = await File(map?[key]).exists();
         }
         try {
           if (filesExists) {
             multiPartImage =
-                await MultipartFile.fromFile(map[key], filename: '$key$i.jpg');
+                await MultipartFile.fromFile(map?[key], filename: '$key$i.jpg');
             if (multiPartImage != null) {
-              singleFilePath = map[key];
-              map[key] = multiPartImage;
-              print("$key is now ::::: ${map[key]}");
+              singleFilePath = map?[key];
+              map?[key] = multiPartImage;
+              print("$key is now ::::: ${map?[key]}");
               i++;
               print("i is :::: $i after increment");
             }
@@ -191,10 +191,10 @@ class ServicesRequest {
       await Future.forEach(mulitFileKeys, (key) async {
         List<MultipartFile> listOfMultipartFile = [];
         try {
-          print(map[key]);
-          if (map[key] != null) {
-            if (map[key].isNotEmpty) {
-              listOfDecodedPaths = json.decode(map[key]);
+          print(map?[key]);
+          if (map?[key] != null) {
+            if (map?[key].isNotEmpty) {
+              listOfDecodedPaths = json.decode(map?[key]);
               print("dynamic list of decoded ::: $listOfDecodedPaths");
               decodeSucceeded = true;
             }
@@ -205,16 +205,16 @@ class ServicesRequest {
           print('The provided string is not valid JSON');
           print(e);
           // imagePath.add(map[key]);
-          MultipartFile multiPartImage;
-          bool fileExists = await File(map[key]).exists();
+          MultipartFile? multiPartImage;
+          bool fileExists = await File(map?[key]).exists();
           if (fileExists) {
             multiPartImage =
-                await MultipartFile.fromFile(map[key], filename: '$key$i');
+                await MultipartFile.fromFile(map?[key], filename: '$key$i');
             if (multiPartImage != null) {
               listOfMultipartFile.add(multiPartImage);
-              map[key] = listOfMultipartFile;
+              map?[key] = listOfMultipartFile;
               print("Single file added ");
-              print("$key is now :::: ${map[key]}");
+              print("$key is now :::: ${map?[key]}");
               i++;
               print("i is ::: $i");
             }
@@ -233,17 +233,17 @@ class ServicesRequest {
                 if (listOfDecodedPaths.length > 1) {
                   listOfMultipartFile.add(checkFile);
                   // map[key].add(checkFile);
-                  print("$key is now a list ::::: ${map[key]}");
+                  print("$key is now a list ::::: ${map?[key]}");
                   i++;
                   print("i is :::: $i after increment");
                 } else {
                   listOfMultipartFile.add(checkFile);
                   // map[key] = checkFile;
-                  print("$key is now ::::: ${map[key]}");
+                  print("$key is now ::::: ${map?[key]}");
                   i++;
                   print("i is :::: $i after increment");
                 }
-                map[key] = listOfMultipartFile;
+                map?[key] = listOfMultipartFile;
               }
             } else {
               print("Multiple Files you are trying to convert does not exists");
@@ -256,6 +256,7 @@ class ServicesRequest {
       print("reached");
       return map;
     }
+    return null;
   }
 
   Future<void> ifInternetAvailable() async {
@@ -277,15 +278,15 @@ class ServicesRequest {
     }
   }
 
-  Future<int> singleFormSubmission(bool previousFormSubmitted) async {
+  Future<int?> singleFormSubmission(bool previousFormSubmitted) async {
     var dio = Dio(BaseOptions(
-      connectTimeout: 90 * 1000,
+      connectTimeout: Duration(minutes: 3),
     ));
     dio.interceptors.add(LogInterceptor(responseBody: true));
 
     String url;
-    String userID = LocalStorage.localStorage.getUserID();
-    String authToken = LocalStorage.localStorage.getAuthToken();
+    String? userID = LocalStorage.localStorage.getUserID();
+    String? authToken = LocalStorage.localStorage.getAuthToken();
     int applicant_id;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
@@ -294,12 +295,12 @@ class ServicesRequest {
     } else {
       url = '${MyConstants.myConst.baseUrl}api/v1/users/application_form';
     }
-    myMap = await getFormData(MyConstants.myConst.currentApplicantId);
+    myMap = await getFormData(MyConstants.myConst.currentApplicantId??"");
     if (myMap != null) {
       tempMap = myMap;
       log("Map key value pairings are " + myMap.toString());
-      if (myMap != null || myMap.isNotEmpty) {
-        FormData formData = new FormData.fromMap(myMap);
+      if (myMap != null || myMap!.isNotEmpty) {
+        FormData formData = new FormData.fromMap(myMap!);
         log("FormData fields " + formData.fields.toString());
         log("FormData files " + formData.files.toString());
         try {
@@ -323,8 +324,8 @@ class ServicesRequest {
                   'applicant_id', apid['data']['application_id']);
               applicant_id = apid['application_id'];
             } else {
-              sharedPreferences.setInt('applicant_id', myMap['application_id']);
-              applicant_id = myMap['application_id'];
+              sharedPreferences.setInt('applicant_id', myMap?['application_id']);
+              applicant_id = myMap?['application_id'];
             }
 
             return applicant_id;

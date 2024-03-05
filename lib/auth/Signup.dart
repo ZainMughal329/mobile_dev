@@ -21,8 +21,8 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool _isLoading = false;
-  String _translation;
-  String roleHolder;
+  String? _translation;
+  String? roleHolder;
   bool _isSecure = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -33,7 +33,8 @@ class _SignUpState extends State<SignUp> {
   void signUpClicked() async {
     print(_translation);
 
-    Pattern pattern =
+    // Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
@@ -245,9 +246,9 @@ class _SignUpState extends State<SignUp> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                          color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                               validator: (val) {
-                                if (val.length == 0) {
+                                if (val?.length == 0) {
                                   return "Email Cannot be empty";
                                 } else {
                                   return null;
@@ -292,7 +293,7 @@ class _SignUpState extends State<SignUp> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                          color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                               keyboardType: TextInputType.emailAddress,
                               style: new TextStyle(
                                   fontFamily: 'opensans',
@@ -337,7 +338,7 @@ class _SignUpState extends State<SignUp> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                          color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                               keyboardType: TextInputType.phone,
                               style: new TextStyle(
@@ -397,7 +398,7 @@ class _SignUpState extends State<SignUp> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                          color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                               keyboardType: TextInputType.text,
                               style: new TextStyle(
@@ -474,7 +475,7 @@ class _SignUpState extends State<SignUp> {
                                   : null,
                               onChanged: (newVal) {
 //
-                                _translation = newVal;
+                                _translation = newVal??"";
 
                                 print(_translation);
 

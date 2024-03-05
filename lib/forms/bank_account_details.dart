@@ -55,20 +55,19 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
     await request.ifInternetAvailable();
     // checkInternetAvailability();
     // LocalStorage.localStorage.saveFormData(data);
-    if (MyConstants.myConst.internet) {
-
+    if (MyConstants.myConst.internet ?? false) {
       BankDetailsModel bankDetailsModel = BankDetailsModel();
-      bankDetailsModel.bankDetailsAttributes=[];
+      bankDetailsModel.bankDetailsAttributes = [];
 
       for (int i = 0; i < 3; i++) {
         if (bankName[i].isNotEmpty &&
             bankAc[i].isNotEmpty &&
             branchCode[i].isNotEmpty) {
-          bankDetailsModel.bankDetailsAttributes.add(
+          bankDetailsModel.bankDetailsAttributes?.add(
             BankDetailsAttributes(
-                bankNumber: bankName[i],
-                bankAccountNumber: bankAc[i],
-                branchCode: branchCode[i],
+              bankNumber: bankName[i],
+              bankAccountNumber: bankAc[i],
+              branchCode: branchCode[i],
             ),
           );
         }
@@ -88,8 +87,8 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
               "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
           headers: {
             'Content-Type': 'application/json',
-            'uuid': userID,
-            'Authentication': authToken
+            'uuid': userID ?? "",
+            'Authentication': authToken ?? ""
           },
           body: jsonEncode(bankDetailsModel.toJson()
               //     {
@@ -114,8 +113,10 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
           widget.previousFormSubmitted = true;
           showToastMessage('Form Submitted');
           Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => Attachments(widget.applicant_id,
-                  widget.gross_monthly_income, widget.previousFormSubmitted)));
+              pageBuilder: (_, __, ___) => Attachments(
+                  applicant_id: widget.applicant_id,
+                  gross_monthly_income: widget.gross_monthly_income,
+                  previousFormSubmitted: widget.previousFormSubmitted)));
           // previousFormSubmitted = true;
           // Navigator.of(context).push(MaterialPageRoute(
           //     builder: (BuildContext context) => new PersonalInformationB1(
@@ -242,7 +243,7 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])),
+                                          color: Colors.blue.shade700)),
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.auto),
                               keyboardType: TextInputType.name,
@@ -283,7 +284,7 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])),
+                                          color: Colors.blue.shade700)),
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.auto),
                               keyboardType: TextInputType.text,
@@ -324,7 +325,7 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
                                       borderRadius:
                                           new BorderRadius.circular(4.0),
                                       borderSide: new BorderSide(
-                                          color: Colors.blue[700])),
+                                          color: Colors.blue.shade700)),
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.auto),
                               keyboardType: TextInputType.number,

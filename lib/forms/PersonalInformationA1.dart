@@ -48,7 +48,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
   var concatenate;
   var lat = '';
   var lng = '';
-  LocationData _locationData;
+  LocationData? _locationData;
   ServicesRequest request = ServicesRequest();
   bool previousFormSubmitted = false;
   @override
@@ -88,17 +88,17 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
 
     _locationData = await location.getLocation();
     setState(() {
-      lat = _locationData.latitude.toString();
-      lng = _locationData.longitude.toString();
+      lat = _locationData?.latitude.toString()??"";
+      lng = _locationData?.longitude.toString()??"";
     });
 
     print(_coordinatesLoading);
     print('location holdeer');
-    print(_locationData.latitude);
+    print(_locationData?.latitude);
   }
 
   Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime(2015, 8),
@@ -118,7 +118,8 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
   }
 
   void formClicked() async {
-    Pattern pattern =
+    // Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (dateOfApplicationController.text.isNotEmpty) {
@@ -243,7 +244,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
 
     // checkInternetAvailability();
     LocalStorage.localStorage.saveFormData(data);
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       var jsonResponse;
       if (applicant_id == null) {
         print('yuppp');
@@ -252,8 +253,8 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                 "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID??"",
+              'Authentication': authToken??""
             },
             body: jsonEncode(data));
 
@@ -318,8 +319,8 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                 "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID??"",
+              'Authentication': authToken??""
             },
             body: jsonEncode(data));
 
@@ -378,7 +379,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
   TextStyle buttonTextStyle =
       TextStyle(color: Colors.white, fontSize: 13, fontFamily: 'opensans');
   selectDate(BuildContext context, DateTime initialDateTime,
-      {DateTime lastDate}) async {
+      {DateTime? lastDate}) async {
     Completer completer = Completer();
     String _selectedDateInString;
 //    if (Platform.isAndroid)
@@ -550,7 +551,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                       data: Theme.of(context).copyWith(
                         primaryColor:
                             AppColors.PRIMARY_COLOR, //color of the main banner
-                        accentColor: AppColors.PRIMARY_COLOR,
+                        hintColor: AppColors.PRIMARY_COLOR,
                         colorScheme: ColorScheme.light().copyWith(
                           primary: AppColors.PRIMARY_COLOR,
                           secondary: AppColors.PRIMARY_COLOR,
@@ -586,7 +587,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                                         borderRadius:
                                             new BorderRadius.circular(4.0),
                                         borderSide: new BorderSide(
-                                            color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                            color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                                 keyboardType: TextInputType.datetime,
                                 style: new TextStyle(
                                     fontFamily: 'opensans',
@@ -631,7 +632,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -669,7 +670,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
                           fontFamily: 'opensans',
@@ -711,7 +712,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -759,7 +760,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -783,7 +784,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                               data: Theme.of(context).copyWith(
                                 primaryColor: AppColors
                                     .PRIMARY_COLOR, //color of the main banner
-                                accentColor: AppColors.PRIMARY_COLOR,
+                                hintColor: AppColors.PRIMARY_COLOR,
                                 colorScheme: ColorScheme.light().copyWith(
                                   primary: AppColors.PRIMARY_COLOR,
                                   secondary: AppColors.PRIMARY_COLOR,
@@ -901,7 +902,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -949,7 +950,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -995,7 +996,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -1041,7 +1042,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -1059,7 +1060,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
               FocusScopeNode currentFocus = FocusScope.of(context);
               if (!currentFocus.hasPrimaryFocus &&
                   currentFocus.focusedChild != null) {
-                currentFocus.focusedChild.unfocus();
+                currentFocus.focusedChild?.unfocus();
               }
               formClicked();
 //                  Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> PersonalInformationB1()));

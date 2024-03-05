@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:barcode_keyboard_listener/barcode_keyboard_listener.dart';
+// import 'package:barcode_keyboard_listener/barcode_keyboard_listener.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -7,15 +7,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  BarcodeListener _barcodeListener;
+  // BarcodeListener? _barcodeListener;
   final _tecScanKeyCode = TextEditingController();
-  int _scanButtonKeyCode;
+  int? _scanButtonKeyCode;
   String _scanResult = '';
 
   @override
   void initState() {
     super.initState();
-    _barcodeListener = BarcodeListener(null, null, _onKeyPress);
+    // _barcodeListener = BarcodeListener(null, null, _onKeyPress);
   }
 
   void _onScan(String barcode) async {
@@ -32,19 +32,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _setScanButtonKeyCode(){
     setState(() {
-      if (_barcodeListener != null) {
-        _barcodeListener.dispose();
-        _barcodeListener = null;
-      }
+      // if (_barcodeListener != null) {
+      //   _barcodeListener.dispose();
+      //   _barcodeListener = null;
+      // }
 
       _scanButtonKeyCode = int.parse(_tecScanKeyCode.text);
-      _barcodeListener = BarcodeListener(_onScan, _scanButtonKeyCode, _onKeyPress);
+      // _barcodeListener = BarcodeListener(_onScan, _scanButtonKeyCode, _onKeyPress);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final widgetList = List<Widget>();
+    // final widgetList = List<Widget>();
+    final List<Widget> widgetList = [];
 
     widgetList.addAll([
       Text('Press the scan button, its code will appear in the text field below'),
@@ -76,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar( title: Text('Barcode keyboard listener test')),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: widgetList
+          children: widgetList??[]
       ),
     );
   }

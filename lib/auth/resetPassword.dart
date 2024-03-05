@@ -26,11 +26,11 @@ class ResetPassword extends StatefulWidget {
 //PDF147
 class _ResetPasswordState extends State<ResetPassword> {
 
-  String brand_name;
-  String logo;
-  FocusNode _focusNode;
-  FocusNode _focusNodePassword;
-  String _translation;
+  String? brand_name;
+  String? logo;
+  FocusNode? _focusNode;
+  FocusNode? _focusNodePassword;
+  String? _translation;
 
   bool _isLoading = false;
   bool _isSecure = true;
@@ -38,8 +38,8 @@ class _ResetPasswordState extends State<ResetPassword> {
   TextEditingController tokenNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmpasswordController = TextEditingController();
-  SharedPreferences prefs;
-  String _checkUserAuthImage;
+  SharedPreferences? prefs;
+  String? _checkUserAuthImage;
 
   Future<Null> _getUserAuthImage() async {
     SharedPreferences prefs;
@@ -51,7 +51,8 @@ class _ResetPasswordState extends State<ResetPassword> {
     });
   }
   void signUpClicked() async {
-    Pattern pattern =
+    // Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (tokenNumberController.text.isNotEmpty && passwordController.text.isNotEmpty) {
@@ -133,8 +134,8 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
-    _focusNodePassword.dispose();
+    _focusNode?.dispose();
+    _focusNodePassword?.dispose();
     super.dispose();
   }
 
@@ -267,7 +268,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                     borderRadius:
                                     new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                        color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                             keyboardType: TextInputType.emailAddress,
                             style: new TextStyle(
                                 fontFamily: 'opensans',
@@ -324,7 +325,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                     borderRadius:
                                     new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                        color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                             keyboardType: TextInputType.text,
                             style: new TextStyle(
@@ -381,7 +382,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                     borderRadius:
                                     new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                        color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                             keyboardType: TextInputType.text,
                             style: new TextStyle(

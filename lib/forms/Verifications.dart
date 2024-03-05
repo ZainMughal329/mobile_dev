@@ -38,30 +38,30 @@ class _VerificationsState extends State<Verifications> {
 
 
 
-  bool verificationIdsWithThirdPartyHomeAffairs;
-  bool verificationOfEmploymentStatusAndSalaryBracketWithExperian;
-  bool verificationOfTheEmployerOfApplicantWithDoLOrExperian;
-  bool verificationOfApplicantCreditStatusWithExperian;
-  bool verificationOfApplicantCIPCDirectorshipWithCIPC;
-  bool verificationOfApplicationIDValidation;
+  bool? verificationIdsWithThirdPartyHomeAffairs;
+  bool? verificationOfEmploymentStatusAndSalaryBracketWithExperian;
+  bool? verificationOfTheEmployerOfApplicantWithDoLOrExperian;
+  bool? verificationOfApplicantCreditStatusWithExperian;
+  bool? verificationOfApplicantCIPCDirectorshipWithCIPC;
+  bool? verificationOfApplicationIDValidation;
 
 
-  String home_affairs;
-  String employment_status_and_salary;
-  String employer_by_dol_or_experian;
-  String credit_status_by_experian;
-  String cipc;
-  String id_veri;
+  String? home_affairs;
+  String? employment_status_and_salary;
+  String? employer_by_dol_or_experian;
+  String? credit_status_by_experian;
+  String? cipc;
+  String? id_veri;
 
 
 
 
-  bool home_affairs_value;
-  bool employment_status_and_salary_value;
-  bool employer_by_dol_or_experian_value;
-  bool credit_status_by_experian_value;
-  bool cipc_value;
-  bool id_validation;
+  bool? home_affairs_value;
+  bool? employment_status_and_salary_value;
+  bool? employer_by_dol_or_experian_value;
+  bool? credit_status_by_experian_value;
+  bool? cipc_value;
+  bool? id_validation;
 
   ServicesRequest request = ServicesRequest();
 
@@ -77,7 +77,7 @@ class _VerificationsState extends State<Verifications> {
   var jsonResponse;
 
 
-Future<void> checkInternetAvailability(){
+Future<void> checkInternetAvailability() async {
     setState(() async {
       await request.ifInternetAvailable();
     });
@@ -95,8 +95,8 @@ Future<void> checkInternetAvailability(){
         .get(Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/application_verifications?application_id=${widget.id}"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid' : userID,
-          'Authentication' : authToken
+          'uuid' : userID??"",
+          'Authentication' : authToken??""
         }
     );
     print(response);
@@ -199,8 +199,8 @@ Future<void> checkInternetAvailability(){
         .post(Uri.parse(url),
         headers: {
 //          'Content-Type': 'application/json',
-          'uuid' : userID,
-          'Authentication' : authToken
+          'uuid' : userID??"",
+          'Authentication' : authToken??""
         },
 //        body: data
     );
@@ -325,7 +325,7 @@ Future<void> checkInternetAvailability(){
                               )),
                               value: jsonResponse[key],
                               controlAffinity: ListTileControlAffinity.leading,
-                              onChanged: (bool value) {
+                              onChanged: (bool? value) {
                                 setState(() {
                                   jsonResponse[key] = value;
                                   print(value);

@@ -10,10 +10,10 @@ class NodoCollection {
 }
 
 class NodoPOJO {
-  final int extremo1;
-  final String extremo2;
-  final String extremo3;
-  final String linea;
+  final int? extremo1;
+  final String? extremo2;
+  final String? extremo3;
+  final String? linea;
 
   NodoPOJO(this.extremo1, this.extremo2, this.extremo3 , this.linea);
 

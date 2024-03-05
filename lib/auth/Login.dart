@@ -25,18 +25,18 @@ class Login extends StatefulWidget {
 //PDF147
 class _LoginState extends State<Login> {
 
-  String brand_name;
-  String logo;
-  FocusNode _focusNode;
-  FocusNode _focusNodePassword;
-  String _translation;
+  String? brand_name;
+  String? logo;
+  FocusNode? _focusNode;
+  FocusNode? _focusNodePassword;
+  String? _translation;
 
   bool _isLoading = false;
   bool _isSecure = true;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  SharedPreferences prefs;
-  String _checkUserAuthImage;
+  TextEditingController emailController = TextEditingController(text: "saadtest0001@gmail.com");
+  TextEditingController passwordController = TextEditingController(text: "123456");
+  SharedPreferences? prefs;
+  String? _checkUserAuthImage;
 
   Future<Null> _getUserAuthImage() async {
     SharedPreferences prefs;
@@ -48,7 +48,8 @@ class _LoginState extends State<Login> {
     });
   }
   void signUpClicked() async {
-    Pattern pattern =
+    // Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
@@ -79,6 +80,7 @@ class _LoginState extends State<Login> {
     var jsonResponse;
     http.Response response = await http.get(
         Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/sign_in?email=$email&password=$pass&role='reviewer'"));
+        // Uri.parse("http://185.193.67.250:3000/admin/login/api/v1/users/sign_in?email=$email&password=$pass&role='reviewer'"));
     print(response.body);
     print(data);
     if (response.statusCode == 200) {
@@ -91,8 +93,7 @@ class _LoginState extends State<Login> {
       sharedPreferences.setString('role', jsonResponse['role']);
       var applicant_id = sharedPreferences.getInt('applicant_id');
       sharedPreferences.setBool('login', true);
-      var role = sharedPreferences.getString('role');
-      print('role' + role);
+      String? role = sharedPreferences.getString('role');
 
       setState(() {
         print('done');
@@ -125,8 +126,8 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
-    _focusNodePassword.dispose();
+    _focusNode?.dispose();
+    _focusNodePassword?.dispose();
     super.dispose();
   }
 
@@ -285,7 +286,7 @@ class _LoginState extends State<Login> {
                                     borderRadius:
                                         new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                        color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                             keyboardType: TextInputType.emailAddress,
                             style: new TextStyle(
                                 fontFamily: 'opensans',
@@ -342,7 +343,7 @@ class _LoginState extends State<Login> {
                                     borderRadius:
                                         new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                        color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                             keyboardType: TextInputType.text,
                             style: new TextStyle(

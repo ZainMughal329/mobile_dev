@@ -45,7 +45,7 @@ class _DashboardState extends State<Dashboard> {
     print(role);
   }
 
-  Widget getFieldWorkerApplication(BuildContext context) {
+  Widget? getFieldWorkerApplication(BuildContext context) {
     if (widget.userRole == "field_worker") {
       return InkWell(
           onTap: () async {

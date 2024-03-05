@@ -34,11 +34,12 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
 
   bool _isVisible = true;
   ServicesRequest request = ServicesRequest();
-  bool submitStatus;
+  bool? submitStatus;
   bool isLoading = false;
   bool isSyncLoading = false;
 
   List<Map<String, dynamic>> mapData = <Map<String, dynamic>>[];
+
   getLocalData() async {
     print("Get Local Data Called");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -69,7 +70,7 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
     var jsonResponse;
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       setState(() {
         isLoading = true;
       });
@@ -78,8 +79,8 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
               "${MyConstants.myConst.baseUrl}api/v1/users/all_reviewed_applications"),
           headers: {
             'Content-Type': 'application/json',
-            'uuid': userID,
-            'Authentication': authToken
+            'uuid': userID ?? "",
+            'Authentication': authToken ?? ""
           });
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
@@ -126,8 +127,8 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&reviewed='true'"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID ?? "",
+          'Authentication': authToken ?? ""
         });
 
     print(response.body);
@@ -159,8 +160,8 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&reviewed='false'"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID ?? "",
+          'Authentication': authToken ?? ""
         });
 
     print(response.body);
@@ -302,7 +303,7 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
                             border: Border(
                                 left: BorderSide(
                               width: 7,
-                              color: Colors.amber[800],
+                              color: Colors.amber.shade800,
                             )),
                           ),
                           child: Column(
@@ -384,35 +385,61 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
                       print(models[position].extremo1);
                       Navigator.of(context).pushReplacement(PageRouteBuilder(
                           pageBuilder: (_, __, ___) =>
-                              Verifications(models[position].extremo1)));
+                              Verifications(models[position].extremo1 ?? 0)));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Slidable(
                         key: ValueKey(models[position].extremo1.toString()),
-                        actionPane: SlidableDrawerActionPane(),
-                        secondaryActions: <Widget>[
-                          IconSlideAction(
-                            color: Colors.green,
-                            icon: Icons.check,
-                            onTap: () {
-                              reviewedApplicant(models[position].extremo1);
-                              print(models[position].extremo1);
-                            },
-                          ),
-                          IconSlideAction(
-//                  caption: 'Delete',
-                            color: Colors.red,
-                            icon: Icons.clear,
-                            onTap: () {
-                              reviewedApplicant(models[position].extremo1);
-                              print(models[position].extremo1);
-                            },
-                          ),
-                        ],
-                        dismissal: SlidableDismissal(
-                          child: SlidableDrawerDismissal(),
+                        endActionPane: ActionPane(
+                          motion: ScrollMotion(),
+                          children: <Widget>[
+                            SlidableAction(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              icon: Icons.check,
+                              onPressed: (context){
+                                  reviewedApplicant(
+                                      models[position].extremo1 ?? 0);
+                                  print(models[position].extremo1);
+
+                              },
+
+                            ),
+                            SlidableAction(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                             icon: Icons.clear,
+                              onPressed: (context){
+                                reviewedApplicant(models[position].extremo1??0);
+                                print(models[position].extremo1);
+                              },
+                            ),
+                          ],
                         ),
+//                         actionPane: SlidableDrawerActionPane(),
+//                         secondaryActions: <Widget>[
+//                           IconSlideAction(
+//                             color: Colors.green,
+//                             icon: Icons.check,
+//                             onTap: () {
+//                               reviewedApplicant(models[position].extremo1);
+//                               print(models[position].extremo1);
+//                             },
+//                           ),
+//                           IconSlideAction(
+// //                  caption: 'Delete',
+//                             color: Colors.red,
+//                             icon: Icons.clear,
+//                             onTap: () {
+//                               reviewedApplicant(models[position].extremo1);
+//                               print(models[position].extremo1);
+//                             },
+//                           ),
+//                         ],
+//                         dismissal: SlidableDismissal(
+//                           child: SlidableDrawerDismissal(),
+//                         ),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -466,12 +493,15 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
                                                         .width *
                                                     0.58,
 //                                       width: 300,
+//                                                 child: Text(
+// //                                                   models[position].extremo3 !=
+// //                                                           null
+// //                                                       ? models[position]
+// //                                                           .extremo3
+// //                                                       : ''
                                                 child: Text(
-                                                  models[position].extremo3 !=
-                                                          null
-                                                      ? models[position]
-                                                          .extremo3
-                                                      : '',
+                                                  models[position].extremo3 ??
+                                                      "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
@@ -485,11 +515,13 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
                                                       fontSize: 15.0),
                                                 ),
                                               ),
+                                              // Text(
+                                              //   models[position].extremo2 !=
+                                              //           null
+                                              //       ? models[position].extremo2
+                                              //       : '',
                                               Text(
-                                                models[position].extremo2 !=
-                                                        null
-                                                    ? models[position].extremo2
-                                                    : '',
+                                                models[position].extremo2 ?? "",
                                                 style: TextStyle(
                                                   fontFamily: "sans",
                                                   fontWeight: FontWeight.w300,
@@ -537,7 +569,8 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
             },
           ),
           actions: [
-            MyConstants.myConst.applicationsList.isEmpty
+            MyConstants.myConst.applicationsList != null &&
+                    MyConstants.myConst.applicationsList!.isEmpty
                 ? SizedBox()
                 : isSyncLoading
                     ? SizedBox()
@@ -550,7 +583,7 @@ class _SuperVisorAllApplicantsState extends State<SuperVisorAllApplicants> {
                           if (mapData.isNotEmpty) {
                             // Utils.checkFormStatusAndSubmit();
                             submitStatus = await request.submitForm();
-                            if (submitStatus) {
+                            if (submitStatus ?? false) {
                               setState(() {
                                 mapData.clear();
                                 getAllApplicant();

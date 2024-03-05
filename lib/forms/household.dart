@@ -30,19 +30,19 @@ class HouseHold extends StatefulWidget {
 }
 
 class _HouseHoldState extends State<HouseHold> {
-  String _fileName;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
+  String? _fileName;
+  String? _path;
+  Map<String, String>? _paths;
+  String? _extension;
   bool _loadingPath = false;
   bool _multiPick = false;
   bool _hasValidMime = false;
-  FileType _pickingType;
-  String profileType;
+  FileType? _pickingType;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
-  List<String> house_hold_id = List<String>();
+  List<String> house_hold_id = [];
   ServicesRequest request = ServicesRequest();
   List<String> household_list = <String>[];
 
@@ -86,134 +86,251 @@ class _HouseHoldState extends State<HouseHold> {
       _isLoadingSecondary = true;
     });
     // List<File> listFiles  = await FilePicker.getMultiFile();
-    List<File> listFiles = await FilePicker.getMultiFile(
+    // List<File> listFiles = await FilePicker.getMultiFile(
+    //     type: FileType.custom, allowedExtensions: ['jpg']);
+   FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
         type: FileType.custom, allowedExtensions: ['jpg']);
     final Map<String, dynamic> _formData = {};
 
     _formData['application_id'] = widget.applicant_id;
+   if(listFiles!=null){
+     List<File> files = listFiles.paths.map((path) => File(path!)).toList();
 
-    var img = [];
-    List<String> img_paths = <String>[];
-    for (int j = 0; j < listFiles.length; j++) {
-      img.add(await MultipartFile.fromFile(listFiles[j].path,
-          filename: 'household($j)'));
-      img_paths.add(listFiles[j].path);
-      household_list.add(listFiles[j].path);
-      print(_formData);
-    }
+     var img = [];
+     List<String> img_paths = <String>[];
+     for (int j = 0; j < files.length; j++) {
 
-    _formData['household[]'] = img;
-    print('idsss ++++++++');
-    print(_formData['household[]']);
-    // checkInternetAvailability();
+       img.add(await MultipartFile.fromFile(files[j].path,
+           filename: 'household($j)'));
+       img_paths.add(files[j].path);
+       household_list.add(files[j].path);
+       print(_formData);
+     }
+     _formData['household[]'] = img;
+     print('idsss ++++++++');
+     print(_formData['household[]']);
+     _isLoadingSecondary = true;
 
-    if (listFiles != null) {
-      _isLoadingSecondary = true;
+     try {
+       if (_isLoadingSecondary == true) {
+         print(widget.applicant_id);
+       }
+       FormData formData = new FormData.fromMap(_formData);
 
-      try {
-        if (_isLoadingSecondary == true) {
-          print(widget.applicant_id);
-        }
-        FormData formData = new FormData.fromMap(_formData);
+       Map<String, dynamic> map = {
+         "application_id": widget.applicant_id,
+         'household[]': jsonEncode(img_paths)
+       };
+       LocalStorage.localStorage.saveFormData(map);
 
-        Map<String, dynamic> map = {
-          "application_id": widget.applicant_id,
-          'household[]': jsonEncode(img_paths)
-        };
-        LocalStorage.localStorage.saveFormData(map);
-
-        print('daataaaa');
+       print('daataaaa');
 //
-        print(formData);
-        // checkInternetAvailability();
-        if (MyConstants.myConst.internet) {
-          showToastMessage('File Uploading Please wait');
-          var dio = Dio(BaseOptions(
-              receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
-              ));
-          dio.interceptors.add(LogInterceptor(responseBody: true));
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          var userID = sharedPreferences.getString('userID');
-          var authToken = sharedPreferences.getString('auth-token');
+       print(formData);
+       // checkInternetAvailability();
+       if (MyConstants.myConst.internet ?? false) {
+         showToastMessage('File Uploading Please wait');
+         var dio = Dio(BaseOptions(
+             receiveDataWhenStatusError: true,
+             connectTimeout: Duration(minutes: 3), // 3 minutes
+             receiveTimeout: Duration(minutes: 3) // 3 minuntes
+         ));
+         dio.interceptors.add(LogInterceptor(responseBody: true));
+         SharedPreferences sharedPreferences =
+         await SharedPreferences.getInstance();
+         var userID = sharedPreferences.getString('userID');
+         var authToken = sharedPreferences.getString('auth-token');
 
-          Response response = await dio.post(
-            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-            data: formData, // Post with Stream<List<int>>
-            options: Options(
-                headers: {'uuid': userID, 'Authentication': authToken},
-                contentType: "*/*",
-                responseType: ResponseType.json),
-          );
+         Response response = await dio.post(
+           '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+           data: formData, // Post with Stream<List<int>>
+           options: Options(
+               headers: {'uuid': userID, 'Authentication': authToken},
+               contentType: "*/*",
+               responseType: ResponseType.json),
+         );
 
-          print(response.data.toString());
-          // var jsonResponse = json.decode(response.data);
-          var jsonResponse = response.data;
-          print('yaha aya');
-          if (response.statusCode == 200) {
-            setState(() {
-              _isLoadingSecondary = false;
-              print('uploading occupant');
-              print(jsonResponse);
-              print('yaha aya');
-              var houseHold_list = jsonResponse['data']['household'];
-              String fileName;
-              print('filename');
-              print(houseHold_list);
-              var newEntry;
-              print('yaha aya');
-              for (int p = 0; p < houseHold_list.length; p++) {
-                print('filename');
-                newEntry = houseHold_list[p];
-                fileName = houseHold_list[p].split('/').last;
+         print(response.data.toString());
+         // var jsonResponse = json.decode(response.data);
+         var jsonResponse = response.data;
+         print('yaha aya');
+         if (response.statusCode == 200) {
+           setState(() {
+             _isLoadingSecondary = false;
+             print('uploading occupant');
+             print(jsonResponse);
+             print('yaha aya');
+             var houseHold_list = jsonResponse['data']['household'];
+             String? fileName;
+             print('filename');
+             print(houseHold_list);
+             var newEntry;
+             print('yaha aya');
+             for (int p = 0; p < houseHold_list.length; p++) {
+               print('filename');
+               newEntry = houseHold_list[p];
+               fileName = houseHold_list[p].split('/').last;
 
 //              global.occupantImages = dependent_idss;
 
-              }
+             }
 
-              if (fileName.contains('.png') ||
-                  fileName.contains('.jpg') ||
-                  fileName.contains('.jpeg') ||
-                  fileName.contains('.gif')) {
+             if (fileName!.contains('.png') ||
+                 fileName.contains('.jpg') ||
+                 fileName.contains('.jpeg') ||
+                 fileName.contains('.gif')) {
 //            if (jsonResponse['data']['content_type'][0].toString() == 'image/jpeg' || jsonResponse['data']['content_type'][0].toString() == 'image/jpg'
 //                || jsonResponse['data']['content_type'][0].toString() == 'image/png' || jsonResponse['data']['content_type'][0].toString() == 'image/gif'
 //            ){
-                print('wiii');
+               print('wiii');
 
-                house_hold_id.add(newEntry);
-              } else {
-                house_hold_id.add(
-                    'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
-              }
-              sharedPreferences.setStringList("household", house_hold_id);
+               house_hold_id.add(newEntry);
+             } else {
+               house_hold_id.add(
+                   'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
+             }
+             sharedPreferences.setStringList("household", house_hold_id);
 
-              getAttachment();
-            });
+             getAttachment();
+           });
 
-            showToastMessage('File Uploaded');
-          }
-        } else {
-          setState(() {});
-        }
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Something went wrong");
-        setState(() {
-          _isLoading = false;
-        });
-        print('dsa');
-        print(e);
-      }
-    }
+           showToastMessage('File Uploaded');
+         }
+       } else {
+         setState(() {});
+       }
+     } catch (e) {
+       Fluttertoast.showToast(msg: "Something went wrong");
+       setState(() {
+         _isLoading = false;
+       });
+       print('dsa');
+       print(e);
+     }
+   }
+
+
+    // var img = [];
+    // List<String> img_paths = <String>[];
+    // for (int j = 0; j < listFiles.length; j++) {
+    //   img.add(await MultipartFile.fromFile(listFiles[j].path,
+    //       filename: 'household($j)'));
+    //   img_paths.add(listFiles[j].path);
+    //   household_list.add(listFiles[j].path);
+    //   print(_formData);
+    // }
+
+    // _formData['household[]'] = img;
+    // print('idsss ++++++++');
+    // print(_formData['household[]']);
+    // checkInternetAvailability();
+
+//     if (listFiles != null) {
+//       _isLoadingSecondary = true;
+//
+//       try {
+//         if (_isLoadingSecondary == true) {
+//           print(widget.applicant_id);
+//         }
+//         FormData formData = new FormData.fromMap(_formData);
+//
+//         Map<String, dynamic> map = {
+//           "application_id": widget.applicant_id,
+//           'household[]': jsonEncode(img_paths)
+//         };
+//         LocalStorage.localStorage.saveFormData(map);
+//
+//         print('daataaaa');
+// //
+//         print(formData);
+//         // checkInternetAvailability();
+//         if (MyConstants.myConst.internet ?? false) {
+//           showToastMessage('File Uploading Please wait');
+//           var dio = Dio(BaseOptions(
+//               receiveDataWhenStatusError: true,
+//               connectTimeout: Duration(minutes: 3), // 3 minutes
+//               receiveTimeout: Duration(minutes: 3) // 3 minuntes
+//               ));
+//           dio.interceptors.add(LogInterceptor(responseBody: true));
+//           SharedPreferences sharedPreferences =
+//               await SharedPreferences.getInstance();
+//           var userID = sharedPreferences.getString('userID');
+//           var authToken = sharedPreferences.getString('auth-token');
+//
+//           Response response = await dio.post(
+//             '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+//             data: formData, // Post with Stream<List<int>>
+//             options: Options(
+//                 headers: {'uuid': userID, 'Authentication': authToken},
+//                 contentType: "*/*",
+//                 responseType: ResponseType.json),
+//           );
+//
+//           print(response.data.toString());
+//           // var jsonResponse = json.decode(response.data);
+//           var jsonResponse = response.data;
+//           print('yaha aya');
+//           if (response.statusCode == 200) {
+//             setState(() {
+//               _isLoadingSecondary = false;
+//               print('uploading occupant');
+//               print(jsonResponse);
+//               print('yaha aya');
+//               var houseHold_list = jsonResponse['data']['household'];
+//               String? fileName;
+//               print('filename');
+//               print(houseHold_list);
+//               var newEntry;
+//               print('yaha aya');
+//               for (int p = 0; p < houseHold_list.length; p++) {
+//                 print('filename');
+//                 newEntry = houseHold_list[p];
+//                 fileName = houseHold_list[p].split('/').last;
+//
+// //              global.occupantImages = dependent_idss;
+//
+//               }
+//
+//               if (fileName!.contains('.png') ||
+//                   fileName.contains('.jpg') ||
+//                   fileName.contains('.jpeg') ||
+//                   fileName.contains('.gif')) {
+// //            if (jsonResponse['data']['content_type'][0].toString() == 'image/jpeg' || jsonResponse['data']['content_type'][0].toString() == 'image/jpg'
+// //                || jsonResponse['data']['content_type'][0].toString() == 'image/png' || jsonResponse['data']['content_type'][0].toString() == 'image/gif'
+// //            ){
+//                 print('wiii');
+//
+//                 house_hold_id.add(newEntry);
+//               } else {
+//                 house_hold_id.add(
+//                     'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
+//               }
+//               sharedPreferences.setStringList("household", house_hold_id);
+//
+//               getAttachment();
+//             });
+//
+//             showToastMessage('File Uploaded');
+//           }
+//         } else {
+//           setState(() {});
+//         }
+//       } catch (e) {
+//         Fluttertoast.showToast(msg: "Something went wrong");
+//         setState(() {
+//           _isLoading = false;
+//         });
+//         print('dsa');
+//         print(e);
+//       }
+//     }
   }
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   void uploadImage() async {
@@ -224,13 +341,12 @@ class _HouseHoldState extends State<HouseHold> {
       _isLoadingSecondary = true;
     });
     Navigator.pop(context, true);
-    File file;
+    File? file;
     await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CameraCamera(
                   onFile: (onFile) {
-                    print(file);
                     print("Inside house hold file");
                     file = onFile;
                     Navigator.pop(context);
@@ -247,13 +363,12 @@ class _HouseHoldState extends State<HouseHold> {
             // )
 
             ));
-    print(file.path);
-    print(file);
+    print(file?.path??"");
 
     if (file != null) {
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file?.path??"");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
@@ -263,12 +378,12 @@ class _HouseHoldState extends State<HouseHold> {
         FormData formData = new FormData.fromMap({
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          'household[]': await MultipartFile.fromFile(_image.path,
+          'household[]': await MultipartFile.fromFile(_image?.path??"",
               filename: 'household.jpg')
         });
 
-        img_paths.add(_image.path);
-        household_list.add(_image.path);
+        img_paths.add(_image?.path??"");
+        household_list.add(_image?.path??"");
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
           'household[]': jsonEncode(img_paths)
@@ -277,12 +392,12 @@ class _HouseHoldState extends State<HouseHold> {
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet??false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -524,7 +639,7 @@ class _HouseHoldState extends State<HouseHold> {
                               color: Colors.black,
                               size: 20,
                             )
-                          : MyConstants.myConst.internet
+                          : MyConstants.myConst.internet ?? false
                               ? Container(
                                   width: 20,
                                   height: 20,
@@ -549,7 +664,7 @@ class _HouseHoldState extends State<HouseHold> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false ? 'Uploading' : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,

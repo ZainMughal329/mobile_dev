@@ -70,7 +70,7 @@ class _DeclarationState extends State<Declaration> {
   var strokeWidth = 5.0;
   final _sign = GlobalKey<SignatureState>();
   DateTime selectedDate = DateTime.now();
-  String formattedDate;
+  String? formattedDate;
   ServicesRequest request = ServicesRequest();
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _DeclarationState extends State<Declaration> {
   }
 
   Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime(2015, 8),
@@ -102,7 +102,7 @@ class _DeclarationState extends State<Declaration> {
   bool _isLoadingSecondary = false;
 
   var storeSignature;
-  File storePath;
+  File? storePath;
   getFile() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 //    role = sharedPreferences.getString('role');
@@ -115,7 +115,7 @@ class _DeclarationState extends State<Declaration> {
     });
   }
 
-  File file;
+  File? file;
   Future _onSubmit() async {
     await request.ifInternetAvailable();
     String url;
@@ -130,11 +130,11 @@ class _DeclarationState extends State<Declaration> {
 // //          showToastMessage('Image Uploading Please wait');
 //           print(widget.applicant_id);
 //         }
-        Map<String, dynamic> data = {
+        Map<String, dynamic>? data = {
           "application_id": widget.applicant_id,
           "signature_date": selectedDate,
           "signature": await MultipartFile.fromFile(
-              storeSignature != null ? storeSignature : file.path,
+              storeSignature != null ? storeSignature : file?.path,
               filename: 'signature.jpg')
         };
         formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(selectedDate);
@@ -142,25 +142,25 @@ class _DeclarationState extends State<Declaration> {
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
           "signature_date": formattedDate,
-          "signature": file.path
+          "signature": file?.path
         };
 
-        FormData formData;
+        FormData? formData;
         LocalStorage.localStorage.saveFormData(map);
 
         print('form data');
 
-        print(formData.toString());
+        print(formData??"");
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet ?? false) {
           setState(() {
             _isLoadingSecondary = true;
             print(widget.applicant_id);
           });
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 90 * 1000, // 3 minutes
-              receiveTimeout: 90 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3)// 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -174,8 +174,8 @@ class _DeclarationState extends State<Declaration> {
           } else {
             url = '${MyConstants.myConst.baseUrl}api/v1/users/application_form';
             data = await request
-                .getFormData(MyConstants.myConst.currentApplicantId);
-            formData = FormData.fromMap(data);
+                .getFormData(MyConstants.myConst.currentApplicantId??"");
+            formData = FormData.fromMap(data!);
           }
           Response response = await dio.post(
             url,
@@ -198,8 +198,8 @@ class _DeclarationState extends State<Declaration> {
               sharedPreferences.setInt('applicant_id', apid['application_id']);
               applicant_id = apid['application_id'];
             } else {
-              sharedPreferences.setInt('applicant_id', data['application_id']);
-              applicant_id = data['application_id'];
+              sharedPreferences.setInt('applicant_id', data?['application_id']);
+              applicant_id = data?['application_id'];
             }
             LocalStorage.localStorage.clearCurrentApplication();
             MyConstants.myConst.currentApplicantId = null;
@@ -255,7 +255,7 @@ class _DeclarationState extends State<Declaration> {
                     onSign: () {
                       final sign = _sign.currentState;
                       debugPrint(
-                          '${sign.points.length} points in the signature');
+                          '${sign?.points.length} points in the signature');
                     },
 //                    backgroundPainter: _WatermarkPaint("2.0", "2.0"),
                     strokeWidth: strokeWidth,
@@ -267,14 +267,14 @@ class _DeclarationState extends State<Declaration> {
                       final sign = _sign.currentState;
                       //retrieve image data, do whatever you want with it (send to server, save locally...)
 
-                      final image = await sign.getData();
-                      var data = await image.toByteData(
+                      final image = await sign?.getData();
+                      var data = await image?.toByteData(
                           format: ui.ImageByteFormat.png);
 
 //                      print(imageHOlder);
                       print(data);
-                      sign.clear();
-                      encoded = base64.encode(data.buffer.asUint8List());
+                      sign?.clear();
+                      encoded = base64.encode(data!.buffer.asUint8List());
                       Uint8List bytes = base64.decode(encoded);
                       String dir =
                           (await getApplicationDocumentsDirectory()).path;
@@ -285,11 +285,11 @@ class _DeclarationState extends State<Declaration> {
 
                       print(widget.applicant_id);
 
-                      await file.writeAsBytes(bytes);
+                      await file?.writeAsBytes(bytes);
 
                       print('path');
 
-                      print(file.path);
+                      print(file?.path);
 
                       final result = await ImageGallerySaver.saveImage(bytes);
 
@@ -308,7 +308,7 @@ class _DeclarationState extends State<Declaration> {
                         print(_img.buffer.asUint8List());
                         print('path');
                         print(file);
-                        prefs.setString("fileStorage", file.path);
+                        prefs.setString("fileStorage", file?.path??"");
                       });
                       Navigator.of(context).pop();
                       print('image');
@@ -418,7 +418,7 @@ class _DeclarationState extends State<Declaration> {
                   ],
                 ),
                 child: Text(
-                  MyConstants.myConst.internet ? 'SUBMIT' : 'SAVE',
+                  MyConstants.myConst.internet ?? false ? 'SUBMIT' : 'SAVE',
                   style: TextStyle(
                     fontFamily: 'Open Sans',
                     fontSize: 16,

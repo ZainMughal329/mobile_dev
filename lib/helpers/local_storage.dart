@@ -8,14 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
   static final LocalStorage localStorage = LocalStorage._internal();
-  SharedPreferences prefs;
-  Map<String, dynamic> applicationFormData = Map();
+  SharedPreferences? prefs;
+  Map<dynamic, dynamic> applicationFormData = Map();
   List<String> applications = <String>[];
   factory LocalStorage() {
     return localStorage;
   }
 
-  LocalStorage._internal();
+   LocalStorage._internal();
 
   LocalStorage._();
 
@@ -23,8 +23,8 @@ class LocalStorage {
     prefs = await SharedPreferences.getInstance();
   }
 
-  Future<bool> clearSharedPreferences() {
-    return prefs.clear();
+  Future<bool>? clearSharedPreferences() {
+    return prefs?.clear();
   }
 
   // Future<bool> clearFormData(String applicationId) {
@@ -38,32 +38,37 @@ class LocalStorage {
   //   return prefs.remove(applicationId);
   // }
 
-  String getUserID() {
-    return prefs.getString('userID');
+  String? getUserID() {
+    return prefs?.getString('userID');
   }
 
-  String getAuthToken() {
-    return prefs.getString('auth-token');
+  String? getAuthToken() {
+    return prefs?.getString('auth-token');
   }
 
-  void getApplicationsList() {
+  void getApplicationsList() async {
     // prefs.remove("applicationIds");
 
-    MyConstants.myConst.applicationsList =
-        prefs.getStringList('applicationIds') == null
-            ? []
-            : prefs.getStringList('applicationIds');
+    List<String>? applicationsIdsList = await prefs?.getStringList('applicationIds');
+    if(applicationsIdsList!=null)
+      {
+        MyConstants.myConst.applicationsList =applicationsIdsList;
+      }
+    // MyConstants.myConst.applicationsList =
+    //     prefs.getStringList('applicationIds') == null
+    //         ? []
+    //         : prefs.getStringList('applicationIds');
     print("Applications List :::: ${MyConstants.myConst.applicationsList}");
   }
 
-  void saveFormData(Map<String, dynamic> applicantInfo) async {
-    String applicationId = applicantInfo['id_number'];
+  void saveFormData(Map<dynamic, dynamic> applicantInfo) async {
+    String? applicationId = applicantInfo['id_number'];
     print("Application id_number ::: $applicationId");
     if (applicationId != null) {
       MyConstants.myConst.currentApplicantId = applicationId;
       print("Application ID was not null");
     } else {
-      applicationId = MyConstants.myConst.currentApplicantId;
+      applicationId = MyConstants.myConst.currentApplicantId??"";
       print("Application ID was null");
     }
 
@@ -81,9 +86,9 @@ class LocalStorage {
 
     log("Application Data saved :: $applicationFormData");
     print(applicationFormData.length);
-    prefs.setString(applicationId, jsonEncode(applicationFormData));
-    prefs.setStringList('applicationIds', applications);
-    print("Application IDs :::: ${prefs.getStringList('applicationIds')}");
+    prefs?.setString(applicationId, jsonEncode(applicationFormData));
+    prefs?.setStringList('applicationIds', applications);
+    print("Application IDs :::: ${prefs?.getStringList('applicationIds')}");
     print("Leaving Local Storage");
   }
 
@@ -105,9 +110,12 @@ class LocalStorage {
   }
 
   Map getFormData(String applicationId) {
-    print("get form data :::: ${prefs.getString(applicationId)}");
-    if (prefs.getString(applicationId) != null) {
-      Map formData = jsonDecode(prefs.getString(applicationId));
+    print("get form data :::: ${prefs?.getString(applicationId)}");
+    String? id =prefs?.getString(applicationId);
+    // if (id != null) {
+      // applicationFormData = jsonDecode(id);
+    if (id != null) {
+      Map formData = jsonDecode(id);
       print(formData);
       return formData;
     } else {
@@ -144,20 +152,32 @@ class LocalStorage {
   }
 
   void formSubmitted(bool val) {
-    prefs.setBool('formSubmitted', val);
+    prefs?.setBool('formSubmitted', val);
   }
 
   bool getFormSubmissionStatus() {
-    return prefs.getBool('formSubmitted') == null
-        ? true
-        : prefs.getBool('formSubmitted');
+    bool? formSubmitted=prefs?.getBool('formSubmitted');
+    if(formSubmitted!=null)
+      {
+        return true;
+      }
+    else{
+      return false;
+    }
+
+    // return prefs.getBool('formSubmitted') == null
+    //     ? true
+    //     : prefs.getBool('formSubmitted');
   }
 
   void checkAndupdateApplicantData(String applicationId) {
     // prefs.clear();
     // print("preferences cleared");
-    if (prefs.getString(applicationId) != null) {
-      applicationFormData = jsonDecode(prefs.getString(applicationId));
+    // if (prefs.getString(applicationId) != null) {
+    //   applicationFormData = jsonDecode(prefs.getString(applicationId));
+    String? id =prefs?.getString(applicationId);
+    if (id != null) {
+      applicationFormData = jsonDecode(id);
       print(applicationFormData);
     } else {
       applications.add(applicationId);
@@ -166,27 +186,37 @@ class LocalStorage {
   }
 
   void clearApplicationsID() {
-    prefs.setStringList('applicationIds', []);
+    prefs?.setStringList('applicationIds', []);
 
-    List<String> list = prefs.getStringList('applicationIds');
+    List<String>? list = prefs?.getStringList('applicationIds');
     applications = [];
 
-    MyConstants.myConst.applicationsList =
-        prefs.getStringList('applicationIds');
+    if(prefs?.getStringList('applicationIds')!=null)
+      {
+        MyConstants.myConst.applicationsList =
+            prefs?.getStringList('applicationIds')!;
+      }
+
 
     print(
         "Applications list cleared ::: ${MyConstants.myConst.applicationsList}");
   }
 
-  void clearCurrentApplication() {
-    prefs.remove(MyConstants.myConst.currentApplicantId);
+  void clearCurrentApplication() async  {
+    prefs?.remove(MyConstants.myConst.currentApplicantId??"");
 
-    List<String> applicationIds = MyConstants.myConst.applicationsList;
+    List<String> applicationIds = MyConstants.myConst.applicationsList??[];
     applicationIds.remove(MyConstants.myConst.currentApplicantId);
-    prefs.setStringList('applicationIds', applicationIds);
-    MyConstants.myConst.applicationsList =
-        prefs.getStringList('applicationIds');
-    applications = MyConstants.myConst.applicationsList;
+    prefs?.setStringList('applicationIds', applicationIds);
+
+    List<String>? applicationId= await prefs?.getStringList("applicationIds");
+    if(applicationId!=null)
+    {
+      MyConstants.myConst.applicationsList = applicationId;
+    }
+    // MyConstants.myConst.applicationsList =
+    //     prefs.getStringList('applicationIds');
+    applications = MyConstants.myConst.applicationsList??[];
     print(
         "After removing applicationIds ::::: ${MyConstants.myConst.applicationsList}");
   }

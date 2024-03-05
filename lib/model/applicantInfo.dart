@@ -3,46 +3,46 @@ import 'package:lesedi/forms/filePickerAdditionalFile.dart';
 import 'package:lesedi/forms/filePickerMarriageCertificate.dart';
 
 class ApplicantInfo {
-  String firstName;
-  String surname;
-  String idNumber;
-  String dob;
-  String address;
-  String cellphoneNumber;
-  String telephoneNumber;
-  String email;
-  String accountNumber;
-  String standNumber;
-  List<String> servicesLinked;
-  List<BankDetails> bankDetails;
-  String eskomAccountNumber;
-  String financialYear;
-  String maritalStatus;
-  String employmentStatus;
-  String grossMonthlyIncome;
-  String dateOfApplication;
-  String signatureDate;
-  String spouseIdNumber;
-  String occupantId;
-  String wardNumber;
-  String applicantIdProof;
-  String spouseId;
-  String decreeDivorce;
-  List<ProofOfIncomes> proofOfIncomes;
-  List<SpouseCreditReport> spouseCreditReport;
-  String accountStatement;
-  String sapsAffidavit;
-  String marriageCertificate;
-  List<Affidavits> affidavits;
-  List<OccupantIds> occupantIds;
-  List<DeathCertificate> deathCertificate;
-  List<HouseHold> houseHoldList;
-  List<AdditionalFile> additionalFile;
-  String signature;
-  List<Remarks> remarks;
-  int age;
-  double userLatitude;
-  double userLongitude;
+  String? firstName;
+  String? surname;
+  String? idNumber;
+  String? dob;
+  String? address;
+  String? cellphoneNumber;
+  String? telephoneNumber;
+  String? email;
+  String? accountNumber;
+  String? standNumber;
+  List<String>? servicesLinked;
+  List<BankDetails>? bankDetails;
+  String? eskomAccountNumber;
+  String? financialYear;
+  String? maritalStatus;
+  String? employmentStatus;
+  String? grossMonthlyIncome;
+  String? dateOfApplication;
+  String? signatureDate;
+  String? spouseIdNumber;
+  String? occupantId;
+  String? wardNumber;
+  String? applicantIdProof;
+  String? spouseId;
+  String? decreeDivorce;
+  List<ProofOfIncomes>? proofOfIncomes;
+  List<SpouseCreditReport>? spouseCreditReport;
+  String? accountStatement;
+  String? sapsAffidavit;
+  String? marriageCertificate;
+  List<Affidavits>? affidavits;
+  List<OccupantIds>? occupantIds;
+  List<DeathCertificate>? deathCertificate;
+  List<HouseHold>? houseHoldList;
+  List<AdditionalFile>? additionalFile;
+  String? signature;
+  List<Remarks>? remarks;
+  int? age;
+  double? userLatitude;
+  double? userLongitude;
 
   ApplicantInfo(
       {this.firstName,
@@ -115,20 +115,20 @@ class ApplicantInfo {
     if (json['proof_of_incomes'] != null) {
       proofOfIncomes = <ProofOfIncomes>[];
       json['proof_of_incomes'].forEach((v) {
-        proofOfIncomes.add(new ProofOfIncomes.fromJson(v));
+        proofOfIncomes?.add(new ProofOfIncomes.fromJson(v));
       });
     }
     if (json['household'] != null) {
       houseHoldList = <HouseHold>[];
       json['household'].forEach((v) {
-        houseHoldList.add(new HouseHold.fromJson(v));
+        houseHoldList?.add(new HouseHold.fromJson(v));
       });
     }
 
     if (json['death_certificate'] != null) {
       deathCertificate = <DeathCertificate>[];
       json['death_certificate'].forEach((v) {
-        deathCertificate.add(new DeathCertificate.fromJson(v));
+        deathCertificate?.add(new DeathCertificate.fromJson(v));
       });
     }
 
@@ -136,7 +136,7 @@ class ApplicantInfo {
     if (json['affidavits'] != null) {
       affidavits = <Affidavits>[];
       json['affidavits'].forEach((v) {
-        affidavits.add(new Affidavits.fromJson(v));
+        affidavits?.add(new Affidavits.fromJson(v));
       });
     }
     accountStatement = json['account_statement'];
@@ -144,7 +144,7 @@ class ApplicantInfo {
     if (json['occupant_ids'] != null) {
       occupantIds = <OccupantIds>[];
       json['occupant_ids'].forEach((v) {
-        occupantIds.add(new OccupantIds.fromJson(v));
+        occupantIds?.add(new OccupantIds.fromJson(v));
       });
     }
     // if (json['marriage_certificate'] != null) {
@@ -156,13 +156,13 @@ class ApplicantInfo {
     if (json['additional_file'] != null) {
       additionalFile = <AdditionalFile>[];
       json['additional_file'].forEach((v) {
-        additionalFile.add(new AdditionalFile.fromJson(v));
+        additionalFile?.add(new AdditionalFile.fromJson(v));
       });
     }
     if (json['spouse_report'] != null) {
       spouseCreditReport = <SpouseCreditReport>[];
       json['spouse_report'].forEach((v) {
-        spouseCreditReport.add(new SpouseCreditReport.fromJson(v));
+        spouseCreditReport?.add(new SpouseCreditReport.fromJson(v));
       });
     }
     // if (json['death_certificate'] != null) {
@@ -189,13 +189,13 @@ class ApplicantInfo {
     if (json['remarks'] != null) {
       remarks = <Remarks>[];
       json['remarks'].forEach((v) {
-        remarks.add(new Remarks.fromJson(v));
+        remarks?.add(new Remarks.fromJson(v));
       });
     }
     if (json['bank_details'] != null) {
       bankDetails = <BankDetails>[];
       json['bank_details'].forEach((v) {
-        bankDetails.add(new BankDetails.fromJson(v));
+        bankDetails?.add(new BankDetails.fromJson(v));
       });
     }
     age = json['age'];
@@ -230,7 +230,7 @@ class ApplicantInfo {
     data['spouse_id'] = this.spouseId;
     if (this.proofOfIncomes != null) {
       data['proof_of_incomes'] =
-          this.proofOfIncomes.map((v) => v.toJson()).toList();
+          this.proofOfIncomes?.map((v) => v.toJson()).toList();
     }
     // if (this.marriageCertificate != null) {
     //   data['marriage_certificate'] =
@@ -238,20 +238,20 @@ class ApplicantInfo {
     // }
     if (this.additionalFile != null) {
       data['additional_file'] =
-          this.additionalFile.map((v) => v.toJson()).toList();
+          this.additionalFile?.map((v) => v.toJson()).toList();
     }
     if (this.deathCertificate != null) {
       data['death_certificate'] =
-          this.deathCertificate.map((v) => v.toJson()).toList();
+          this.deathCertificate?.map((v) => v.toJson()).toList();
     }
     if (this.houseHoldList != null) {
       data['household'] =
-          this.houseHoldList.map((v) => v.toJson()).toList();
+          this.houseHoldList?.map((v) => v.toJson()).toList();
     }
     data['account_statement'] = this.accountStatement;
     data['saps_affidavit'] = this.sapsAffidavit;
     if (this.occupantIds != null) {
-      data['occupant_ids'] = this.occupantIds.map((v) => v.toJson()).toList();
+      data['occupant_ids'] = this.occupantIds?.map((v) => v.toJson()).toList();
     }
     // if (this.household != null) {
     //   data['household'] = this.household.map((v) => v.toJson()).toList();
@@ -271,10 +271,10 @@ class ApplicantInfo {
     // }
     data['signature'] = this.signature;
     if (this.remarks != null) {
-      data['remarks'] = this.remarks.map((v) => v.toJson()).toList();
+      data['remarks'] = this.remarks?.map((v) => v.toJson()).toList();
     }
     if (this.bankDetails != null) {
-      data['bank_details'] = this.bankDetails.map((v) => v.toJson()).toList();
+      data['bank_details'] = this.bankDetails?.map((v) => v.toJson()).toList();
     }
     data['age'] = this.age;
     data['user_latitude'] = this.userLatitude;
@@ -284,8 +284,8 @@ class ApplicantInfo {
 }
 
 class ProofOfIncomes {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   ProofOfIncomes({this.url, this.contentType});
 
@@ -302,13 +302,13 @@ class ProofOfIncomes {
   }
 }
 class BankDetails {
-  int id;
-  String bankNumber;
-  String bankAccountNumber;
-  String branchCode;
-  int applicationId;
-  String createdAt;
-  String updatedAt;
+  int? id;
+  String? bankNumber;
+  String? bankAccountNumber;
+  String? branchCode;
+  int? applicationId;
+  String? createdAt;
+  String? updatedAt;
 
   BankDetails(
       {this.id,
@@ -343,8 +343,8 @@ class BankDetails {
 }
 
 class SpouseCreditReport {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   SpouseCreditReport({this.url, this.contentType});
 
@@ -362,8 +362,8 @@ class SpouseCreditReport {
 }
 
 class DeathCertificate {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   DeathCertificate({this.url, this.contentType});
 
@@ -381,8 +381,8 @@ class DeathCertificate {
 }
 
 class HouseHold {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   HouseHold({this.url, this.contentType});
 
@@ -401,8 +401,8 @@ class HouseHold {
 
 
 class Affidavits {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   Affidavits({this.url, this.contentType});
 
@@ -420,8 +420,8 @@ class Affidavits {
 }
 
 class MarriageCertificate {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   MarriageCertificate({this.url, this.contentType});
 
@@ -438,8 +438,8 @@ class MarriageCertificate {
   }
 }
 class AdditionalFile {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   AdditionalFile({this.url, this.contentType});
 
@@ -457,8 +457,8 @@ class AdditionalFile {
 }
 
 class OccupantIds {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   OccupantIds({this.url, this.contentType});
 
@@ -476,8 +476,8 @@ class OccupantIds {
 }
 
 class AdditionalIds {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   AdditionalIds({this.url, this.contentType});
 
@@ -494,8 +494,8 @@ class AdditionalIds {
   }
 }
 class AffidavitsIds {
-  String url;
-  String contentType;
+  String? url;
+  String? contentType;
 
   AffidavitsIds({this.url, this.contentType});
 
@@ -512,8 +512,8 @@ class AffidavitsIds {
   }
 }
 class Remarks {
-  String userType;
-  String remarks;
+  String? userType;
+  String? remarks;
 
   Remarks({this.userType, this.remarks});
 

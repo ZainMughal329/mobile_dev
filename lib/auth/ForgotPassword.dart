@@ -25,7 +25,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   TextEditingController passwordController = TextEditingController();
 
   void signUpClicked() async {
-    Pattern pattern =
+    // Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (emailController.text.isNotEmpty || passwordController.text.isNotEmpty) {
@@ -200,7 +201,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     borderRadius:
                                         new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])),
+                                        color: Colors.blue.shade700)),
                                 floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                             keyboardType: TextInputType.number,
@@ -246,7 +247,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     borderRadius:
                                         new BorderRadius.circular(4.0),
                                     borderSide: new BorderSide(
-                                        color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                        color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
                             keyboardType: TextInputType.emailAddress,
                             style: new TextStyle(
                                 fontFamily: 'opensans',

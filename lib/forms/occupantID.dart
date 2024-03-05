@@ -28,12 +28,13 @@ class OccupantID extends StatefulWidget {
 }
 
 class _OccupantIDState extends State<OccupantID> {
-  String _extension;
-  String profileType;
+  String? _extension;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
-  List<String> dependent_idss = List<String>();
+  // List<String> dependent_idss = List<String>();
+  List<String> dependent_idss = [];
   ServicesRequest request = ServicesRequest();
   List<String> occupant_ids_list = <String>[];
 //var
@@ -67,7 +68,9 @@ class _OccupantIDState extends State<OccupantID> {
   void _filePicker() async {
     await request.ifInternetAvailable();
     occupant_ids_list = <String>[];
-    List<File> listFiles = await FilePicker.getMultiFile(
+    // List<File> listFiles = await FilePicker.getMultiFile(
+    //     type: FileType.custom, allowedExtensions: ['jpg','png']);
+    FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
         type: FileType.custom, allowedExtensions: ['jpg','png']);
     Navigator.pop(context, true);
     setState(() {
@@ -81,11 +84,13 @@ class _OccupantIDState extends State<OccupantID> {
     occupant_ids_list = [];
 
     if (listFiles != null) {
-      for (int j = 0; j < listFiles.length; j++) {
-        img.add(await MultipartFile.fromFile(listFiles[j].path,
+      List<File> files = listFiles.paths.map((path) => File(path!)).toList();
+
+      for (int j = 0; j < files.length; j++) {
+        img.add(await MultipartFile.fromFile(files[j].path,
             filename: 'occupantId($j).jpg'));
-        img_paths.add(listFiles[j].path);
-        occupant_ids_list.add(listFiles[j].path);
+        img_paths.add(files[j].path);
+        occupant_ids_list.add(files[j].path);
         print(_formData);
       }
     }
@@ -108,12 +113,12 @@ class _OccupantIDState extends State<OccupantID> {
 
         LocalStorage.localStorage.saveFormData(map);
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -191,10 +196,10 @@ class _OccupantIDState extends State<OccupantID> {
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
   void uploadImage() async {
     await request.ifInternetAvailable();
@@ -204,7 +209,7 @@ class _OccupantIDState extends State<OccupantID> {
       _isLoadingSecondary = true;
     });
     Navigator.pop(context, true);
-    File file;
+    File? file;
     await Navigator.push(
         context,
         MaterialPageRoute(
@@ -226,30 +231,30 @@ class _OccupantIDState extends State<OccupantID> {
             //       ),
             //     )
             ));
-    print(file.path);
+    print(file?.path??"");
     print(file);
 
     if (file != null) {
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file?.path??"");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
           print(widget.applicant_id);
         }
 
-        occupant_ids_list.add(file.path);
+        occupant_ids_list.add(file?.path??"");
         Map<String, dynamic> data = {
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          'occupant_ids[]': await MultipartFile.fromFile(file.path,
+          'occupant_ids[]': await MultipartFile.fromFile(file?.path??"",
               filename: 'occupantID.jpg')
         };
 
         FormData formData = new FormData.fromMap(data);
 
-        img_paths.add(_image.path);
+        img_paths.add(_image?.path??"");
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
           'occupant_ids[]': jsonEncode(img_paths)
@@ -258,12 +263,12 @@ class _OccupantIDState extends State<OccupantID> {
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -476,7 +481,7 @@ class _OccupantIDState extends State<OccupantID> {
                               color: Colors.black,
                               size: 20,
                             )
-                          : MyConstants.myConst.internet
+                          : MyConstants.myConst.internet ?? false
                               ? Container(
                                   width: 20,
                                   height: 20,
@@ -501,7 +506,7 @@ class _OccupantIDState extends State<OccupantID> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false ? 'Uploading' : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,

@@ -19,7 +19,7 @@ import 'package:http/http.dart' as http;
 import 'package:lesedi/app_color.dart';
 
 //import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+// import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class PersonalInformationB1 extends StatefulWidget {
   int applicant_id;
@@ -82,7 +82,9 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
       municipalAccountNumber =
           sharedPreferences.getString('municipalAccountNumber');
       standNumber = sharedPreferences.getString('standNumber');
-      serviceLinkedHolder = sharedPreferences.getStringList('serviceLinked');
+      if (sharedPreferences.getStringList('serviceLinked') != null) {
+        serviceLinkedHolder = sharedPreferences.getStringList('serviceLinked')!;
+      }
       eskonAccountNumber = sharedPreferences.getString('eskonAccountNumber');
       contactNumber = sharedPreferences.getString('contactNumber');
       telephone_number = sharedPreferences.getString('telephone_number');
@@ -139,66 +141,67 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
   TextEditingController FinancialYearController = TextEditingController();
 
   void formClicked() async {
-    Pattern pattern =
+    // Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (emailController.text.isNotEmpty) {
       // if (wardNumberController.text.isNotEmpty) {
-        if (formattedString.isNotEmpty) {
-          if (selectedCities != null) {
-            if (eskomAccountNumberController.text.isNotEmpty) {
-              if (contectNumberController.text.isNotEmpty) {
-                if (telephoneNumberController.text.isNotEmpty) {
-                  if (FinancialYearController.text.isNotEmpty) {
-                    if (!_isLoading) {
-                      submitForm(
-                          emailController.text,
-                          wardNumberController.text,
-                          accountNumberController.text,
-                          formattedString,
-                          _translation,
-                          eskomAccountNumberController.text,
-                          contectNumberController.text,
-                          telephoneNumberController.text,
-                          FinancialYearController.text);
-                    }
-                  } else {
-                    setState(() {
-                      _isLoading = false;
-                      showToastMessage("Please select financial year ");
-                    });
+      if (formattedString.isNotEmpty) {
+        if (selectedCities != null) {
+          if (eskomAccountNumberController.text.isNotEmpty) {
+            if (contectNumberController.text.isNotEmpty) {
+              if (telephoneNumberController.text.isNotEmpty) {
+                if (FinancialYearController.text.isNotEmpty) {
+                  if (!_isLoading) {
+                    submitForm(
+                        emailController.text,
+                        wardNumberController.text,
+                        accountNumberController.text,
+                        formattedString,
+                        _translation,
+                        eskomAccountNumberController.text,
+                        contectNumberController.text,
+                        telephoneNumberController.text,
+                        FinancialYearController.text);
                   }
                 } else {
                   setState(() {
                     _isLoading = false;
-                    showToastMessage("Please enter telephone number ");
+                    showToastMessage("Please select financial year ");
                   });
                 }
               } else {
                 setState(() {
                   _isLoading = false;
-                  showToastMessage("Please enter contact number ");
+                  showToastMessage("Please enter telephone number ");
                 });
               }
             } else {
               setState(() {
                 _isLoading = false;
-                showToastMessage("Please enter eskon account number ");
+                showToastMessage("Please enter contact number ");
               });
             }
           } else {
             setState(() {
               _isLoading = false;
-              showToastMessage("Please enter service link to stand number");
+              showToastMessage("Please enter eskon account number ");
             });
           }
         } else {
           setState(() {
             _isLoading = false;
-
-            showToastMessage("Please enter  stand/ erf number");
+            showToastMessage("Please enter service link to stand number");
           });
         }
+      } else {
+        setState(() {
+          _isLoading = false;
+
+          showToastMessage("Please enter  stand/ erf number");
+        });
+      }
       // }
       // else {
       //   setState(() {
@@ -240,7 +243,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
     print('okay');
     print(userID);
     print('okay');
-    Map<String, dynamic> data = {
+    Map<dynamic, dynamic>? data = {
       'application_id': widget.applicant_id,
       'email': email,
       'ward_number': wardNumber,
@@ -256,7 +259,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
     };
     // checkInternetAvailability();
     LocalStorage.localStorage.saveFormData(data);
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet??false) {
       var jsonResponse;
       http.Response response;
 
@@ -266,20 +269,20 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                 "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID ?? "",
+              'Authentication': authToken ?? ""
             },
             body: jsonEncode(data));
       } else {
         data = LocalStorage.localStorage
-            .getFormData(MyConstants.myConst.currentApplicantId);
+            .getFormData(MyConstants.myConst.currentApplicantId??"");
         response = await http.post(
             Uri.parse(
                 "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID ?? "",
+              'Authentication': authToken ?? ""
             },
             body: jsonEncode(data));
       }
@@ -310,8 +313,8 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
           sharedPreferences.setInt('applicant_id', apid['application_id']);
           widget.applicant_id = apid['application_id'];
         } else {
-          sharedPreferences.setInt('applicant_id', data['application_id']);
-          widget.applicant_id = data['application_id'];
+          sharedPreferences.setInt('applicant_id', data?['application_id']);
+          widget.applicant_id = data?['application_id'];
         }
 
         setState(() {
@@ -353,6 +356,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
   bool _checkedESM = false;
   bool _checkedDI = false;
   var checkBoxValue;
+
   Future<Null> _selectDateYear(BuildContext context) async {
     DatePicker.showDatePicker(
       context,
@@ -562,7 +566,8 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto),
 
 //                      keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -686,7 +691,8 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto),
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
                           fontFamily: 'opensans',
@@ -726,7 +732,8 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -764,8 +771,9 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                             fillColor: Colors.white,
                             border: new OutlineInputBorder(
                                 borderRadius: new BorderRadius.circular(4.0),
-                                borderSide:
-                                    new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                borderSide: new BorderSide(
+                                    color: Colors.blue.shade700)),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto),
                         keyboardType: TextInputType.text,
                         style: new TextStyle(
                             fontFamily: 'opensans',
@@ -804,7 +812,8 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.number,
                       style: new TextStyle(
@@ -845,7 +854,8 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.number,
                       style: new TextStyle(
@@ -865,7 +875,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                       data: Theme.of(context).copyWith(
                         primaryColor:
                             AppColors.PRIMARY_COLOR, //color of the main banner
-                        accentColor: AppColors.PRIMARY_COLOR,
+                        hintColor: AppColors.PRIMARY_COLOR,
                         colorScheme: ColorScheme.light().copyWith(
                           primary: AppColors.PRIMARY_COLOR,
                           secondary: AppColors.PRIMARY_COLOR,
@@ -907,7 +917,9 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                                         borderRadius:
                                             new BorderRadius.circular(4.0),
                                         borderSide: new BorderSide(
-                                            color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                            color: Colors.blue.shade700)),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.auto),
                                 keyboardType: TextInputType.datetime,
                                 style: new TextStyle(
                                     fontFamily: 'opensans',
@@ -972,7 +984,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                   FocusScopeNode currentFocus = FocusScope.of(context);
                   if (!currentFocus.hasPrimaryFocus &&
                       currentFocus.focusedChild != null) {
-                    currentFocus.focusedChild.unfocus();
+                    currentFocus.focusedChild?.unfocus();
                   }
                   formClicked();
 //                      Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> ApplicationStatus()));
@@ -1027,9 +1039,9 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
 
 class _MyDialog extends StatefulWidget {
   _MyDialog({
-    this.cities,
-    this.selectedCities,
-    this.onSelectedCitiesListChanged,
+    required this.cities,
+    required this.selectedCities,
+    required this.onSelectedCitiesListChanged,
   });
 
   final List<String> cities;
@@ -1083,8 +1095,8 @@ class _MyDialogState extends State<_MyDialog> {
                           ),
                           activeColor: Color(0xffde626c),
                           value: _tempSelectedCities.contains(cityName),
-                          onChanged: (bool value) {
-                            if (value) {
+                          onChanged: (bool? value) {
+                            if (value??false) {
                               print(value);
                               print('data');
                               print(value);

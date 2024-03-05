@@ -31,10 +31,11 @@ class _AllApplicantsState extends State<AllApplicants> {
   }
 
   ServicesRequest request = ServicesRequest();
-  bool submitStatus;
+  bool? submitStatus;
   List<Map<String, dynamic>> mapData = <Map<String, dynamic>>[];
   bool isLoading = false;
   bool isSyncLoading = false;
+
   getLocalData() async {
     print("Get Local Data Called");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -67,7 +68,7 @@ class _AllApplicantsState extends State<AllApplicants> {
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
     var jsonResponse;
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       setState(() {
         isLoading = true;
       });
@@ -76,8 +77,8 @@ class _AllApplicantsState extends State<AllApplicants> {
               "${MyConstants.myConst.baseUrl}api/v1/users/all_applications"),
           headers: {
             'Content-Type': 'application/json',
-            'uuid': userID,
-            'Authentication': authToken
+            'uuid': userID ?? "",
+            'Authentication': authToken ?? ""
           });
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
@@ -124,8 +125,8 @@ class _AllApplicantsState extends State<AllApplicants> {
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&accepted=true"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID ?? "",
+          'Authentication': authToken ?? ""
         });
 
     print(response.body);
@@ -157,8 +158,8 @@ class _AllApplicantsState extends State<AllApplicants> {
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&accepted=false"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID ?? "",
+          'Authentication': authToken ?? ""
         });
 
     print(response.body);
@@ -275,6 +276,7 @@ class _AllApplicantsState extends State<AllApplicants> {
                     Navigator.of(context).push(PageRouteBuilder(
                         pageBuilder: (_, __, ___) => LocalDetails(
                               map: mapData[position],
+                              key: null,
                             )));
                   },
                   child: Padding(
@@ -300,7 +302,7 @@ class _AllApplicantsState extends State<AllApplicants> {
                             border: Border(
                                 left: BorderSide(
                               width: 7,
-                              color: Colors.amber[800],
+                              color: Colors.amber.shade800,
                             )),
                           ),
                           child: Column(
@@ -389,31 +391,31 @@ class _AllApplicantsState extends State<AllApplicants> {
                   return InkWell(
                     onTap: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) =>
-                              ApplicantDetails(models[position].extremo1)));
+                          pageBuilder: (_, __, ___) => ApplicantDetails(
+                              models[position].extremo1 ?? 0)));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Slidable(
                         key: ValueKey(models[position].extremo1.toString()),
-                        actionPane: SlidableDrawerActionPane(),
-                        secondaryActions: <Widget>[
-                          IconSlideAction(
-                            color: Colors.green,
-                            icon: Icons.check,
-                            onTap: () {
-                              reviewedApplicant(models[position].extremo1);
-                            },
-                          ),
-                          IconSlideAction(
-
-//                  caption: 'Delete',
-                              color: Colors.red,
+                        startActionPane: ActionPane(
+                          motion: ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              icon: Icons.check,
+                              onPressed: (context) {
+                                reviewedApplicant(
+                                    models[position].extremo1 ?? 0);
+                              },
+                            ),
+                            SlidableAction(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
                               icon: Icons.clear,
-                              onTap: () {
-//
-
-                                // set up the buttons
+                              onPressed: (context) {
+                                                                // set up the buttons
                                 Widget cancelButton = TextButton (
                                   child: Text("Cancel"),
                                   onPressed: () {
@@ -424,7 +426,7 @@ class _AllApplicantsState extends State<AllApplicants> {
                                   child: Text("Okay"),
                                   onPressed: () {
                                     removeReviewedApplicant(
-                                        models[position].extremo1);
+                                        models[position].extremo1??0);
                                     print(models[position].extremo1);
                                     Navigator.of(context).pop(true);
                                   },
@@ -448,11 +450,68 @@ class _AllApplicantsState extends State<AllApplicants> {
                                     return alert;
                                   },
                                 );
-                              }),
-                        ],
-                        dismissal: SlidableDismissal(
-                          child: SlidableDrawerDismissal(),
+
+                              },
+                            ),
+                          ],
                         ),
+                        // actionPane: SlidableDrawerActionPane(),
+//                         secondaryActions: <Widget>[
+//                           IconSlideAction(
+//                             color: Colors.green,
+//                             icon: Icons.check,
+//                             onTap: () {
+//                               reviewedApplicant(models[position].extremo1);
+//                             },
+//                           ),
+//                           IconSlideAction(
+//
+// //                  caption: 'Delete',
+//                               color: Colors.red,
+//                               icon: Icons.clear,
+//                               onTap: () {
+// //
+//
+//                                 // set up the buttons
+//                                 Widget cancelButton = TextButton (
+//                                   child: Text("Cancel"),
+//                                   onPressed: () {
+//                                     Navigator.of(context).pop(false);
+//                                   },
+//                                 );
+//                                 Widget continueButton = TextButton (
+//                                   child: Text("Okay"),
+//                                   onPressed: () {
+//                                     removeReviewedApplicant(
+//                                         models[position].extremo1);
+//                                     print(models[position].extremo1);
+//                                     Navigator.of(context).pop(true);
+//                                   },
+//                                 );
+//
+//                                 // set up the AlertDialog
+//                                 AlertDialog alert = AlertDialog(
+//                                   title: Text("Confirmation"),
+//                                   content: Text(
+//                                       "Are you sure you want to  Reject the Application?"),
+//                                   actions: [
+//                                     cancelButton,
+//                                     continueButton,
+//                                   ],
+//                                 );
+//
+//                                 // show the dialog
+//                                 showDialog(
+//                                   context: context,
+//                                   builder: (BuildContext context) {
+//                                     return alert;
+//                                   },
+//                                 );
+//                               }),
+//                         ],
+//                         dismissal: SlidableDismissal(
+//                           child: SlidableDrawerDismissal(),
+//                         ),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -507,11 +566,14 @@ class _AllApplicantsState extends State<AllApplicants> {
                                                     0.58,
 //                                       width: 300,
                                                 child: Text(
-                                                  models[position].extremo3 !=
-                                                          null
-                                                      ? models[position]
-                                                          .extremo3
-                                                      : '',
+                                                  models[position].extremo3 ??
+                                                      "",
+//                                                 child: Text(
+                                                  // models[position].extremo3 !=
+                                                  //         null
+                                                  //     ? models[position]
+                                                  //         .extremo3
+                                                  //     : '',
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
@@ -525,11 +587,13 @@ class _AllApplicantsState extends State<AllApplicants> {
                                                       fontSize: 15.0),
                                                 ),
                                               ),
+                                              // Text(
+                                              //   models[position].extremo2 !=
+                                              //           null
+                                              //       ? models[position].extremo2
+                                              //       : '',
                                               Text(
-                                                models[position].extremo2 !=
-                                                        null
-                                                    ? models[position].extremo2
-                                                    : '',
+                                                models[position].extremo2 ?? "",
                                                 style: TextStyle(
                                                   fontFamily: "sans",
                                                   fontWeight: FontWeight.w300,
@@ -581,7 +645,7 @@ class _AllApplicantsState extends State<AllApplicants> {
                           if (mapData.isNotEmpty) {
                             // Utils.checkFormStatusAndSubmit();
                             submitStatus = await request.submitForm();
-                            if (submitStatus) {
+                            if (submitStatus ?? false) {
                               setState(() {
                                 mapData.clear();
                                 getAllApplicant();

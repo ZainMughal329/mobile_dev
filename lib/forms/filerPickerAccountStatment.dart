@@ -26,15 +26,15 @@ class FileHolderAccountStatement extends StatefulWidget {
 
 class _FileHolderAccountStatementState
     extends State<FileHolderAccountStatement> {
-  String _fileName;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
+  String? _fileName;
+  String? _path;
+  Map<String, String>?_paths;
+  String? _extension;
   bool _loadingPath = false;
   bool _multiPick = false;
   bool _hasValidMime = false;
-  FileType _pickingType;
-  String profileType;
+  FileType? _pickingType;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
@@ -60,7 +60,7 @@ class _FileHolderAccountStatementState
     _controller.addListener(() => _extension = _controller.text);
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   checkInternetAvailability() async {
@@ -81,7 +81,7 @@ class _FileHolderAccountStatementState
 
   void _filePicker() async {
     print('hi');
-    File file = await FilePicker.getFile(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
     // List<File> file = await FilePicker.getMultiFile(type: FileType.custom, allowedExtensions: ['jpg']);
     setState(() {
       print('true');
@@ -90,7 +90,8 @@ class _FileHolderAccountStatementState
     await request.ifInternetAvailable();
     account_statement_list = <String>[];
 
-    if (file != null) {
+    // if (file != null) {
+    if (result != null) {
       setState(() {
         _isLoadingSecondary = true;
         print('state');
@@ -102,83 +103,168 @@ class _FileHolderAccountStatementState
 //          showToastMessage('Image Uploading Please wait');
           print(widget.applicant_id);
         }
-        FormData formData = new FormData.fromMap({
-          "application_id": widget.applicant_id,
+
+        ///---------******** new implementation ***************-------///////
+        List<File> files = result.paths.map((path) => File(path!)).toList();
+        for (var file in files) {
+          FormData formData = new FormData.fromMap({
+            "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(
-              file.path,
-              filename: 'accountStatement.jpg')
-        });
+            widget.image_name: await MultipartFile.fromFile(
+                file.path,
+                filename: 'accountStatement.jpg')
+          });
+          account_statement_list.add(file.path);
+          print("Account Statement file ::: ${file.path}");
+          Map<String, dynamic> map = {
+            "application_id": widget.applicant_id,
+            widget.image_name: file.path
+          };
+          LocalStorage.localStorage.saveFormData(map);
 
-        account_statement_list.add(file.path);
-        print("Account Statement file ::: ${file.path}");
-        Map<String, dynamic> map = {
-          "application_id": widget.applicant_id,
-          widget.image_name: file.path
-        };
-        LocalStorage.localStorage.saveFormData(map);
+          print(formData.toString());
+          if (MyConstants.myConst.internet ?? false) {
+            showToastMessage('File Uploading Please wait');
+            var dio = Dio(BaseOptions(
+                receiveDataWhenStatusError: true,
+                connectTimeout: Duration(minutes: 3), // 3 minutes
+                receiveTimeout: Duration(minutes: 3) // 3 minuntes
+            ));
+            dio.interceptors.add(LogInterceptor(responseBody: true));
+            SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+            var userID = sharedPreferences.getString('userID');
+            var authToken = sharedPreferences.getString('auth-token');
+            var jsonResponse;
+            Response response = await dio.post(
+              '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+              data: formData, // Post with Stream<List<int>>
+              options: Options(
+                  headers: {'uuid': userID, 'Authentication': authToken},
+                  contentType: "*/*",
+                  responseType: ResponseType.json),
+            );
+            if (response.statusCode == 200) {
+              // jsonResponse = json.decode(response.data);
+              jsonResponse = response.data;
+              print('data');
+              print(jsonResponse['data']['spouse_id']);
 
-        print(formData.toString());
-
-        if (MyConstants.myConst.internet) {
-          showToastMessage('File Uploading Please wait');
-          var dio = Dio(BaseOptions(
-              receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
-              ));
-          dio.interceptors.add(LogInterceptor(responseBody: true));
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          var userID = sharedPreferences.getString('userID');
-          var authToken = sharedPreferences.getString('auth-token');
-          var jsonResponse;
-          Response response = await dio.post(
-            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-            data: formData, // Post with Stream<List<int>>
-            options: Options(
-                headers: {'uuid': userID, 'Authentication': authToken},
-                contentType: "*/*",
-                responseType: ResponseType.json),
-          );
-          if (response.statusCode == 200) {
-            // jsonResponse = json.decode(response.data);
-            jsonResponse = response.data;
-            print('data');
-            print(jsonResponse['data']['spouse_id']);
-
-            showToastMessage(jsonResponse['message']);
+              showToastMessage(jsonResponse['message']);
 //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
-            setState(() {
-              _isLoadingSecondary = false;
+              setState(() {
+                _isLoadingSecondary = false;
 //            Navigator.pop(context, true);
 
-              account_statement = jsonResponse['data']['account_statement'];
-              String fileName = account_statement.split('/').last;
-              print('filename');
-
-              if (fileName.contains('.png') ||
-                  fileName.contains('.jpg') ||
-                  fileName.contains('.jpeg') ||
-                  fileName.contains('.gif')) {
-                print('wiii');
                 account_statement = jsonResponse['data']['account_statement'];
-              } else {
-                account_statement =
-                    'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-              }
-              sharedPreferences.setString(
-                  "account_statement", account_statement);
+                String fileName = account_statement.split('/').last;
+                print('filename');
 
-              getAttachment();
-              print("reached else :::::");
-            });
+                if (fileName.contains('.png') ||
+                    fileName.contains('.jpg') ||
+                    fileName.contains('.jpeg') ||
+                    fileName.contains('.gif')) {
+                  print('wiii');
+                  account_statement = jsonResponse['data']['account_statement'];
+                } else {
+                  account_statement =
+                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+                }
+                sharedPreferences.setString(
+                    "account_statement", account_statement);
 
-            showToastMessage('File Uploaded');
+                getAttachment();
+                print("reached else :::::");
+              });
+
+              showToastMessage('File Uploaded');
+            }
+          } else {
+            setState(() {});
           }
-        } else {
-          setState(() {});
         }
+
+        ///---------******** new implementation ***************-------///////
+
+
+
+//         FormData formData = new FormData.fromMap({
+//           "application_id": widget.applicant_id,
+// //          "signature_date": selectedDate,
+//           widget.image_name: await MultipartFile.fromFile(
+//               file.path,
+//               filename: 'accountStatement.jpg')
+//         });
+//
+//         account_statement_list.add(file.path);
+//         print("Account Statement file ::: ${file.path}");
+//         Map<String, dynamic> map = {
+//           "application_id": widget.applicant_id,
+//           widget.image_name: file.path
+//         };
+//         LocalStorage.localStorage.saveFormData(map);
+//
+//         print(formData.toString());
+//
+//         if (MyConstants.myConst.internet ?? false) {
+//           showToastMessage('File Uploading Please wait');
+//           var dio = Dio(BaseOptions(
+//               receiveDataWhenStatusError: true,
+//               connectTimeout: Duration(minutes: 3), // 3 minutes
+//               receiveTimeout: Duration(minutes: 3) // 3 minuntes
+//               ));
+//           dio.interceptors.add(LogInterceptor(responseBody: true));
+//           SharedPreferences sharedPreferences =
+//               await SharedPreferences.getInstance();
+//           var userID = sharedPreferences.getString('userID');
+//           var authToken = sharedPreferences.getString('auth-token');
+//           var jsonResponse;
+//           Response response = await dio.post(
+//             '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+//             data: formData, // Post with Stream<List<int>>
+//             options: Options(
+//                 headers: {'uuid': userID, 'Authentication': authToken},
+//                 contentType: "*/*",
+//                 responseType: ResponseType.json),
+//           );
+//           if (response.statusCode == 200) {
+//             // jsonResponse = json.decode(response.data);
+//             jsonResponse = response.data;
+//             print('data');
+//             print(jsonResponse['data']['spouse_id']);
+//
+//             showToastMessage(jsonResponse['message']);
+// //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
+//             setState(() {
+//               _isLoadingSecondary = false;
+// //            Navigator.pop(context, true);
+//
+//               account_statement = jsonResponse['data']['account_statement'];
+//               String fileName = account_statement.split('/').last;
+//               print('filename');
+//
+//               if (fileName.contains('.png') ||
+//                   fileName.contains('.jpg') ||
+//                   fileName.contains('.jpeg') ||
+//                   fileName.contains('.gif')) {
+//                 print('wiii');
+//                 account_statement = jsonResponse['data']['account_statement'];
+//               } else {
+//                 account_statement =
+//                     'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+//               }
+//               sharedPreferences.setString(
+//                   "account_statement", account_statement);
+//
+//               getAttachment();
+//               print("reached else :::::");
+//             });
+//
+//             showToastMessage('File Uploaded');
+//           }
+//         } else {
+//           setState(() {});
+//         }
       } catch (e) {
         Fluttertoast.showToast(msg: "Something went wrong");
         setState(() {
@@ -193,7 +279,7 @@ class _FileHolderAccountStatementState
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
   void uploadImage() async {
@@ -203,7 +289,7 @@ class _FileHolderAccountStatementState
 //    });
     account_statement_list = <String>[];
     Navigator.pop(context, true);
-    File file;
+    File? file;
     await Navigator.push(
         context,
         MaterialPageRoute(
@@ -225,7 +311,7 @@ class _FileHolderAccountStatementState
             //       ),
             //     )
             ));
-    print(file.path);
+    print(file?.path);
     print(file);
     await request.ifInternetAvailable();
     if (file != null) {
@@ -237,7 +323,7 @@ class _FileHolderAccountStatementState
 
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file?.path??"");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
@@ -246,25 +332,25 @@ class _FileHolderAccountStatementState
         FormData formData = new FormData.fromMap({
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(_image.path,
+          widget.image_name: await MultipartFile.fromFile(_image?.path??"",
               filename: 'accountStatement.jpg')
         });
-        account_statement_list.add(_image.path);
+        account_statement_list.add(_image?.path??"");
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          widget.image_name: _image.path
+          widget.image_name: _image?.path??""
         };
         LocalStorage.localStorage.saveFormData(map);
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -480,7 +566,7 @@ class _FileHolderAccountStatementState
                               color: Colors.black,
                               size: 20,
                             )
-                          : MyConstants.myConst.internet
+                          : MyConstants.myConst.internet ?? false
                               ? Container(
                                   width: 20,
                                   height: 20,
@@ -505,7 +591,7 @@ class _FileHolderAccountStatementState
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false ? 'Uploading' : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,

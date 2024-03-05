@@ -1,10 +1,10 @@
 class verificationListing {
-  bool salaryIncomeIndicator;
-  bool employmentStatus;
-  bool employerName;
-  bool creditStatus;
-  bool cIPCDirectorship;
-  bool iDValidation;
+  bool? salaryIncomeIndicator;
+  bool? employmentStatus;
+  bool? employerName;
+  bool? creditStatus;
+  bool? cIPCDirectorship;
+  bool? iDValidation;
 
   verificationListing(
       {this.salaryIncomeIndicator,

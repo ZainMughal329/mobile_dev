@@ -19,7 +19,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
-  Future<void> initState() {
+  void initState()  {
     super.initState();
   }
   @override
@@ -37,10 +37,10 @@ class _MyAppState extends State<MyApp> {
       },
       theme: ThemeData(
         brightness: Brightness.light,
-        backgroundColor: Colors.white,
 //          primaryColor: Color(0xff626a76),
         primaryColorLight: Colors.white,
-        primaryColorBrightness: Brightness.light,
+        // primaryColorBrightness: Brightness.light,
+        // primaryColorBrightness: Brightness.light,
         unselectedWidgetColor: Color(0xffDE626C),
 //          selectedWidgetColor:Color(0xffde626c),
 //            canvasColor: Colors.transparent,
@@ -48,12 +48,11 @@ class _MyAppState extends State<MyApp> {
 //          primaryColor: Color(0xff626a76),
 //        primaryColor: Color(0xFFFF3661), //color of the main banner
         primaryColor: Color(0xffDE626C), //color of the main banner
-        accentColor: Color(0xffDE626C),
-//        splashColor: Color(0xff3BB273),
-        colorScheme: ColorScheme.light().copyWith(
+        // accentColor: Color(0xffDE626C),
+        hintColor: Color(0xffDE626C), colorScheme: ColorScheme.light().copyWith(
           primary: Color(0xffDE626C),
           secondary: Color(0xffDE626C),
-        ),
+        ).copyWith(background: Colors.white),
       ),
       debugShowCheckedModeBanner: false,
       home: Splash(),
@@ -62,8 +61,15 @@ class _MyAppState extends State<MyApp> {
 }
 class MyHttpOverrides extends HttpOverrides{
   @override
-  HttpClient createHttpClient(SecurityContext context){
+  HttpClient createHttpClient(SecurityContext? context){
     return super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }
 }
+// class MyHttpOverrides extends HttpOverrides{
+//   @override
+//   HttpClient createHttpClient(SecurityContext context){
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+//   }
+// }

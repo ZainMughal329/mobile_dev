@@ -1,6 +1,6 @@
 class BankDetailsModel {
-  List<BankDetailsAttributes> bankDetailsAttributes;
-  int applicationId;
+  List<BankDetailsAttributes>? bankDetailsAttributes;
+  int? applicationId;
 
   BankDetailsModel({this.bankDetailsAttributes, this.applicationId});
 
@@ -8,7 +8,7 @@ class BankDetailsModel {
     if (json['bank_details_attributes'] != null) {
       bankDetailsAttributes = <BankDetailsAttributes>[];
       json['bank_details_attributes'].forEach((v) {
-        bankDetailsAttributes.add(new BankDetailsAttributes.fromJson(v));
+        bankDetailsAttributes?.add(new BankDetailsAttributes.fromJson(v));
       });
     }
     applicationId = json['application_id'];
@@ -18,7 +18,7 @@ class BankDetailsModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.bankDetailsAttributes != null) {
       data['bank_details_attributes'] =
-          this.bankDetailsAttributes.map((v) => v.toJson()).toList();
+          this.bankDetailsAttributes?.map((v) => v.toJson()).toList();
     }
     data['application_id'] = this.applicationId;
     return data;
@@ -26,9 +26,9 @@ class BankDetailsModel {
 }
 
 class BankDetailsAttributes {
-  String bankNumber;
-  String bankAccountNumber;
-  String branchCode;
+  String? bankNumber;
+  String? bankAccountNumber;
+  String? branchCode;
   // int id;
 
   BankDetailsAttributes(

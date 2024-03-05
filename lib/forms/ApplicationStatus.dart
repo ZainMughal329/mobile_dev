@@ -25,14 +25,14 @@ class ApplicationStatus extends StatefulWidget {
 
 class _ApplicationStatusState extends State<ApplicationStatus> {
   bool _isLoading = false;
-  bool _checked = true;
-  bool _checkedG = false;
-  bool _checkedUn = false;
-  bool _checkedEm = false;
-  bool _checkedCh = false;
-  bool _checkedESM = false;
-  bool _checkedDI = false;
-  bool _checkedGMI = false;
+  bool? _checked = true;
+  bool? _checkedG = false;
+  bool? _checkedUn = false;
+  bool? _checkedEm = false;
+  bool? _checkedCh = false;
+  bool? _checkedESM = false;
+  bool? _checkedDI = false;
+  bool? _checkedGMI = false;
 
   var grossMonthlyStorage;
   var remarksStorage;
@@ -126,7 +126,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
     print("Applicant ID is ::: $applicant_id");
     print("Widget Applicant ID is ::: ${widget.applicant_id}");
     // print('okay');
-    Map<String, dynamic> data = {
+    Map<dynamic, dynamic> data = {
       'application_id': applicant_id,
       'employment_status': checkBoxValue,
       'gross_monthly_income': grossMonthlyController.text,
@@ -137,26 +137,26 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
     LocalStorage.localStorage.saveFormData(data);
     var jsonResponse;
     http.Response response;
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       if (widget.previousFormSubmitted) {
         response = await http.post(
             Uri.parse(
                 "${MyConstants.myConst.baseUrl}api/v1/users/update_application?application_id=${widget.applicant_id}&employment_status=$checkBoxValue&gross_monthly_income=${grossMonthlyController.text}"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID??"",
+              'Authentication': authToken??""
             });
       } else {
         data = LocalStorage.localStorage
-            .getFormData(MyConstants.myConst.currentApplicantId);
+            .getFormData(MyConstants.myConst.currentApplicantId??"");
         response = await http.post(
             Uri.parse(
                 "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
             headers: {
               'Content-Type': 'application/json',
-              'uuid': userID,
-              'Authentication': authToken
+              'uuid': userID??"",
+              'Authentication': authToken??""
             },
             body: jsonEncode(data));
       }
@@ -175,14 +175,13 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        await prefs.setBool('_checked', _checked);
-        await prefs.setBool('_checkedG', _checkedG);
-        await prefs.setBool('_checkedUn', _checkedUn);
-        await prefs.setBool('_checkedEm', _checkedEm);
-        await prefs.setBool('_checkedCh', _checkedCh);
-        await prefs.setBool('_checkedESM', _checkedESM);
-        await prefs.setBool('_checkedDI', _checkedDI);
-        await prefs.setBool('_checkedGMI', _checkedGMI);
+        await prefs.setBool('_checked', _checked!);
+        await prefs.setBool('_checkedG', _checkedG!);
+        await prefs.setBool('_checkedUn', _checkedUn!);
+        await prefs.setBool('_checkedEm', _checkedEm!);
+        await prefs.setBool('_checkedCh', _checkedCh!);
+        await prefs.setBool('_checkedDI', _checkedDI!);
+        await prefs.setBool('_checkedGMI', _checkedGMI!);
         sharedPreferences.setString(
             "grossMonthlyStorage", grossMonthlyController.text);
         if (!widget.previousFormSubmitted) {
@@ -312,7 +311,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checked,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checked = value;
                             _checkedG = false;
@@ -368,7 +367,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checkedG,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedG = value;
                             _checked = false;
@@ -422,7 +421,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checkedUn,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedG = false;
                             _checked = false;
@@ -475,7 +474,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checkedCh,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedCh = value;
                             _checkedG = false;
@@ -528,7 +527,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checkedEm,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedCh = false;
                             _checkedG = false;
@@ -581,7 +580,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checkedESM,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedCh = false;
                             _checkedG = false;
@@ -634,7 +633,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                         ),
                         value: _checkedDI,
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (bool value) {
+                        onChanged: (bool? value) {
                           setState(() {
                             _checkedCh = false;
                             _checkedG = false;
@@ -719,7 +718,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.number,
                       style: new TextStyle(
@@ -784,7 +783,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                           border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(4.0),
                               borderSide:
-                                  new BorderSide(color: Colors.blue[700])), floatingLabelBehavior: FloatingLabelBehavior.auto),
+                                  new BorderSide(color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
 
                       keyboardType: TextInputType.text,
                       style: new TextStyle(
@@ -843,7 +842,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                   FocusScopeNode currentFocus = FocusScope.of(context);
                   if (!currentFocus.hasPrimaryFocus &&
                       currentFocus.focusedChild != null) {
-                    currentFocus.focusedChild.unfocus();
+                    currentFocus.focusedChild?.unfocus();
                   }
 //                      Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> MaritalStatus()));
                   if (!_isLoading) {

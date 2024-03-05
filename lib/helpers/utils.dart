@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:ext_storage/ext_storage.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -72,9 +70,9 @@ class Utils {
     final path = Platform.isAndroid
         ? await getExternalStorageDirectory() //FOR ANDROID
         : await getApplicationSupportDirectory(); //FOR iOS
-    print(path.path);
+    print(path?.path);
     try {
-      File newFile = File('${path.path}/$fileName.jpg');
+      File newFile = File('${path?.path}/$fileName.jpg');
       newFile = await newFile.create(recursive: true);
       newFile.writeAsBytesSync(file.readAsBytesSync());
 
@@ -102,11 +100,11 @@ class Utils {
     final path = Platform.isAndroid
         ? await getExternalStorageDirectory() //FOR ANDROID
         : await getApplicationSupportDirectory(); //FOR iOS
-    print(path.path);
+    print(path?.path??"");
 
     files.forEach((file) async {
       try {
-        File newFile = File('${path.path}/$fileName$index.jpg');
+        File newFile = File('${path?.path??""}/$fileName$index.jpg');
         newFile = await newFile.create(recursive: true);
         newFile.writeAsBytesSync(file.readAsBytesSync());
         paths.add(newFile.path);

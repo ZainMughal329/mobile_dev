@@ -29,7 +29,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
 
   List<Map<String, dynamic>> mapData = <Map<String, dynamic>>[];
   ServicesRequest request = ServicesRequest();
-  bool submitStatus;
+  bool? submitStatus;
   bool isLoading = false;
   bool isSyncLoading = false;
   getLocalData() async {
@@ -67,7 +67,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
   bool _isVisible = true;
   getAllApplicant() async {
     await request.ifInternetAvailable();
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       setState(() {
         isLoading = true;
       });
@@ -82,8 +82,8 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
               "${MyConstants.myConst.baseUrl}api/v1/users/all_my_applications"),
           headers: {
             'Content-Type': 'application/json',
-            'uuid': userID,
-            'Authentication': authToken
+            'uuid': userID??"",
+            'Authentication': authToken??""
           });
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
@@ -97,6 +97,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
         print(jsonResponse);
         for (int j = 0; j < dataHolder.length; j++) {
           var dataSort = dataHolder.toList()[j];
+          print("datsoort ===> $dataSort");
           NodoPOJO models = NodoPOJO.fromJson(dataSort);
           responseM.add(models);
           print(responseM[0].extremo1);
@@ -137,8 +138,8 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
             "${MyConstants.myConst.baseUrl}api/v1/users/applicant_reviewed?application_id=$id&reviewed='true'"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID??"",
+          'Authentication': authToken??""
         });
 
     print(response.body);
@@ -170,8 +171,8 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
             "${MyConstants.myConst.baseUrl}api/v1/users/applicant_reviewed?application_id=$id&reviewed='false'"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID??"",
+          'Authentication': authToken??""
         });
 
     print(response.body);
@@ -319,7 +320,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
                             border: Border(
                                 left: BorderSide(
                               width: 7,
-                              color: Colors.amber[800],
+                              color: Colors.amber.shade800,
                             )),
                           ),
                           child: Column(
@@ -413,7 +414,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
                       print(models[position].extremo1);
                       Navigator.of(context).push(PageRouteBuilder(
                           pageBuilder: (_, __, ___) =>
-                              ApplicantDetails(models[position].extremo1)));
+                              ApplicantDetails(models[position].extremo1??0)));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -468,11 +469,13 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
                                                       .width *
                                                   0.58,
 //                                       width: 300,
+//                                               child: Text(
+//                                                 models[position].extremo3 !=
+//                                                     null
+//                                                     ? models[position].extremo3
+//                                                     : '',
                                               child: Text(
-                                                models[position].extremo3 !=
-                                                        null
-                                                    ? models[position].extremo3
-                                                    : '',
+                                                models[position].extremo3??"",
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
                                                 softWrap: false,
@@ -484,10 +487,12 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
                                                     fontSize: 15.0),
                                               ),
                                             ),
+                                            // Text(
+                                            //   models[position].extremo2 != null
+                                            //       ? models[position].extremo2
+                                            //       : ''
                                             Text(
-                                              models[position].extremo2 != null
-                                                  ? models[position].extremo2
-                                                  : '',
+                                              models[position].extremo2??"",
                                               style: TextStyle(
                                                 fontFamily: "sans",
                                                 fontWeight: FontWeight.w300,
@@ -552,7 +557,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
                               isSyncLoading = true;
                             });
                             submitStatus = await request.submitForm();
-                            if (submitStatus) {
+                            if (submitStatus ?? false) {
                               setState(() {
                                 mapData.clear();
                                 getAllApplicant();

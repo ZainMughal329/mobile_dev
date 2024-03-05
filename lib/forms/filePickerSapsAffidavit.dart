@@ -17,14 +17,17 @@ import '../global.dart';
 class FileHolderAsapsAffidavit extends StatefulWidget {
   int applicant_id;
   String image_name;
+
   FileHolderAsapsAffidavit(this.applicant_id, this.image_name);
+
   @override
-  _FileHolderAsapsAffidavitState createState() => _FileHolderAsapsAffidavitState();
+  _FileHolderAsapsAffidavitState createState() =>
+      _FileHolderAsapsAffidavitState();
 }
 
 class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
-  String _extension;
-  String profileType;
+  String? _extension;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
@@ -48,10 +51,11 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
     _controller.addListener(() => _extension = _controller.text);
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   var saps_affidavit_storage;
+
   checkInternetAvailability() async {
     await request.ifInternetAvailable();
     setState(() {});
@@ -70,118 +74,226 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
     await request.ifInternetAvailable();
     saps_affidavit_list = <String>[];
     print('hi');
-    File file = await FilePicker.getFile(allowedExtensions: ['jpg','png'],  type: FileType.custom,
+    // File file = await FilePicker.getFile(allowedExtensions: ['jpg','png'],  type: FileType.custom,
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['jpg', 'png'],
+      type: FileType.custom,
     );
-    // List<File> file = await FilePicker.getMultiFile(type: FileType.custom, allowedExtensions: ['jpg']);
-    // print("Affidavit picked file :: ${file.paths}");
     setState(() {
       Navigator.pop(context, true);
     });
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
 
-    if (file != null) {
       setState(() {
         _isLoadingSecondary = true;
         print('state');
         print(_isLoadingSecondary);
       });
-
-      try {
-        if (_isLoadingSecondary == true) {
+      for (var file in files) {
+        try {
+          if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
-          print(widget.applicant_id);
-        }
+            print(widget.applicant_id);
+          }
 
-        Map<String, dynamic> data = {
-          "application_id": widget.applicant_id,
+          Map<String, dynamic> data = {
+            "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(
-              file.path,
-              filename: 'affidavit.jpg')
-        };
-        FormData formData = new FormData.fromMap(data);
+            widget.image_name: await MultipartFile.fromFile(file.path,
+                filename: 'affidavit.jpg')
+          };
+          FormData formData = new FormData.fromMap(data);
 
-        // print("Saps Affidavit ${file.single.path}");
-        Map<String, dynamic> map = {
-          "application_id": widget.applicant_id,
-          widget.image_name: file.path
-        };
-        LocalStorage.localStorage.saveFormData(map);
-        saps_affidavit_list.add(file.path);
+          // print("Saps Affidavit ${file.single.path}");
+          Map<String, dynamic> map = {
+            "application_id": widget.applicant_id,
+            widget.image_name: file.path
+          };
+          LocalStorage.localStorage.saveFormData(map);
+          saps_affidavit_list.add(file.path);
 
-        print(formData.toString());
+          print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
-          showToastMessage('File Uploading Please wait');
-          var dio = Dio(BaseOptions(
-              receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
-              ));
-          dio.interceptors.add(LogInterceptor(responseBody: true));
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          var userID = sharedPreferences.getString('userID');
-          var authToken = sharedPreferences.getString('auth-token');
-          var jsonResponse;
-          Response response = await dio.post(
-            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-            data: formData, // Post with Stream<List<int>>
-            options: Options(
-                headers: {'uuid': userID, 'Authentication': authToken},
-                contentType: "*/*",
-                responseType: ResponseType.json),
-          );
-          if (response.statusCode == 200) {
-            // jsonResponse = json.decode(response.data);
-            jsonResponse = response.data;
-            print('data');
-            print(jsonResponse['data']['spouse_id']);
+          if (MyConstants.myConst.internet ?? false) {
+            showToastMessage('File Uploading Please wait');
+            var dio = Dio(BaseOptions(
+                receiveDataWhenStatusError: true,
+                connectTimeout: Duration(minutes: 3), // 3 minutes
+                receiveTimeout: Duration(minutes: 3) // 3 minuntes
+                ));
+            dio.interceptors.add(LogInterceptor(responseBody: true));
+            SharedPreferences sharedPreferences =
+                await SharedPreferences.getInstance();
+            var userID = sharedPreferences.getString('userID');
+            var authToken = sharedPreferences.getString('auth-token');
+            var jsonResponse;
+            Response response = await dio.post(
+              '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+              data: formData, // Post with Stream<List<int>>
+              options: Options(
+                  headers: {'uuid': userID, 'Authentication': authToken},
+                  contentType: "*/*",
+                  responseType: ResponseType.json),
+            );
+            if (response.statusCode == 200) {
+              // jsonResponse = json.decode(response.data);
+              jsonResponse = response.data;
+              print('data');
+              print(jsonResponse['data']['spouse_id']);
 
-            showToastMessage(jsonResponse['message']);
+              showToastMessage(jsonResponse['message']);
 //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
-            setState(() {
-              _isLoadingSecondary = false;
+              setState(() {
+                _isLoadingSecondary = false;
 //            Navigator.pop(context, true);
 //            saps_affidavit = jsonResponse['data']['saps_affidavit'];
 //            sharedPreferences.setString("saps_affidavit", saps_affidavit);
 
-              saps_affidavit = jsonResponse['data']['saps_affidavit'];
-              String fileName = saps_affidavit.split('/').last;
-              print('filename');
-
-              if (fileName.contains('.png') ||
-                  fileName.contains('.jpg') ||
-                  fileName.contains('.jpeg') ||
-                  fileName.contains('.gif')) {
-                print('wiii');
                 saps_affidavit = jsonResponse['data']['saps_affidavit'];
-              } else {
-                saps_affidavit =
-                    'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-              }
-              sharedPreferences.setString("saps_affidavit", saps_affidavit);
+                String fileName = saps_affidavit.split('/').last;
+                print('filename');
 
-              getAttachment();
-            });
+                if (fileName.contains('.png') ||
+                    fileName.contains('.jpg') ||
+                    fileName.contains('.jpeg') ||
+                    fileName.contains('.gif')) {
+                  print('wiii');
+                  saps_affidavit = jsonResponse['data']['saps_affidavit'];
+                } else {
+                  saps_affidavit =
+                      'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+                }
+                sharedPreferences.setString("saps_affidavit", saps_affidavit);
 
-            showToastMessage('File Uploaded');
+                getAttachment();
+              });
+
+              showToastMessage('File Uploaded');
+            }
           }
+        } catch (e) {
+          Fluttertoast.showToast(msg: "Something went wrong");
+          setState(() {
+            _isLoading = false;
+            _isLoadingSecondary = false;
+          });
+          print('dsa');
+          print(e);
         }
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Something went wrong");
-        setState(() {
-          _isLoading = false;
-          _isLoadingSecondary = false;
-        });
-        print('dsa');
-        print(e);
       }
     }
+
+    // List<File> file = await FilePicker.getMultiFile(type: FileType.custom, allowedExtensions: ['jpg']);
+    // print("Affidavit picked file :: ${file.paths}");
+    // setState(() {
+    //   Navigator.pop(context, true);
+    // });
+
+//     if (file != null) {
+//       setState(() {
+//         _isLoadingSecondary = true;
+//         print('state');
+//         print(_isLoadingSecondary);
+//       });
+//
+//       try {
+//         if (_isLoadingSecondary == true) {
+// //          showToastMessage('Image Uploading Please wait');
+//           print(widget.applicant_id);
+//         }
+//
+//         Map<String, dynamic> data = {
+//           "application_id": widget.applicant_id,
+// //          "signature_date": selectedDate,
+//           widget.image_name: await MultipartFile.fromFile(
+//               file.path,
+//               filename: 'affidavit.jpg')
+//         };
+//         FormData formData = new FormData.fromMap(data);
+//
+//         // print("Saps Affidavit ${file.single.path}");
+//         Map<String, dynamic> map = {
+//           "application_id": widget.applicant_id,
+//           widget.image_name: file.path
+//         };
+//         LocalStorage.localStorage.saveFormData(map);
+//         saps_affidavit_list.add(file.path);
+//
+//         print(formData.toString());
+//
+//         if (MyConstants.myConst.internet??false) {
+//           showToastMessage('File Uploading Please wait');
+//           var dio = Dio(BaseOptions(
+//               receiveDataWhenStatusError: true,
+//               connectTimeout: Duration(minutes: 3), // 3 minutes
+//               receiveTimeout: Duration(minutes: 3) // 3 minuntes
+//               ));
+//           dio.interceptors.add(LogInterceptor(responseBody: true));
+//           SharedPreferences sharedPreferences =
+//               await SharedPreferences.getInstance();
+//           var userID = sharedPreferences.getString('userID');
+//           var authToken = sharedPreferences.getString('auth-token');
+//           var jsonResponse;
+//           Response response = await dio.post(
+//             '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+//             data: formData, // Post with Stream<List<int>>
+//             options: Options(
+//                 headers: {'uuid': userID, 'Authentication': authToken},
+//                 contentType: "*/*",
+//                 responseType: ResponseType.json),
+//           );
+//           if (response.statusCode == 200) {
+//             // jsonResponse = json.decode(response.data);
+//             jsonResponse = response.data;
+//             print('data');
+//             print(jsonResponse['data']['spouse_id']);
+//
+//             showToastMessage(jsonResponse['message']);
+// //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
+//             setState(() {
+//               _isLoadingSecondary = false;
+// //            Navigator.pop(context, true);
+// //            saps_affidavit = jsonResponse['data']['saps_affidavit'];
+// //            sharedPreferences.setString("saps_affidavit", saps_affidavit);
+//
+//               saps_affidavit = jsonResponse['data']['saps_affidavit'];
+//               String fileName = saps_affidavit.split('/').last;
+//               print('filename');
+//
+//               if (fileName.contains('.png') ||
+//                   fileName.contains('.jpg') ||
+//                   fileName.contains('.jpeg') ||
+//                   fileName.contains('.gif')) {
+//                 print('wiii');
+//                 saps_affidavit = jsonResponse['data']['saps_affidavit'];
+//               } else {
+//                 saps_affidavit =
+//                     'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+//               }
+//               sharedPreferences.setString("saps_affidavit", saps_affidavit);
+//
+//               getAttachment();
+//             });
+//
+//             showToastMessage('File Uploaded');
+//           }
+//         }
+//       } catch (e) {
+//         Fluttertoast.showToast(msg: "Something went wrong");
+//         setState(() {
+//           _isLoading = false;
+//           _isLoadingSecondary = false;
+//         });
+//         print('dsa');
+//         print(e);
+//       }
+//     }
   }
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
   void uploadImage() async {
@@ -193,7 +305,7 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
 //    });
 
     Navigator.pop(context, true);
-    File file;
+    File? file;
     await Navigator.push(
         context,
         MaterialPageRoute(
@@ -215,7 +327,7 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
             //       ),
             //     )
             ));
-    print(file.path);
+    print(file?.path);
     print(file);
 
     if (file != null) {
@@ -227,7 +339,7 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
 
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file?.path ?? "");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
@@ -237,27 +349,27 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
         Map<String, dynamic> data = {
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(_image.path,
+          widget.image_name: await MultipartFile.fromFile(_image?.path ?? "",
               filename: 'affidavit.jpg')
         };
 
-        saps_affidavit_list.add(_image.path);
+        saps_affidavit_list.add(_image?.path ?? "");
         FormData formData = new FormData.fromMap(data);
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          "saps_affidavit": _image.path
+          "saps_affidavit": _image?.path ?? ""
         };
         LocalStorage.localStorage.saveFormData(map);
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
               ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -472,7 +584,7 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
                               color: Colors.black,
                               size: 20,
                             )
-                          : MyConstants.myConst.internet
+                          : MyConstants.myConst.internet ?? false
                               ? Container(
                                   width: 20,
                                   height: 20,
@@ -497,7 +609,9 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,
@@ -535,7 +649,7 @@ class _FileHolderAsapsAffidavitState extends State<FileHolderAsapsAffidavit> {
                 )
               : saps_affidavit_list.isNotEmpty
                   ? Container(
-                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
                       alignment: Alignment.center,
                       height: 150,
                       child: ListView(

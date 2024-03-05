@@ -7,7 +7,7 @@ import 'package:lesedi/app_color.dart';
 
 class LocalDetails extends StatefulWidget {
   Map<String, dynamic> map = Map<String, dynamic>();
-  LocalDetails({Key key, this.map}) : super(key: key);
+  LocalDetails({Key? key, required this.map}) : super(key: key);
 
   @override
   _LocalDetailsState createState() => _LocalDetailsState();

@@ -19,7 +19,7 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  String SplashImage;
+  String? SplashImage;
   // Request request =
   /// Declare startTime to InitState
   ServicesRequest servicesRequest = ServicesRequest();
@@ -45,7 +45,7 @@ class _SplashState extends State<Splash> {
   /// To navigate layout change
   Future<void> NavigatorPage() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    bool isLogin = sharedPreferences.getBool('login');
+    bool? isLogin = sharedPreferences.getBool('login');
     var role = sharedPreferences.getString('role');
     var applicant_id = sharedPreferences.getInt('applicant_id');
     if (isLogin != null && isLogin) {
@@ -75,18 +75,19 @@ class _SplashState extends State<Splash> {
       sharedPreferences.setString(
           'brand_color_primary_action', responseJson['color'].trim());
 
+
       global.brand_color_primary_action =
-          await sharedPreferences.get("brand_color_primary_action");
+          await sharedPreferences.getString("brand_color_primary_action");
 
       sharedPreferences.setString('favicon_logo_square', responseJson['logo']);
 
       global.favicon_logo_square =
-          await sharedPreferences.get("favicon_logo_square");
+          await sharedPreferences.getString("favicon_logo_square");
 
       setState(() {
         global.company_name = responseJson['splash_screen'];
       });
-      sharedPreferences.setString(SplashImage, responseJson['splash_screen']);
+      sharedPreferences.setString(SplashImage??"", responseJson['splash_screen']);
       print('working');
       print(global.company_name);
     }

@@ -41,25 +41,27 @@ class Attachments extends StatefulWidget {
   String gross_monthly_income;
   bool previousFormSubmitted;
   Attachments(
-      this.applicant_id, this.gross_monthly_income, this.previousFormSubmitted);
+      {required this.applicant_id,
+      required this.gross_monthly_income,
+      required this.previousFormSubmitted});
   @override
   _AttachmentsState createState() => _AttachmentsState();
 }
 
 class _AttachmentsState extends State<Attachments> {
-  String _fileName;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
+  String? _fileName;
+  String? _path;
+  Map<String, String>? _paths;
+  String? _extension;
   bool _loadingPath = false;
   bool _multiPick = false;
   bool _hasValidMime = false;
-  FileType _pickingType;
-  String profileType;
+  FileType? _pickingType;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
-  int applicant_id;
+  int? applicant_id;
 
   var employment_status;
   var spouse_id;
@@ -80,13 +82,13 @@ class _AttachmentsState extends State<Attachments> {
     checkInternetAvailability();
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
   ServicesRequest request = ServicesRequest();
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
   checkInternetAvailability() async {
@@ -453,7 +455,7 @@ class _AttachmentsState extends State<Attachments> {
 
   Future<bool> checkFormStatus() async {
     await request.ifInternetAvailable();
-    if (MyConstants.myConst.internet) {
+    if (MyConstants.myConst.internet ?? false) {
       applicant_id =
           await request.singleFormSubmission(widget.previousFormSubmitted);
       if (applicant_id == null) {
@@ -466,7 +468,7 @@ class _AttachmentsState extends State<Attachments> {
         setState(() {
           _isLoading = false;
           widget.previousFormSubmitted = true;
-          widget.applicant_id = applicant_id;
+          widget.applicant_id = applicant_id??0;
           LocalStorage.localStorage.clearCurrentApplication();
         });
         return true;

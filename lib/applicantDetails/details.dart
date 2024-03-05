@@ -60,8 +60,8 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=${widget.id}&accepted=true"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID??"",
+          'Authentication': authToken??""
         });
 
     print(response.body);
@@ -99,8 +99,8 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=${widget.id}&accepted=false"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID??"",
+          'Authentication': authToken??""
         });
 
     print(response.body);
@@ -124,30 +124,30 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
     }
   }
 
-  ApplicantInfo models;
+  ApplicantInfo? models;
 
-  String firstname;
-  String surname;
-  String id_number;
-  String date_of_application;
-  String dob;
-  String age;
-  String address;
-  String department_id_num;
-  String email;
-  String ward_number;
-  String municipal_rates_account_num;
-  String status_number;
-  List<String> service_links;
-  String eskom_accounts;
-  String contact;
-  String application_status;
-  String marital_status;
-  String signature_date;
-  String cellphone_number;
-  String telephone_number;
-  String applicant_id_proof;
-  String spouse_id;
+  String? firstname;
+  String? surname;
+  String? id_number;
+  String? date_of_application;
+  String? dob;
+  String? age;
+  String? address;
+  String? department_id_num;
+  String? email;
+  String? ward_number;
+  String? municipal_rates_account_num;
+  String? status_number;
+  List<String>? service_links;
+  String? eskom_accounts;
+  String? contact;
+  String? application_status;
+  String? marital_status;
+  String? signature_date;
+  String? cellphone_number;
+  String? telephone_number;
+  String? applicant_id_proof;
+  String? spouse_id;
   var proof_of_income;
   var spouse_credit_report;
   var affidavits;
@@ -157,11 +157,11 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
   var marriage_certificate;
 
   var account_statment;
-  String saps_affidavit;
-  String decree_divorce;
-  String signature;
-  String spouse_id_number;
-  String occupant_id;
+  String? saps_affidavit;
+  String? decree_divorce;
+  String? signature;
+  String? spouse_id_number;
+  String? occupant_id;
   var dependent_ids;
   List<OccupantIds> response = [];
   List<BankDetails> bankDetails = [];
@@ -178,8 +178,8 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
             "${MyConstants.myConst.baseUrl}api/v1/users/review?application_id=${widget.id}"),
         headers: {
           'Content-Type': 'application/json',
-          'uuid': userID,
-          'Authentication': authToken
+          'uuid': userID??"",
+          'Authentication': authToken??""
         });
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
@@ -239,11 +239,11 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
         spouse_id_number = responseM.spouseIdNumber;
 
         occupant_id = responseM.occupantId;
-        bankDetails = responseM.bankDetails;
+        bankDetails = responseM.bankDetails??[];
         age = responseM.age.toString();
 
         if (applicant_id_proof != null) {
-          String fileName = applicant_id_proof.split('/').last;
+          String fileName = applicant_id_proof??"".split('/').last;
           print('filename');
 
           if (fileName.contains('.png') ||
@@ -261,7 +261,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
           print('agya');
           spouse_id = responseM.spouseId;
 
-          String fileNameSpouse = spouse_id.split('/').last;
+          String fileNameSpouse = spouse_id??"".split('/').last;
 
           print('filename');
 
@@ -282,7 +282,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
           print('agya');
           decree_divorce = responseM.decreeDivorce;
 
-          String fileNameSpouse = decree_divorce.split('/').last;
+          String fileNameSpouse = decree_divorce??"".split('/').last;
 
           print('filename');
 
@@ -443,7 +443,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
         if (saps_affidavit != null) {
           saps_affidavit = responseM.sapsAffidavit;
 
-          String fileNameSap = saps_affidavit.split('/').last;
+          String fileNameSap = saps_affidavit??"".split('/').last;
           print('filename');
 
           if (fileNameSap.contains('.png') ||
@@ -649,7 +649,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       ),
                       Text(date_of_application != null
                           ? DateFormat('yMMMMd')
-                              .format(DateTime.parse(date_of_application))
+                              .format(DateTime.parse(date_of_application??""))
                           : ''),
                       SizedBox(
                         height: 4,
@@ -690,7 +690,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(surname != null ? surname : ''),
+                      Text(surname??""),
                       SizedBox(
                         height: 4,
                       ),
@@ -709,7 +709,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       ),
 
                       Text(
-                        firstname != null ? firstname : '',
+                        firstname??"",
                       ),
                       SizedBox(
                         height: 4,
@@ -729,7 +729,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(id_number != null ? id_number : ''),
+                      Text(id_number??""),
                       SizedBox(
                         height: 4,
                       ),
@@ -850,9 +850,9 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       service_links != null
                           ? Row(
                               children: List.generate(
-                                service_links.length,
+                                service_links?.length??0,
                                 (index) =>
-                                    Text(service_links[index].toString() + ","),
+                                    Text(service_links?[index].toString()??"" + ","),
                               ),
                             )
                           : Text(''),
@@ -988,7 +988,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                         height: 4,
                       ),
                       Text(application_status != null
-                          ? application_status
+                          ? application_status??""
                               .replaceAll(new RegExp('[\\W_]+'), ' ')
                               .toLowerCase()
                           : ''),
@@ -1010,7 +1010,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(marital_status != null ? marital_status : ''),
+                      Text(marital_status??""),
 
                       Divider(
                         color: Color(0x29000000),
@@ -1052,7 +1052,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                         fontFamily: 'opensans',
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold
-                                    ),), Text(bankDetails[index].bankAccountNumber,
+                                    ),), Text(bankDetails[index].bankAccountNumber??"",
                                       style: TextStyle(
                                           fontFamily: 'opensans',
                                           fontSize: 13,
@@ -1065,7 +1065,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                         fontFamily: 'opensans',
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold
-                                    ),), Text(bankDetails[index].bankNumber,
+                                    ),), Text(bankDetails[index].bankNumber??"",
                                     style: TextStyle(
                                       fontFamily: 'opensans',
                                       fontSize: 13,
@@ -1078,7 +1078,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                         fontFamily: 'opensans',
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold
-                                    ),), Text(bankDetails[index].branchCode,
+                                    ),), Text(bankDetails[index].branchCode??"",
                                     style: TextStyle(
                                       fontFamily: 'opensans',
                                       fontSize: 13,
@@ -1111,7 +1111,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       ),
                       Text(signature_date != null
                           ? DateFormat('yMMMMd')
-                              .format(DateTime.parse(signature_date))
+                              .format(DateTime.parse(signature_date??""))
                           : ''),
                       SizedBox(
                         height: 4,
@@ -1179,7 +1179,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                           ? Center(
                               child: Image(
                                 image: CachedNetworkImageProvider(
-                                    applicant_id_proof),
+                                    applicant_id_proof??""),
                                 width: 100,
                                 fit: BoxFit.cover,
                               ),
@@ -1206,7 +1206,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       spouse_id != null
                           ? Center(
                               child: Image(
-                                image: CachedNetworkImageProvider(spouse_id),
+                                image: CachedNetworkImageProvider(spouse_id??""),
                                 width: 100,
                                 fit: BoxFit.cover,
                               ),
@@ -1330,7 +1330,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                           ? Center(
                               child: Image(
                                 image:
-                                    CachedNetworkImageProvider(saps_affidavit),
+                                    CachedNetworkImageProvider(saps_affidavit??""),
                                 width: 100,
                                 fit: BoxFit.cover,
                               ),
@@ -1395,7 +1395,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                           ? Center(
                               child: Image(
                                 image:
-                                    CachedNetworkImageProvider(decree_divorce),
+                                    CachedNetworkImageProvider(decree_divorce??""),
                                 width: 100,
                                 fit: BoxFit.cover,
                               ),
@@ -1623,7 +1623,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       signature != null
                           ? Center(
                               child: Image(
-                                image: CachedNetworkImageProvider(signature),
+                                image: CachedNetworkImageProvider(signature??""),
                                 width: 100,
                                 fit: BoxFit.cover,
                               ),

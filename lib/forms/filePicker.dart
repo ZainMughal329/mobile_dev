@@ -21,15 +21,15 @@ class FileHolder extends StatefulWidget {
 }
 
 class _FileHolderState extends State<FileHolder> {
-  String _fileName;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
+  String? _fileName;
+  String? _path;
+  Map<String, String>? _paths;
+  String? _extension;
   bool _loadingPath = false;
   bool _multiPick = false;
   bool _hasValidMime = false;
-  FileType _pickingType;
-  String profileType;
+  FileType? _pickingType;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
@@ -52,7 +52,7 @@ class _FileHolderState extends State<FileHolder> {
     _controller.addListener(() => _extension = _controller.text);
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   var dependant_ids_storage;
@@ -68,7 +68,8 @@ class _FileHolderState extends State<FileHolder> {
   void _filePicker() async {
     print('hi');
     // File file = await FilePicker.getFile();
-    List<File> file = await FilePicker.getMultiFile();
+    // List<File> file = await FilePicker.getMultiFile();
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
     setState(() {
       print('true');
       Navigator.pop(context, true);
@@ -79,13 +80,17 @@ class _FileHolderState extends State<FileHolder> {
 //    setState(() {
 ////      _fileHolder =  file;
 //    });
+if(result!=null)
+  {
+    List<File> files = result.paths.map((path) => File(path!)).toList();
 
-    if (file != null) {
-      setState(() {
-        _isLoadingSecondary = true;
-        print('state');
-        print(_isLoadingSecondary);
-      });
+  setState(() {
+      _isLoadingSecondary = true;
+      print('state');
+      print(_isLoadingSecondary);
+    });
+
+    for (var file in files) {
 
       try {
         showToastMessage('File Uploading Please wait');
@@ -98,25 +103,25 @@ class _FileHolderState extends State<FileHolder> {
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
           widget.image_name:
-              await MultipartFile.fromFile(file.single.path)
+          await MultipartFile.fromFile(file.path)
         };
 
         FormData formData = new FormData.fromMap(data);
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          widget.image_name: file.single.path
+          widget.image_name: file.path
         };
         LocalStorage.localStorage.saveFormData(map);
 
         print(formData.toString());
 
         var dio = Dio(BaseOptions(
-          connectTimeout: 10000,
+          connectTimeout: Duration(minutes: 3),
         ));
         dio.interceptors.add(LogInterceptor(responseBody: true));
         SharedPreferences sharedPreferences =
-            await SharedPreferences.getInstance();
+        await SharedPreferences.getInstance();
         var userID = sharedPreferences.getString('userID');
         var authToken = sharedPreferences.getString('auth-token');
         var jsonResponse;
@@ -158,7 +163,7 @@ class _FileHolderState extends State<FileHolder> {
               dependent_ids = jsonResponse['data']['dependent_ids'];
             } else {
               saps_affidavit =
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+              'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
             }
             sharedPreferences.setString("dependent_ids", dependent_ids);
 
@@ -170,12 +175,106 @@ class _FileHolderState extends State<FileHolder> {
         print('dsa');
         print(e);
       }
+
     }
+
+  }
+//     if (file != null) {
+//       setState(() {
+//         _isLoadingSecondary = true;
+//         print('state');
+//         print(_isLoadingSecondary);
+//       });
+//
+//       try {
+//         showToastMessage('File Uploading Please wait');
+//         if (_isLoadingSecondary == true) {
+// //          showToastMessage('Image Uploading Please wait');
+//           print(widget.applicant_id);
+//         }
+//
+//         Map<String, dynamic> data = {
+//           "application_id": widget.applicant_id,
+// //          "signature_date": selectedDate,
+//           widget.image_name:
+//               await MultipartFile.fromFile(file.single.path)
+//         };
+//
+//         FormData formData = new FormData.fromMap(data);
+//
+//         Map<String, dynamic> map = {
+//           "application_id": widget.applicant_id,
+//           widget.image_name: file.single.path
+//         };
+//         LocalStorage.localStorage.saveFormData(map);
+//
+//         print(formData.toString());
+//
+//         var dio = Dio(BaseOptions(
+//           connectTimeout: Duration(minutes: 3),
+//         ));
+//         dio.interceptors.add(LogInterceptor(responseBody: true));
+//         SharedPreferences sharedPreferences =
+//             await SharedPreferences.getInstance();
+//         var userID = sharedPreferences.getString('userID');
+//         var authToken = sharedPreferences.getString('auth-token');
+//         var jsonResponse;
+//         Response response = await dio.post(
+//           '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+//           data: formData, // Post with Stream<List<int>>
+//           options: Options(
+//             headers: {
+//               HttpHeaders.userAgentHeader: "dio",
+//               HttpHeaders.contentTypeHeader: ContentType.text,
+//               'uuid': userID,
+//               'Authentication': authToken
+//             },
+//             contentType: 'image/png',
+//             responseType: ResponseType.plain,
+//           ),
+//         );
+//         if (response.statusCode == 200) {
+//           jsonResponse = json.decode(response.data);
+//           print('data');
+//
+//           showToastMessage(jsonResponse['message']);
+// //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
+//           setState(() {
+//             _isLoadingSecondary = false;
+// //            Navigator.pop(context, true);
+// //            saps_affidavit = jsonResponse['data']['saps_affidavit'];
+// //            sharedPreferences.setString("saps_affidavit", saps_affidavit);
+//
+//             dependent_ids = jsonResponse['data']['dependent_ids'];
+//             String fileName = dependent_ids.split('/').last;
+//             print('filename');
+//
+//             if (fileName.contains('.png') ||
+//                 fileName.contains('.jpg') ||
+//                 fileName.contains('.jpeg') ||
+//                 fileName.contains('.gif')) {
+//               print('wiii');
+//               dependent_ids = jsonResponse['data']['dependent_ids'];
+//             } else {
+//               saps_affidavit =
+//                   'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+//             }
+//             sharedPreferences.setString("dependent_ids", dependent_ids);
+//
+//             getAttachment();
+//           });
+//           showToastMessage('File Uploaded');
+//         }
+//       } catch (e) {
+//         print('dsa');
+//         print(e);
+//       }
+//     }
   }
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
   void uploadImage() async {
@@ -185,7 +284,7 @@ class _FileHolderState extends State<FileHolder> {
 //    });
 
     Navigator.pop(context, true);
-    File file;
+    File? file;
     await Navigator.push(
         context,
         MaterialPageRoute(
@@ -207,7 +306,7 @@ class _FileHolderState extends State<FileHolder> {
             //       ),
             //     )
             ));
-    print(file.path);
+    print(file?.path);
     print(file);
 
     if (file != null) {
@@ -220,7 +319,7 @@ class _FileHolderState extends State<FileHolder> {
       showToastMessage('File Uploading Please wait');
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file!.path);
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
@@ -230,14 +329,14 @@ class _FileHolderState extends State<FileHolder> {
         Map<String, dynamic> data = {
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(_image.path)
+          widget.image_name: await MultipartFile.fromFile(_image?.path??"")
         };
 
         FormData formData = new FormData.fromMap(data);
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          widget.image_name: _image.path
+          widget.image_name: _image?.path
         };
         LocalStorage.localStorage.saveFormData(map);
         // LocalStorage.localStorage.saveFormData(data);
@@ -245,7 +344,7 @@ class _FileHolderState extends State<FileHolder> {
         print(formData.toString());
 
         var dio = Dio(BaseOptions(
-          connectTimeout: 10000,
+          connectTimeout: Duration(minutes: 3),
         ));
         dio.interceptors.add(LogInterceptor(responseBody: true));
         SharedPreferences sharedPreferences =
@@ -308,7 +407,7 @@ class _FileHolderState extends State<FileHolder> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-//        _filePicker();
+       _filePicker();
 
         showDialog(
             context: context,

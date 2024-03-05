@@ -24,15 +24,15 @@ class MarriageCertificate extends StatefulWidget {
 }
 
 class _MarriageCertificateState extends State<MarriageCertificate> {
-  String _fileName;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
+  String? _fileName;
+  String? _path;
+  Map<String, String>? _paths;
+  String? _extension;
   bool _loadingPath = false;
   bool _multiPick = false;
   bool _hasValidMime = false;
-  FileType _pickingType;
-  String profileType;
+  FileType? _pickingType;
+  String? profileType;
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
@@ -58,7 +58,7 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
     _controller.addListener(() => _extension = _controller.text);
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   var marriage_id_storage;
@@ -81,7 +81,8 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
     marriage_id_list = <String>[];
     print('hi');
     // File file = await FilePicker.getFile();
-    File file = await FilePicker.getFile(type: FileType.custom, allowedExtensions: ['jpg']);
+    // File file = await FilePicker.getFile(type: FileType.custom, allowedExtensions: ['jpg']);
+    FilePickerResult? file = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['jpg']);
     setState(() {
       print('true');
       Navigator.pop(context, true);
@@ -94,106 +95,207 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
 //    });
 
     if (file != null) {
-      setState(() {
-        _isLoadingSecondary = true;
-        print('state');
-        print(_isLoadingSecondary);
-      });
+      List<File> files = file.paths.map((path) => File(path!)).toList();
 
-      try {
-        if (_isLoadingSecondary == true) {
+      for(var file in files)
+        {
+          setState(() {
+            _isLoadingSecondary = true;
+            print('state');
+            print(_isLoadingSecondary);
+          });
+
+          try {
+            if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
-          print(widget.applicant_id);
-        }
-        FormData formData = new FormData.fromMap({
-          "application_id": widget.applicant_id,
-          'marriage_certificate': await MultipartFile.fromFile(
-              file.path,
-              filename: "MarriageCertificate.jpg")
-        });
-        marriage_id_list.add(file.path);
+              print(widget.applicant_id);
+            }
+            FormData formData = new FormData.fromMap({
+              "application_id": widget.applicant_id,
+              'marriage_certificate': await MultipartFile.fromFile(
+                  file.path,
+                  filename: "MarriageCertificate.jpg")
+            });
+            marriage_id_list.add(file.path);
 
-        Map<String, dynamic> map = {
-          "application_id": widget.applicant_id,
-          widget.image_name: file.path
-        };
-        LocalStorage.localStorage.saveFormData(map);
+            Map<String, dynamic> map = {
+              "application_id": widget.applicant_id,
+              widget.image_name: file.path
+            };
+            LocalStorage.localStorage.saveFormData(map);
 
-        print(formData.toString());
+            print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
-          showToastMessage('File Uploading Please wait');
-          var dio = Dio(BaseOptions(
-              receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
-          ));
-          dio.interceptors.add(LogInterceptor(responseBody: true));
-          SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-          var userID = sharedPreferences.getString('userID');
-          var authToken = sharedPreferences.getString('auth-token');
-          var jsonResponse;
-          Response response = await dio.post(
-            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-            data: formData, // Post with Stream<List<int>>
-            options: Options(
-                headers: {'uuid': userID, 'Authentication': authToken},
-                contentType: "*/*",
-                responseType: ResponseType.json),
-            // ),
-          );
-          if (response.statusCode == 200) {
-            // jsonResponse = json.decode(response.data);
-            var jsonResponse = response.data;
-            print('data');
-            print(jsonResponse['data']['marriage_certificate']);
+            if (MyConstants.myConst.internet??false) {
+              showToastMessage('File Uploading Please wait');
+              var dio = Dio(BaseOptions(
+                  receiveDataWhenStatusError: true,
+                  connectTimeout: Duration(minutes: 3), // 3 minutes
+                  receiveTimeout: Duration(minutes: 3) // 3 minuntes
+              ));
+              dio.interceptors.add(LogInterceptor(responseBody: true));
+              SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+              var userID = sharedPreferences.getString('userID');
+              var authToken = sharedPreferences.getString('auth-token');
+              var jsonResponse;
+              Response response = await dio.post(
+                '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+                data: formData, // Post with Stream<List<int>>
+                options: Options(
+                    headers: {'uuid': userID, 'Authentication': authToken},
+                    contentType: "*/*",
+                    responseType: ResponseType.json),
+                // ),
+              );
+              if (response.statusCode == 200) {
+                // jsonResponse = json.decode(response.data);
+                var jsonResponse = response.data;
+                print('data');
+                print(jsonResponse['data']['marriage_certificate']);
 
-            showToastMessage(jsonResponse['message']);
+                showToastMessage(jsonResponse['message']);
 //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
-            setState(() {
-              _isLoadingSecondary = false;
+                setState(() {
+                  _isLoadingSecondary = false;
 //            Navigator.pop(context, true);
 
-              marriage_id = jsonResponse['data']['marriage_certificate'];
-              String fileName = marriage_id.split('/').last;
-              print('filename');
+                  marriage_id = jsonResponse['data']['marriage_certificate'];
+                  String fileName = marriage_id.split('/').last;
+                  print('filename');
 
-              if (fileName.contains('.png') ||
-                  fileName.contains('.jpg') ||
-                  fileName.contains('.jpeg') ||
-                  fileName.contains('.gif')) {
-                print('wiii');
-                marriage_id = jsonResponse['data']['marriage_certificate'];
-              } else {
-                marriage_id =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+                  if (fileName.contains('.png') ||
+                      fileName.contains('.jpg') ||
+                      fileName.contains('.jpeg') ||
+                      fileName.contains('.gif')) {
+                    print('wiii');
+                    marriage_id = jsonResponse['data']['marriage_certificate'];
+                  } else {
+                    marriage_id =
+                    'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+                  }
+                  sharedPreferences.setString("marriage_certificate", marriage_id);
+
+                  getAttachment();
+                });
+
+                showToastMessage('File Uploaded');
               }
-              sharedPreferences.setString("marriage_certificate", marriage_id);
-
-              getAttachment();
+            } else {
+              setState(() {});
+            }
+          } catch (e) {
+            Fluttertoast.showToast(msg: "Something went wrong");
+            setState(() {
+              _isLoading = false;
+              _isLoadingSecondary = false;
             });
-
-            showToastMessage('File Uploaded');
+            print('dsa');
+            print(e);
           }
-        } else {
-          setState(() {});
         }
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Something went wrong");
-        setState(() {
-          _isLoading = false;
-          _isLoadingSecondary = false;
-        });
-        print('dsa');
-        print(e);
-      }
-    }
+        }
+
+//       setState(() {
+//         _isLoadingSecondary = true;
+//         print('state');
+//         print(_isLoadingSecondary);
+//       });
+//
+//       try {
+//         if (_isLoadingSecondary == true) {
+// //          showToastMessage('Image Uploading Please wait');
+//           print(widget.applicant_id);
+//         }
+//         FormData formData = new FormData.fromMap({
+//           "application_id": widget.applicant_id,
+//           'marriage_certificate': await MultipartFile.fromFile(
+//               file.path,
+//               filename: "MarriageCertificate.jpg")
+//         });
+//         marriage_id_list.add(file.path);
+//
+//         Map<String, dynamic> map = {
+//           "application_id": widget.applicant_id,
+//           widget.image_name: file.path
+//         };
+//         LocalStorage.localStorage.saveFormData(map);
+//
+//         print(formData.toString());
+//
+//         if (MyConstants.myConst.internet??false) {
+//           showToastMessage('File Uploading Please wait');
+//           var dio = Dio(BaseOptions(
+//               receiveDataWhenStatusError: true,
+//               connectTimeout: Duration(minutes: 3), // 3 minutes
+//               receiveTimeout: Duration(minutes: 3) // 3 minuntes
+//           ));
+//           dio.interceptors.add(LogInterceptor(responseBody: true));
+//           SharedPreferences sharedPreferences =
+//           await SharedPreferences.getInstance();
+//           var userID = sharedPreferences.getString('userID');
+//           var authToken = sharedPreferences.getString('auth-token');
+//           var jsonResponse;
+//           Response response = await dio.post(
+//             '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+//             data: formData, // Post with Stream<List<int>>
+//             options: Options(
+//                 headers: {'uuid': userID, 'Authentication': authToken},
+//                 contentType: "*/*",
+//                 responseType: ResponseType.json),
+//             // ),
+//           );
+//           if (response.statusCode == 200) {
+//             // jsonResponse = json.decode(response.data);
+//             var jsonResponse = response.data;
+//             print('data');
+//             print(jsonResponse['data']['marriage_certificate']);
+//
+//             showToastMessage(jsonResponse['message']);
+// //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
+//             setState(() {
+//               _isLoadingSecondary = false;
+// //            Navigator.pop(context, true);
+//
+//               marriage_id = jsonResponse['data']['marriage_certificate'];
+//               String fileName = marriage_id.split('/').last;
+//               print('filename');
+//
+//               if (fileName.contains('.png') ||
+//                   fileName.contains('.jpg') ||
+//                   fileName.contains('.jpeg') ||
+//                   fileName.contains('.gif')) {
+//                 print('wiii');
+//                 marriage_id = jsonResponse['data']['marriage_certificate'];
+//               } else {
+//                 marriage_id =
+//                 'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
+//               }
+//               sharedPreferences.setString("marriage_certificate", marriage_id);
+//
+//               getAttachment();
+//             });
+//
+//             showToastMessage('File Uploaded');
+//           }
+//         } else {
+//           setState(() {});
+//         }
+//       } catch (e) {
+//         Fluttertoast.showToast(msg: "Something went wrong");
+//         setState(() {
+//           _isLoading = false;
+//           _isLoadingSecondary = false;
+//         });
+//         print('dsa');
+//         print(e);
+//       }
+//     }
   }
 
   void updateProfileWithResume() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String auth_token = sharedPreferences.get('token');
+    String? auth_token = sharedPreferences.getString('token');
   }
 
   void uploadImage() async {
@@ -204,7 +306,7 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
     marriage_id_list = <String>[];
 
     Navigator.pop(context, true);
-    File file;
+    File? file;
     await Navigator.push(
         context,
         MaterialPageRoute(
@@ -229,36 +331,36 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
 
       try {
         setState(() {
-          _image = File(file.path);
+          _image = File(file?.path??"");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
           print(widget.applicant_id);
         }
         await request.ifInternetAvailable();
-        var filePath = file.path;
+        var filePath = file?.path;
         FormData formData = new FormData.fromMap({
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(_image.path,
+          widget.image_name: await MultipartFile.fromFile(_image?.path??"",
               filename: "MarriageCertificate.jpg")
         });
-        marriage_id_list.add(_image.path);
+        marriage_id_list.add(_image?.path??"");
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          widget.image_name: _image.path
+          widget.image_name: _image?.path??""
         };
         LocalStorage.localStorage.saveFormData(map);
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet) {
+        if (MyConstants.myConst.internet??false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
-              connectTimeout: 60 * 1000, // 3 minutes
-              receiveTimeout: 60 * 1000 // 3 minuntes
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
           ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
@@ -467,7 +569,7 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
                         color: Colors.black,
                         size: 20,
                       )
-                          : MyConstants.myConst.internet
+                          : MyConstants.myConst.internet??false
                           ? Container(
                         width: 20,
                         height: 20,
@@ -492,7 +594,7 @@ class _MarriageCertificateState extends State<MarriageCertificate> {
                         fontWeight: FontWeight.w800),
                   )
                       : Text(
-                    MyConstants.myConst.internet ? 'Uploading' : "Saved",
+                    MyConstants.myConst.internet??false ? 'Uploading' : "Saved",
                     style: TextStyle(
                         color: Colors.black,
                         letterSpacing: 0.2,
