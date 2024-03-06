@@ -450,7 +450,7 @@ class _LocalDetailsState extends State<LocalDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(widget.map['signature_date']),
+                      Text(widget.map['signature_date']??""),
                       // Text(widget.map['signature_date'] != null
                       //     ? DateFormat('yMMMMd').format(DateTime.parse(
                       //         jsonDecode(widget.map['signature_date'])))
