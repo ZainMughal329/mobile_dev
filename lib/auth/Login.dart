@@ -80,7 +80,6 @@ class _LoginState extends State<Login> {
     var jsonResponse;
     http.Response response = await http.get(
         Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/sign_in?email=$email&password=$pass&role='reviewer'"));
-        // Uri.parse("http://185.193.67.250:3000/admin/login/api/v1/users/sign_in?email=$email&password=$pass&role='reviewer'"));
     print(response.body);
     print(data);
     if (response.statusCode == 200) {

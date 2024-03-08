@@ -53,6 +53,34 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
+    flavorDimensions "app"
+    productFlavors {
+        emfuleni {
+            dimension "app"
+            applicationIdSuffix ".emfuleni"
+            resValue "string", "app_name", "Emfuleni"
+            versionNameSuffix ".emfuleni"
+        }
+        lasedi {
+            dimension "app"
+            applicationIdSuffix ".lasedi"
+            resValue "string", "app_name", "Lasedi"
+            versionNameSuffix ".lasedi"
+        }
+        modimolle {
+            dimension "app"
+            applicationIdSuffix ".modimolle"
+            resValue "string", "app_name", "Modimolle"
+            versionNameSuffix ".emfuleni"
+        }
+        remoteshere {
+            dimension "app"
+            applicationIdSuffix ".remoteshere"
+            resValue "string", "app_name", "Remoteshere"
+            versionNameSuffix ".lasedi"
+        }
+    }
+
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']

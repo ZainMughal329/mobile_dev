@@ -1,10 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:lesedi/auth/Splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/model/app_flavour_model.dart';
 import 'helpers/local_storage.dart';
 
-Future<void> main() async {
+Future<void> main({AppFlavourModel? appFlavourModel}) async {
+  if(appFlavourModel!=null)
+    {
+      print("this is app name ${appFlavourModel.appName}");
+      MyConstants.myConst.baseUrl=appFlavourModel.baseUrl??"";
+    }
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage.localStorage.init();
