@@ -71,13 +71,13 @@ android {
             dimension "app"
             applicationIdSuffix ".modimolle"
             resValue "string", "app_name", "Modimolle"
-            versionNameSuffix ".emfuleni"
+            versionNameSuffix ".modimolle"
         }
-        remoteshere {
+        ramotshere {
             dimension "app"
-            applicationIdSuffix ".remoteshere"
-            resValue "string", "app_name", "Remoteshere"
-            versionNameSuffix ".lasedi"
+            applicationIdSuffix ".ramotshere"
+            resValue "string", "app_name", "Ramotshere"
+            versionNameSuffix ".ramotshere"
         }
     }
 

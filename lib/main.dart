@@ -10,6 +10,9 @@ Future<void> main({AppFlavourModel? appFlavourModel}) async {
     {
       print("this is app name ${appFlavourModel.appName}");
       MyConstants.myConst.baseUrl=appFlavourModel.baseUrl??"";
+      MyConstants.myConst.appLogo=appFlavourModel.appLogo??"";
+      print("base url === > ${MyConstants.myConst.baseUrl}");
+      print("base url === > ${MyConstants.myConst.appLogo}");
     }
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();

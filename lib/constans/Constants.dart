@@ -5,6 +5,7 @@ class MyConstants {
   String baseUrl = ""; // EMfULENI
   bool? internet;
   bool? formSubmissionStatus;
+  String appLogo='';
   List<String>? applicationsList = <String>[];
   String? currentApplicantId;
 }

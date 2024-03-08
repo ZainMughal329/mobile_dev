@@ -47,6 +47,7 @@ dependencies:
   flutter_barcode_listener: ^0.1.4
   location: ^5.0.0-dev.8
   permission_handler: ^11.3.0
+  flutter_launcher_icons: ^0.13.1
 #  ext_storage: ^1.0.3
 
 
@@ -66,12 +67,12 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
-flutter_icons:
-  image_path: "assets/images/emfuleni_ic_launcher.jpg"
-  #  image_path_android: "assets/images/app-icon.png"
-  #  image_path_ios: "assets/images/icon-710x599-ios.png"
-  android: true # can specify file name here e.g. "ic_launcher"
-  ios: true # can specify file name here e.g. "My-Launcher-Icon"
+#flutter_icons:
+#  image_path: "assets/images/emfuleni_ic_launcher.jpg"
+#  #  image_path_android: "assets/images/app-icon.png"
+#  #  image_path_ios: "assets/images/icon-710x599-ios.png"
+#  android: true # can specify file name here e.g. "ic_launcher"
+#  ios: true # can specify file name here e.g. "My-Launcher-Icon"
 #  adaptive_icon  _background: "assets/images/app-icon.png" # only available for Android 8.0 devices and above
 #  adaptive_icon_foreground: "assets/images/app-icon.png" # only available for Android 8.0 devices and above
 

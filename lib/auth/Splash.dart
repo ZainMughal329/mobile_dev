@@ -140,7 +140,8 @@ class _SplashState extends State<Splash> {
                         // )
                         //     :
                         Image.asset(
-                          'assets/images/emfuleni.jpg',
+                          // 'assets/images/emfuleni.jpg',
+                          MyConstants.myConst.appLogo,
                           width: 250,
                         ),
                       ),
