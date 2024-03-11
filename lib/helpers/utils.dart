@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:lesedi/helpers/local_storage.dart';
@@ -137,5 +138,151 @@ class Utils {
     } else {
       print("Form Submission Status is ::: True");
     }
+  }
+
+  static alertDialog({required BuildContext context,required Function() onCamera,required Function() onGallery})
+  {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Upload File"),
+              InkWell(
+                  onTap: () => Navigator.pop(context, true),
+                  child: Icon(Icons.clear))
+            ],
+          ),
+          content: SingleChildScrollView(
+              child: Container(
+                child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Divider(),
+                    InkWell(
+                      onTap: () {
+                        onGallery();
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 30, bottom: 0, top: 20),
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 15),
+                            height: 55.0,
+                            width: 600.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(
+                                      Icons.image,
+                                      color: Colors.black,
+                                      size: 20,
+                                    )),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'Chosse From Gallery',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      letterSpacing: 0.2,
+                                      fontFamily: "Open Sans",
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ],
+                            ),
+                            alignment: FractionalOffset.center,
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black38,
+                                      blurRadius: 0.0)
+                                ],
+                                borderRadius: BorderRadius.circular(10.0),
+                                gradient: LinearGradient(colors: <Color>[
+                                  Color(0xFFFFFFFF),
+                                  Color(0xFFFFFFFF)
+                                ])),
+//                          decoration: BoxDecoration(
+//                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
+//                              borderRadius: BorderRadius.circular(10.0),
+//                              gradient: LinearGradient(
+//                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                          ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        onCamera();
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 30, bottom: 0, top: 0),
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 15),
+                            height: 55.0,
+//                        width: 600.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(
+                                      Icons.camera_enhance,
+                                      color: Colors.black,
+                                      size: 20,
+                                    )),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'Chosse From Camera',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      letterSpacing: 0.2,
+                                      fontFamily: "Open Sans",
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ],
+                            ),
+                            alignment: FractionalOffset.center,
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black38,
+                                      blurRadius: 0.0)
+                                ],
+                                borderRadius: BorderRadius.circular(10.0),
+                                gradient: LinearGradient(colors: <Color>[
+                                  Color(0xFFFFFFFF),
+                                  Color(0xFFFFFFFF)
+                                ])),
+//                          decoration: BoxDecoration(
+//                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
+//                              borderRadius: BorderRadius.circular(10.0),
+//                              gradient: LinearGradient(
+//                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    )
+                  ],
+                ),
+              )),
+        ));
   }
 }

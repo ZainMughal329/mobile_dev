@@ -844,10 +844,10 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                       currentFocus.focusedChild != null) {
                     currentFocus.focusedChild?.unfocus();
                   }
-//                      Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> MaritalStatus()));
-                  if (!_isLoading) {
-                    submitForm(checkBoxValue);
-                  }
+                     Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> MaritalStatus(1,"",false)));
+                  // if (!_isLoading) {
+                  //   submitForm(checkBoxValue);
+                  // }
                 },
                 child: Align(
                   alignment: Alignment.bottomRight,

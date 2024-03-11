@@ -6,6 +6,7 @@ import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/Dashboard.dart';
 import 'package:lesedi/forms/PersonalInformationB1.dart';
 import 'package:lesedi/forms/attachments.dart';
+import 'package:lesedi/forms/water_and_electricity_information/view/water_and_electricity_info_view.dart';
 import 'package:lesedi/global.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/helpers/local_storage.dart';
@@ -1052,6 +1053,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                     ),
                   ),
                 ),
+
               ],
             ),
           ),
@@ -1063,7 +1065,13 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                 currentFocus.focusedChild?.unfocus();
               }
               formClicked();
-//                  Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> PersonalInformationB1()));
+              // Navigator.of(context).push(MaterialPageRoute(
+              //     builder: (BuildContext context) => new
+              //     // Attachments(applicant_id, "30", previousFormSubmitted)
+              //     PersonalInformationB1(
+              //         1, function, true)
+              // ));
+              //    Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> PersonalInformationB1()));
             },
             child: Align(
               alignment: Alignment.bottomRight,
@@ -1106,6 +1114,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
                   )),
             ),
           ),
+
         ],
       )),
     );

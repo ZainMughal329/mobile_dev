@@ -643,7 +643,17 @@ class _MaritalStatusState extends State<MaritalStatus> {
               InkWell(
                 onTap: () {
                   print("Gesture Detector");
-                  submitForm(checkBoxValue);
+                  // submitForm(checkBoxValue);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => new BankAccountDetails(
+                          widget.applicant_id,
+                          widget.gross_monthly_income,
+                          widget.previousFormSubmitted)
+                    // new Attachments(
+                    //     widget.applicant_id,
+                    //     widget.gross_monthly_income,
+                    //     widget.previousFormSubmitted)
+                  ));
                 },
                 // onTap: (){
                 //     // {

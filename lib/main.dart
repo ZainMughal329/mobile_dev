@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lesedi/auth/Splash.dart';
 import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/model/app_flavour_model.dart';
@@ -17,7 +18,7 @@ Future<void> main({AppFlavourModel? appFlavourModel}) async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage.localStorage.init();
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {

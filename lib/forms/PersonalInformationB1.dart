@@ -247,7 +247,6 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
       'application_id': widget.applicant_id,
       'email': email,
       'ward_number': wardNumber,
-//      'account_number': municipalAccountNumber,
       'stand_number': standNumber,
       'services_linked':
           selectedCities.isNotEmpty ? selectedCities : serviceLinkedHolder,
@@ -255,7 +254,6 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
       'cellphone_number': contactNumber,
       'telephone_number': telephone_number,
       'financial_year': financial_year
-//      'role': _selectedType
     };
     // checkInternetAvailability();
     LocalStorage.localStorage.saveFormData(data);
@@ -987,7 +985,9 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
                     currentFocus.focusedChild?.unfocus();
                   }
                   formClicked();
-//                      Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> ApplicationStatus()));
+                     // Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> ApplicationStatus(
+                     //   1,true
+                     // )));
                 },
                 child: Align(
                   alignment: Alignment.bottomRight,

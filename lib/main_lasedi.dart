@@ -5,6 +5,6 @@ import 'package:lesedi/model/app_flavour_model.dart';
 void main() {
   print("lasedi is running");
   AppFlavourModel appFlavourModel =
-      AppFlavourModel.fromJson(AppFlavoursConfigurations.configLasediPro);
+      AppFlavourModel.fromJson(AppFlavoursConfigurations.configLesediPro);
   app.main(appFlavourModel: appFlavourModel);
 }

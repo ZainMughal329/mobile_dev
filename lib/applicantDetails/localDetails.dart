@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lesedi/app_color.dart';
 
 class LocalDetails extends StatefulWidget {
@@ -18,6 +19,7 @@ class _LocalDetailsState extends State<LocalDetails> {
   @override
   Widget build(BuildContext context) {
     log(widget.map.toString());
+    print("called");
     return Scaffold(
       appBar: AppBar(
 //        elevation: .5,
@@ -450,11 +452,11 @@ class _LocalDetailsState extends State<LocalDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(widget.map['signature_date']??""),
-                      // Text(widget.map['signature_date'] != null
-                      //     ? DateFormat('yMMMMd').format(DateTime.parse(
-                      //         jsonDecode(widget.map['signature_date'])))
-                      //     : ''),
+                      // Text(widget.map['signature_date']??""),
+                      Text(widget.map['signature_date'] != null
+                          ? DateFormat('yMMMMd').format(DateTime.parse(
+                              jsonDecode(widget.map['signature_date'])))
+                          : ''),
                       SizedBox(
                         height: 4,
                       ),
@@ -786,6 +788,7 @@ class _LocalDetailsState extends State<LocalDetails> {
     var decodeSucceeded = false;
 
     try {
+
       if (imagefile != null) {
         image = json.decode(imagefile);
         decodeSucceeded = true;

@@ -452,21 +452,27 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
                               setState(() {
                                 _isLoading = true;
                               });
-                              submitForm(
-                                bankName.map((e) => e.text).toList(),
-                                accountNoCon.map((e) => e.text).toList(),
-                                branchCodeCon.map((e) => e.text).toList(),
+                              Navigator.of(context).push(PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => Attachments(
+                                      applicant_id: widget.applicant_id,
+                                      gross_monthly_income: widget.gross_monthly_income,
+                                      previousFormSubmitted: widget.previousFormSubmitted)));
 
-                                // bankAccCon[0].text,
-                                // accountNoCon[0].text,
-                                // branchCodeCon[0].text,
-                                // bankAccCon[1].text,
-                                // accountNoCon[1].text,
-                                // branchCodeCon[1].text,
-                                // bankAccCon[2].text,
-                                // accountNoCon[2].text,
-                                // branchCodeCon[2].text,
-                              );
+                              // submitForm(
+                              //   bankName.map((e) => e.text).toList(),
+                              //   accountNoCon.map((e) => e.text).toList(),
+                              //   branchCodeCon.map((e) => e.text).toList(),
+                              //
+                              //   // bankAccCon[0].text,
+                              //   // accountNoCon[0].text,
+                              //   // branchCodeCon[0].text,
+                              //   // bankAccCon[1].text,
+                              //   // accountNoCon[1].text,
+                              //   // branchCodeCon[1].text,
+                              //   // bankAccCon[2].text,
+                              //   // accountNoCon[2].text,
+                              //   // branchCodeCon[2].text,
+                              // );
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (BuildContext context) =>
                               //         new Attachments(

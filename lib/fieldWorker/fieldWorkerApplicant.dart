@@ -411,7 +411,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
 
                   return InkWell(
                     onTap: () {
-                      print(models[position].extremo1);
+                      print(models[position].extremo1??"");
                       Navigator.of(context).push(PageRouteBuilder(
                           pageBuilder: (_, __, ___) =>
                               ApplicantDetails(models[position].extremo1??0)));

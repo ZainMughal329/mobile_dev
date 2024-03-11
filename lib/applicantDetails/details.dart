@@ -1,14 +1,9 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lesedi/applicants/allApplicants.dart';
 import 'package:lesedi/constans/Constants.dart';
-import 'package:lesedi/fieldWorker/fieldWorkerApplicant.dart';
 import 'package:lesedi/global.dart';
 import 'package:lesedi/model/applicantInfo.dart';
 import 'package:flutter/material.dart';
-import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -640,205 +635,22 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "Date of application",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(date_of_application != null
-                          ? DateFormat('yMMMMd')
-                              .format(DateTime.parse(date_of_application??""))
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
 
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+                      DetailWidget(title: "Date of application", subtitle:
+                  date_of_application != null
+                      ? DateFormat('yMMMMd')
+                          .format(DateTime.parse(date_of_application??""))
+                      : ''),
 
-                      Text(
-                        "Account Number",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(municipal_rates_account_num != null
-                          ? municipal_rates_account_num.toString()
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Surname",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(surname??""),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text("First Name", style: _style()),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        firstname??"",
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Applicant ID",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(id_number??""),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "DOB",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(dob != null ? dob.toString() : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Age",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(age != null ? age.toString() : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Spouse ID",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(spouse_id_number != null
-                          ? spouse_id_number.toString()
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Occupant ID",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(occupant_id != null ? occupant_id.toString() : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Stand/Erf Number",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(status_number != null
-                          ? status_number.toString()
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+                  DetailWidget(title: "Account Number", subtitle: municipal_rates_account_num ??""),
+                  DetailWidget(title: "Surname", subtitle: surname ??""),
+                  DetailWidget(title: "First Name", subtitle: firstname ??""),
+                  DetailWidget(title: "Applicant ID", subtitle: id_number ??""),
+                  DetailWidget(title: "DOB", subtitle: dob ??""),
+                  DetailWidget(title: "Age", subtitle: age ??""),
+                  DetailWidget(title: "Spouse ID", subtitle: spouse_id_number ??""),
+                  DetailWidget(title: "Occupant ID", subtitle: occupant_id ??""),
+                  DetailWidget(title: "Stand/Erf Number", subtitle: status_number ??""),
 
                       Text(
                         "Services Linked to Stand",
@@ -867,157 +679,18 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(
-                        "Ward Number",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      //Check
-                      Text(ward_number != null ? ward_number.toString() : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
+                      DetailWidget(title: "Ward Number", subtitle: ward_number ??""),
+                      DetailWidget(title: "Eskom Account Number", subtitle: eskom_accounts ??""),
+                      DetailWidget(title: "Email", subtitle: email ??""),
+                      DetailWidget(title: "Cellphone Number", subtitle: cellphone_number ??""),
+                      DetailWidget(title: "Telephone Number", subtitle: telephone_number ??""),
+                      DetailWidget(title: "Employment Status", subtitle: application_status != null
+                            ? application_status??""
+                                .replaceAll(new RegExp('[\\W_]+'), ' ')
+                                .toLowerCase()
+                            : ''),
+                      DetailWidget(title: "Marital Status", subtitle: marital_status ??""),
 
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-//                          Divider(color: Color(0x29000000),),
-
-//                          Text("Gross Monthly Income", style: _style(),),
-//                          SizedBox(height: 4,),
-//                          Text(department_id_num!=null?department_id_num.toString():''),
-//                          SizedBox(height: 4,),
-
-                      Text(
-                        "Eskom Account Number",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(eskom_accounts != null
-                          ? eskom_accounts.toString()
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-//                          Divider(color: Color(0x29000000),),
-//                          SizedBox(height: 4,),
-//
-//                          Text("Contact", style: _style(),),
-//                          SizedBox(height: 4,),
-//                          Text(contact!=null?contact.toString():''),
-//                          SizedBox(height: 4,),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Email",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(email != null ? email.toString() : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Cellphone Number",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(cellphone_number != null
-                          ? cellphone_number.toString()
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Telephone Number",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(telephone_number != null
-                          ? telephone_number.toString()
-                          : ''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Employment Status",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(application_status != null
-                          ? application_status??""
-                              .replaceAll(new RegExp('[\\W_]+'), ' ')
-                              .toLowerCase()
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        "Marital Status",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(marital_status??""),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
 
                       Text(
                         "Bank Details",
@@ -1028,8 +701,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       ),
                   bankDetails.isEmpty || bankDetails == null? Text(''): ListView(
                     shrinkWrap: true,
-                    // scrollDirection: Axis.vertical,
-                    // physics: NeverScrollableScrollPhysics(),
                     children: List.generate(
                       bankDetails.length,
                           (index) => Container(
@@ -1087,12 +758,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                 ],
                             ),
                           )
-
-//                                        Image.network(
-//                                          dependent_ids[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                     ),
                   ),
                       Divider(
@@ -1102,36 +767,19 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                         height: 4,
                       ),
 
-                      Text(
-                        "Signature Date",
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(signature_date != null
-                          ? DateFormat('yMMMMd')
-                              .format(DateTime.parse(signature_date??""))
-                          : ''),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
+                      DetailWidget(title: "Signature Date", subtitle:
+                      signature_date != null
+                            ? DateFormat('yMMMMd')
+                                .format(DateTime.parse(signature_date??""))
+                            : ''
                       ),
                     ],
                   ),
                 ),
 
-//                / Text header "Welcome To" (Click to open code)
               ],
             ),
           ),
-//              Divider(color: Color(0x29000000),),
           SizedBox(
             height: 20,
           ),
@@ -1147,7 +795,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
           Container(
             alignment: Alignment.center,
             margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
-//          height: 665.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
               color: const Color(0xffffffff),
@@ -1168,60 +815,13 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Applicant ID	',
-                        style: _style(),
+                      DetailImageWidget(
+                        title: "Applicant ID ",
+                        image: applicant_id_proof??"",
                       ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      applicant_id_proof != null
-                          ? Center(
-                              child: Image(
-                                image: CachedNetworkImageProvider(
-                                    applicant_id_proof??""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-//                              child: Image.network(
-//                              applicant_id_proof,
-//                              width: 100,
-//                              fit: BoxFit.cover,
-//                            )
-                            )
-                          : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        'Spouse ID	',
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      spouse_id != null
-                          ? Center(
-                              child: Image(
-                                image: CachedNetworkImageProvider(spouse_id??""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-//                              child: Image.network(
-//                              spouse_id,
-//                              width: 100,
-//                              fit: BoxFit.cover,
-//                            )
-                            )
-                          : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
+                      DetailImageWidget(
+                        title: "Spouse ID ",
+                        image: spouse_id??"",
                       ),
                       Text(
                         'Occupant ID',
@@ -1243,12 +843,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
-
-//                                        Image.network(
-//                                          dependent_ids[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                                 ),
                               ),
                             )
@@ -1259,29 +853,11 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(
-                        'Municipal Statement of Account',
-                        style: _style(),
+                      DetailImageWidget(
+                        title: 'Municipal Statement of Account',
+                        image: account_statment??"",
                       ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      account_statment != null
-                          ? Center(
-                              child: Image(
-                                image: CachedNetworkImageProvider(
-                                    account_statment),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+
                       Text(
                         'Proof of Income ',
                         style: _style(),
@@ -1304,11 +880,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
-//                                        Image.network(
-//                                          proof_of_income[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                                 ),
                               ),
                             )
@@ -1319,34 +890,35 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(
-                        'Affidavit SAPS',
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      saps_affidavit != null
-                          ? Center(
-                              child: Image(
-                                image:
-                                    CachedNetworkImageProvider(saps_affidavit??""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-//                              child: Image.network(
-//                                saps_affidavit,
-//                              width: 100,
-//                              fit: BoxFit.cover,
-//                            )
-                            )
-                          : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
+//                       Text(
+//                         'Affidavit SAPS',
+//                         style: _style(),
+//                       ),
+//                       SizedBox(
+//                         height: 4,
+//                       ),
+//                       saps_affidavit != null
+//                           ? Center(
+//                               child: Image(
+//                                 image:
+//                                     CachedNetworkImageProvider(saps_affidavit??""),
+//                                 width: 100,
+//                                 fit: BoxFit.cover,
+//                               ),
+// //                              child: Image.network(
+// //                                saps_affidavit,
+// //                              width: 100,
+// //                              fit: BoxFit.cover,
+// //                            )
+//                             )
+//                           : Text(''),
+//                       Divider(
+//                         color: Color(0x29000000),
+//                       ),
+//                       SizedBox(
+//                         height: 4,
+//                       ),
                       Text(
                         'Death Certificate',
                         style: _style(),
@@ -1369,11 +941,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
-//                                        Image.network(
-//                                          proof_of_income[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                                 ),
                               ),
                             )
@@ -1384,34 +951,8 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(
-                        'Decree Divorce',
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      decree_divorce != null
-                          ? Center(
-                              child: Image(
-                                image:
-                                    CachedNetworkImageProvider(decree_divorce??""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-//                              child: Image.network(
-//                                saps_affidavit,
-//                              width: 100,
-//                              fit: BoxFit.cover,
-//                            )
-                            )
-                          : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+                      DetailImageWidget(title: 'Decree Divorce', image: decree_divorce??""),
+
                       Text(
                         'House Hold',
                         style: _style(),
@@ -1434,11 +975,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
-//                                        Image.network(
-//                                          proof_of_income[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                                 ),
                               ),
                             )
@@ -1450,58 +986,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(
-                        'Marriage Certificate',
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      marriage_certificate != null
-                          ? Center(
-                              child: Image(
-                                image: CachedNetworkImageProvider(
-                                    marriage_certificate),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-//                              child: Image.network(
-//                                saps_affidavit,
-//                              width: 100,
-//                              fit: BoxFit.cover,
-//                            )
-                            )
-                          : Text(''),
-//                       marriage_certificate != null
-//                           ? Container(
-//                         height: 150,
-//                         margin: EdgeInsets.only(top: 10),
-//                         child: ListView(
-//                           scrollDirection: Axis.horizontal,
-//                           shrinkWrap: true,
-//                           children: List.generate(
-//                             marriage_certificate.length,
-//                                 (index) => Image(
-//                               image: CachedNetworkImageProvider(
-//                                   marriage_certificate[index].url),
-//                               width: 100,
-//                               fit: BoxFit.cover,
-//                             ),
-// //                                        Image.network(
-// //                                          proof_of_income[index].url,
-// //                                          width: 100,
-// //                                          fit: BoxFit.cover,
-// //                                        )
-//                           ),
-//                         ),
-//                       )
-//                           : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+                      DetailImageWidget(title: "Marriage Certificate", image: marriage_certificate??""),
                       Text(
                         'Affidavits',
                         style: _style(),
@@ -1524,11 +1009,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
-//                                        Image.network(
-//                                          proof_of_income[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                                 ),
                               ),
                             )
@@ -1561,11 +1041,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
-//                                        Image.network(
-//                                          proof_of_income[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                                 ),
                               ),
                             )
@@ -1598,11 +1073,6 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                               width: 100,
                               fit: BoxFit.cover,
                             ),
-//                                        Image.network(
-//                                          proof_of_income[index].url,
-//                                          width: 100,
-//                                          fit: BoxFit.cover,
-//                                        )
                           ),
                         ),
                       )
@@ -1613,32 +1083,10 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text(
-                        'Signature',
-                        style: _style(),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      signature != null
-                          ? Center(
-                              child: Image(
-                                image: CachedNetworkImageProvider(signature??""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-//                              child: Image.network(
-//                              signature,
-//                              width: 100,
-//                              fit: BoxFit.cover,
-//                            )
-                            )
-                          : Text(''),
+                      DetailImageWidget(title: "Signature", image: signature??""),
                     ],
                   ),
                 ),
-
-//                / Text header "Welcome To" (Click to open code)
               ],
             ),
           ),
@@ -1743,8 +1191,130 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                   ],
                 )
               : Text(''),
+          /// bills updated work
+
+          SizedBox(
+            height: 20,
+          ),
+//           Text(
+//             "Bills",
+//             style: TextStyle(
+//                 letterSpacing: 0.0,
+//                 color: Color(0xff141414),
+//                 fontFamily: "Open Sans",
+//                 fontWeight: FontWeight.w700,
+//                 fontSize: 18.0),
+//           ),
+//           Container(
+//             alignment: Alignment.center,
+//               padding: EdgeInsets.only(
+//                   top: 20.0, bottom: 12, left: 20, right: 20),
+//             margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
+// //          height: 665.0,
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.circular(5.0),
+//               color: const Color(0xffffffff),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: const Color(0x29000000),
+//                   offset: Offset(0, 3),
+//                   blurRadius: 6,
+//                 ),
+//               ],
+//             ),
+//               child:Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   DetailWidget(title: "Marital Status", subtitle: marital_status??""),
+//                 ],
+//               )
+//           ),
         ],
       )),
     );
   }
+}
+
+class DetailImageWidget extends StatelessWidget {
+  const DetailImageWidget({
+    required this.title,
+    required this.image,
+    super.key});
+
+  final String title;
+  final String image;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: _style(),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+        image.isNotEmpty
+            ? Center(
+          child: Image(
+            image: CachedNetworkImageProvider(
+                image??""),
+            width: 100,
+            fit: BoxFit.cover,
+          ),
+        )
+            : Text(''),
+        Divider(
+          color: Color(0x29000000),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+      ],
+    );
+  }
+}
+
+class DetailWidget extends StatelessWidget {
+  const DetailWidget({
+    required this.title,
+    required this.subtitle,
+    super.key});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: _style(),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+        Text(subtitle??""),
+
+        Divider(
+          color: Color(0x29000000),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+      ],
+    );
+  }
+}
+TextStyle _style() {
+  return TextStyle(
+      letterSpacing: 0.0,
+      color: Color(0xff141414),
+      fontFamily: "Open Sans",
+      fontWeight: FontWeight.w700,
+      fontSize: 15.0);
 }

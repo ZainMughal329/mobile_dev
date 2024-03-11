@@ -11,6 +11,7 @@ import 'package:lesedi/forms/filePickerGromeMonthIncome.dart';
 import 'package:lesedi/forms/filePickerSpouseID.dart';
 import 'package:lesedi/forms/filerPickerAccountStatment.dart';
 import 'package:lesedi/forms/household.dart';
+import 'package:lesedi/forms/water_and_electricity_information/view/water_and_electricity_info_view.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:camera/camera.dart';
 import 'package:lesedi/helpers/utils.dart';
@@ -404,10 +405,12 @@ class _AttachmentsState extends State<Attachments> {
                 print("Applicant ID :::: ${widget.applicant_id}");
                 print(
                     "Previous Form Submitted ::: ${widget.previousFormSubmitted}");
-
                 Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => Declaration(
-                        widget.applicant_id, widget.previousFormSubmitted)));
+                    pageBuilder: (_, __, ___) => WaterAndElectricityView(
+                        applicant_id:    widget.applicant_id,previousFormSubmitted:  widget.previousFormSubmitted)));
+                // Navigator.of(context).push(PageRouteBuilder(
+                //     pageBuilder: (_, __, ___) => Declaration(
+                //         widget.applicant_id, widget.previousFormSubmitted)));
               },
               child: Align(
                 alignment: Alignment.bottomRight,
