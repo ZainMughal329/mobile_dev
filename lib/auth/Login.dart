@@ -33,8 +33,8 @@ class _LoginState extends State<Login> {
 
   bool _isLoading = false;
   bool _isSecure = true;
-  TextEditingController emailController = TextEditingController(text: "tester@lesedi.com");
-  TextEditingController passwordController = TextEditingController(text: "123456");
+  TextEditingController emailController = TextEditingController(text: "hanan@gmail.com");
+  TextEditingController passwordController = TextEditingController(text: "11223344");
   SharedPreferences? prefs;
   String? _checkUserAuthImage;
 

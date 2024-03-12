@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/global.dart';
@@ -143,6 +144,8 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
   String? telephone_number;
   String? applicant_id_proof;
   String? spouse_id;
+
+
   var proof_of_income;
   var spouse_credit_report;
   var affidavits;
@@ -160,6 +163,14 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
   var dependent_ids;
   List<OccupantIds> response = [];
   List<BankDetails> bankDetails = [];
+
+  String? water_meter_number;
+  String? water_meter_reading;
+  String? electricity_meter_number;
+  String? electricity_meter_reading;
+  List<OccupantIds> water_meter_attachments=[];
+  List<OccupantIds> electricity_meter_attachments=[];
+  List<OccupantIds> property_meter_attachments=[];
 
 
   getApplicantDetails() async {
@@ -180,7 +191,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
       jsonResponse = json.decode(response.body);
 
       Map<String, dynamic> dataHolder = jsonResponse;
-      print(jsonResponse);
+      log("jsonResponse => $jsonResponse");
       var dataSort = dataHolder.values.toList();
 
       print(dataSort);
@@ -236,6 +247,26 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
         occupant_id = responseM.occupantId;
         bankDetails = responseM.bankDetails??[];
         age = responseM.age.toString();
+        water_meter_number=responseM.water_meter_number;
+        water_meter_reading=responseM.water_meter_reading;
+        electricity_meter_number=responseM.electricity_meter_number;
+        electricity_meter_reading=responseM.electricity_meter_reading;
+        print("water response ${responseM.property_meter_attachments}");
+        if(responseM.water_meter_attachments!=null)
+        {
+          water_meter_attachments=responseM.water_meter_attachments!;
+
+        }
+        if(responseM.electricity_meter_attachments!=null)
+          {
+            electricity_meter_attachments=responseM.electricity_meter_attachments!;
+
+          }
+        if(responseM.property_meter_attachments!=null)
+        {
+          property_meter_attachments=responseM.property_meter_attachments!;
+
+        }
 
         if (applicant_id_proof != null) {
           String fileName = applicant_id_proof??"".split('/').last;
@@ -1196,39 +1227,150 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
           SizedBox(
             height: 20,
           ),
-//           Text(
-//             "Bills",
-//             style: TextStyle(
-//                 letterSpacing: 0.0,
-//                 color: Color(0xff141414),
-//                 fontFamily: "Open Sans",
-//                 fontWeight: FontWeight.w700,
-//                 fontSize: 18.0),
-//           ),
-//           Container(
-//             alignment: Alignment.center,
-//               padding: EdgeInsets.only(
-//                   top: 20.0, bottom: 12, left: 20, right: 20),
-//             margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
-// //          height: 665.0,
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.circular(5.0),
-//               color: const Color(0xffffffff),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: const Color(0x29000000),
-//                   offset: Offset(0, 3),
-//                   blurRadius: 6,
-//                 ),
-//               ],
-//             ),
-//               child:Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   DetailWidget(title: "Marital Status", subtitle: marital_status??""),
-//                 ],
-//               )
-//           ),
+          Text(
+            "Bills",
+            style: TextStyle(
+                letterSpacing: 0.0,
+                color: Color(0xff141414),
+                fontFamily: "Open Sans",
+                fontWeight: FontWeight.w700,
+                fontSize: 18.0),
+          ),
+          Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(
+                  top: 20.0, bottom: 12, left: 20, right: 20),
+              margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
+//          height: 665.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                color: const Color(0xffffffff),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x29000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DetailWidget(title: "Water Meter Number", subtitle:water_meter_number??""),
+                  DetailWidget(title: "Water Meter Reading", subtitle:water_meter_reading??""),
+                  // DetailImageWidget(title: "Water Meter Attachment", image:water_meter_attachments??""),
+
+                  Text(
+                    "Water Meter Attachments",
+                    style: _style(),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  water_meter_attachments.isNotEmpty
+                      ? Container(
+                    height: 150,
+                    margin: EdgeInsets.only(top: 10),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      children: List.generate(
+                        water_meter_attachments.length,
+                            (index) => Image(
+                          image: CachedNetworkImageProvider(
+                              water_meter_attachments[index].url??""),
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                      : Text(''),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Divider(
+                    color: Color(0x29000000),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  DetailWidget(title: "Electricity Meter Number", subtitle:electricity_meter_number??""),
+                  DetailWidget(title: "Electricity Meter Reading", subtitle:electricity_meter_reading??""),
+                  // DetailImageWidget(title: "Electricity Meter Attachment", image:electricity_meter_attachments??""),
+                  // DetailImageWidget(title: "Property Attachments", image:property_meter_attachments??""),
+
+                  Text(
+                    "Electricity Meter Attachments",
+                    style: _style(),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  electricity_meter_attachments.isNotEmpty
+                      ? Container(
+                    height: 150,
+                    margin: EdgeInsets.only(top: 10),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      children: List.generate(
+                        electricity_meter_attachments.length,
+                            (index) => Image(
+                          image: CachedNetworkImageProvider(
+                              electricity_meter_attachments[index].url??""),
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                      : Text(''),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Divider(
+                    color: Color(0x29000000),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    "Property Attachments",
+                    style: _style(),
+                  ),
+
+                  SizedBox(
+                    height: 4,
+                  ),
+                  property_meter_attachments.isNotEmpty
+                      ? Container(
+                    height: 150,
+                    margin: EdgeInsets.only(top: 10),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      children: List.generate(
+                        property_meter_attachments.length,
+                            (index) => Image(
+                          image: CachedNetworkImageProvider(
+                              property_meter_attachments[index].url??""),
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                      : Text(''),
+                  Divider(
+                    color: Color(0x29000000),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                ],
+              )
+          ),
         ],
       )),
     );

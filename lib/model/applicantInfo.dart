@@ -43,48 +43,63 @@ class ApplicantInfo {
   int? age;
   double? userLatitude;
   double? userLongitude;
+  String? water_meter_number;
+  String? water_meter_reading;
+  String? electricity_meter_number;
+  String? electricity_meter_reading;
+  List<OccupantIds>? water_meter_attachments;
+  List<OccupantIds>? electricity_meter_attachments;
+  List<OccupantIds>? property_meter_attachments;
 
-  ApplicantInfo(
-      {this.firstName,
-        this.surname,
-        this.idNumber,
-        this.dob,
-        this.address,
-        this.cellphoneNumber,
-        this.telephoneNumber,
-        this.email,
-        this.accountNumber,
-        this.standNumber,
-        this.servicesLinked,
-        this.bankDetails,
-        this.eskomAccountNumber,
-        this.financialYear,
-        this.maritalStatus,
-        this.employmentStatus,
-        this.grossMonthlyIncome,
-        this.dateOfApplication,
-        this.signatureDate,
-        this.spouseIdNumber,
-        this.occupantId,
-        this.applicantIdProof,
-        this.spouseId,
-        this.houseHoldList,
-        this.proofOfIncomes,
-      this.spouseCreditReport,
-        this.accountStatement,
-        this.wardNumber,
-        this.sapsAffidavit,
-        this.occupantIds,
-        this.decreeDivorce,
-        this.affidavits,
-        this.deathCertificate,
-        this.marriageCertificate,
-        this.additionalFile,
-        this.signature,
-        this.remarks,
-        this.age,
-        this.userLatitude,
-        this.userLongitude});
+  ApplicantInfo({
+    this.firstName,
+    this.surname,
+    this.idNumber,
+    this.dob,
+    this.address,
+    this.cellphoneNumber,
+    this.telephoneNumber,
+    this.email,
+    this.accountNumber,
+    this.standNumber,
+    this.servicesLinked,
+    this.bankDetails,
+    this.eskomAccountNumber,
+    this.financialYear,
+    this.maritalStatus,
+    this.employmentStatus,
+    this.grossMonthlyIncome,
+    this.dateOfApplication,
+    this.signatureDate,
+    this.spouseIdNumber,
+    this.occupantId,
+    this.applicantIdProof,
+    this.spouseId,
+    this.houseHoldList,
+    this.proofOfIncomes,
+    this.spouseCreditReport,
+    this.accountStatement,
+    this.wardNumber,
+    this.sapsAffidavit,
+    this.occupantIds,
+    this.decreeDivorce,
+    this.affidavits,
+    this.deathCertificate,
+    this.marriageCertificate,
+    this.additionalFile,
+    this.signature,
+    this.remarks,
+    this.age,
+    this.userLatitude,
+    this.userLongitude,
+    this.water_meter_number,
+    this.water_meter_reading,
+    this.water_meter_attachments,
+    this.electricity_meter_number,
+    this.electricity_meter_reading,
+    this.electricity_meter_attachments,
+    this.property_meter_attachments,
+  });
 
   ApplicantInfo.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
@@ -112,6 +127,34 @@ class ApplicantInfo {
     marriageCertificate = json['marriage_certificate'];
     decreeDivorce = json['decree_divorce'];
     wardNumber = json['ward_number'];
+    water_meter_number = json['water_meter_number'];
+    water_meter_reading = json['water_meter_reading'];
+    electricity_meter_number = json['electricity_meter_number'];
+    electricity_meter_reading = json['electricity_meter_reading'];
+
+
+    if(json['water_meter_attachment']!=null)
+      {
+        water_meter_attachments = <OccupantIds>[];
+        json['water_meter_attachment'].forEach((v) {
+          water_meter_attachments?.add(new OccupantIds.fromJson(v));
+        });
+      }
+    if(json['electricity_meter_attachment']!=null)
+    {
+      electricity_meter_attachments = <OccupantIds>[];
+      json['electricity_meter_attachment'].forEach((v) {
+        electricity_meter_attachments?.add(new OccupantIds.fromJson(v));
+      });
+    }
+    if(json['property_attachment']!=null)
+    {
+      property_meter_attachments = <OccupantIds>[];
+      json['property_attachment'].forEach((v) {
+        property_meter_attachments?.add(new OccupantIds.fromJson(v));
+      });
+    }
+
     if (json['proof_of_incomes'] != null) {
       proofOfIncomes = <ProofOfIncomes>[];
       json['proof_of_incomes'].forEach((v) {
@@ -131,7 +174,6 @@ class ApplicantInfo {
         deathCertificate?.add(new DeathCertificate.fromJson(v));
       });
     }
-
 
     if (json['affidavits'] != null) {
       affidavits = <Affidavits>[];
@@ -245,8 +287,7 @@ class ApplicantInfo {
           this.deathCertificate?.map((v) => v.toJson()).toList();
     }
     if (this.houseHoldList != null) {
-      data['household'] =
-          this.houseHoldList?.map((v) => v.toJson()).toList();
+      data['household'] = this.houseHoldList?.map((v) => v.toJson()).toList();
     }
     data['account_statement'] = this.accountStatement;
     data['saps_affidavit'] = this.sapsAffidavit;
@@ -301,6 +342,7 @@ class ProofOfIncomes {
     return data;
   }
 }
+
 class BankDetails {
   int? id;
   String? bankNumber;
@@ -312,12 +354,12 @@ class BankDetails {
 
   BankDetails(
       {this.id,
-        this.bankNumber,
-        this.bankAccountNumber,
-        this.branchCode,
-        this.applicationId,
-        this.createdAt,
-        this.updatedAt});
+      this.bankNumber,
+      this.bankAccountNumber,
+      this.branchCode,
+      this.applicationId,
+      this.createdAt,
+      this.updatedAt});
 
   BankDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -399,7 +441,6 @@ class HouseHold {
   }
 }
 
-
 class Affidavits {
   String? url;
   String? contentType;
@@ -437,6 +478,7 @@ class MarriageCertificate {
     return data;
   }
 }
+
 class AdditionalFile {
   String? url;
   String? contentType;
@@ -493,6 +535,7 @@ class AdditionalIds {
     return data;
   }
 }
+
 class AffidavitsIds {
   String? url;
   String? contentType;
@@ -511,6 +554,7 @@ class AffidavitsIds {
     return data;
   }
 }
+
 class Remarks {
   String? userType;
   String? remarks;

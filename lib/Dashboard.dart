@@ -308,6 +308,7 @@ class _DashboardState extends State<Dashboard> {
                     SharedPreferences sharedPreferences =
                         await SharedPreferences.getInstance();
                     var role = sharedPreferences.getString('role');
+                    print("role ${role}");
                     print(role);
                     if (widget.userRole == 'reviewer' ||
                         role == 'aspiring_reviewer') {

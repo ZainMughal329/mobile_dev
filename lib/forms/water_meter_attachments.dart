@@ -1,20 +1,29 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/forms/water_and_electricity_information/notifier/water_and_electricity_form_notifier.dart';
 import 'package:lesedi/helpers/utils.dart';
 
-class WaterMeterAttachments extends StatelessWidget {
-  const WaterMeterAttachments(
+class MeterAttachments extends StatelessWidget {
+  const MeterAttachments(
       {required this.applicant_id,
       required this.notifier,
       required this.title,
-      required this.imageName,
+      required this.isLoading,
+      required this.attachments,
+      required this.onCameraTap,
+      required this.onGalleryTap,
       super.key});
 
   final WaterAndElectricityFormNotifier notifier;
   final int applicant_id;
   final String title;
-  final String imageName;
+  final List<String> attachments;
+  final bool isLoading;
+  final Function() onCameraTap;
+  final Function() onGalleryTap;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +55,7 @@ class WaterMeterAttachments extends StatelessWidget {
               children: <Widget>[
                 Align(
                     alignment: Alignment.centerRight,
-                    child: !notifier.isWaterAttachments
+                    child: !isLoading
                         ? Icon(
                             Icons.file_upload,
                             color: Colors.black,
@@ -69,18 +78,12 @@ class WaterMeterAttachments extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     Utils.alertDialog(
-                        context: context,
-                        onCamera: () => notifier.getImage(
-                            context: context,
-                            applicant_id: applicant_id,
-                            image_name: imageName),
-                        onGallery: () => notifier.getImage(
-                            context: context,
-                            isCamera: false,
-                            applicant_id: applicant_id,
-                            image_name: imageName));
+                      context: context,
+                      onCamera: onCameraTap,
+                      onGallery: onGalleryTap,
+                    );
                   },
-                  child: !notifier.isWaterAttachments
+                  child: !isLoading
                       ? Text(
                           'Upload',
                           style: TextStyle(
@@ -112,6 +115,38 @@ class WaterMeterAttachments extends StatelessWidget {
                     colors: <Color>[Color(0xFFFFFFFF), Color(0xFFFFFFFF)])),
           ),
         ),
+//         notifier.waterMeterAttachmentsList != null
+//             ? Container(
+//           height: notifier.waterMeterAttachmentsList != null ? 150 : 0,
+//           child: CachedNetworkImage(
+//             placeholder: (context, url) => CircularProgressIndicator(),
+//             imageUrl: notifier.waterMeterAttachmentsList != null
+//                 ? spouse_id_storage
+//                 : 'http://via.placeholder.com/1x1',
+// //            height: 150,
+//             errorWidget: (context, url, error) => Icon(Icons.error),
+//           ),
+//         )
+//             :
+        attachments.isNotEmpty
+            ? Container(
+                padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                alignment: Alignment.center,
+                height: 150,
+                child: ListView(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    children: List.generate(attachments.length, (index) {
+                      return Center(
+                        child: Image.file(
+                          File(attachments[index]),
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    })),
+              )
+            : SizedBox(),
       ],
     );
   }

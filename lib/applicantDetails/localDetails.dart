@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lesedi/app_color.dart';
+import 'package:lesedi/applicantDetails/details.dart';
 
 class LocalDetails extends StatefulWidget {
   Map<String, dynamic> map = Map<String, dynamic>();
@@ -19,6 +20,9 @@ class _LocalDetailsState extends State<LocalDetails> {
   @override
   Widget build(BuildContext context) {
     log(widget.map.toString());
+    print("property_attachment => ${widget.map["property_attachment[]"]}");
+    print("electric_attachment => ${widget.map["electricity_meter_attachment[]"]}");
+    print("water_attachment => ${widget.map["water_meter_attachment[]"]}");
     print("called");
     return Scaffold(
       appBar: AppBar(
@@ -762,16 +766,59 @@ class _LocalDetailsState extends State<LocalDetails> {
 //                            )
                             )
                           : Text(''),
+
+
                     ],
                   ),
                 ),
+
               ],
             ),
-          )
+          ),
+          Text(
+            "Bills",
+            style: TextStyle(
+                letterSpacing: 0.0,
+                color: Color(0xff141414),
+                fontFamily: "Open Sans",
+                fontWeight: FontWeight.w700,
+                fontSize: 18.0),
+          ),
+          Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(
+                  top: 20.0, bottom: 12, left: 20, right: 20),
+              margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
+//          height: 665.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                color: const Color(0xffffffff),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x29000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DetailWidget(title: "Water Meter Number", subtitle:widget.map["water_meter_number"]??""),
+                  DetailWidget(title: "Water Meter Reading", subtitle:widget.map["water_meter_reading"]??""),
+                  OfflineDetailImageWidget(title: "Water Meter Attachment", image:widget.map["water_meter_attachment"]??""),
+                  DetailWidget(title: "Electricity Meter Number", subtitle:widget.map["electricity_meter_number"]??""),
+                  DetailWidget(title: "Electricity Meter Reading", subtitle:widget.map["electricity_meter_reading"]??""),
+                  OfflineDetailImageWidget(title: "Electricity Meter Attachment", image:widget.map["electricity_meter_attachment"]??""),
+                  OfflineDetailImageWidget(title: "Property Attachments", image:widget.map["electricity_meter_attachment"]??""),
+                ],
+              )
+          ),
         ],
       )),
     );
   }
+
 
   TextStyle _style() {
     return TextStyle(
@@ -825,5 +872,53 @@ class _LocalDetailsState extends State<LocalDetails> {
     } else {
       return SizedBox();
     }
+  }
+}
+class OfflineDetailImageWidget extends StatelessWidget {
+  const OfflineDetailImageWidget({
+    required this.title,
+    required this.image,
+    super.key});
+
+  final String title;
+  final String image;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: _style(),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+        image.isNotEmpty
+            ? Center(
+          child: Image.file(
+            File(image),
+            width: 100,
+            fit: BoxFit.cover,
+          ),
+//                            )
+        )
+            : Text(''),
+        Divider(
+          color: Color(0x29000000),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+      ],
+    );
+  }
+  TextStyle _style() {
+    return TextStyle(
+        letterSpacing: 0.0,
+        color: Color(0xff141414),
+        fontFamily: "Open Sans",
+        fontWeight: FontWeight.w700,
+        fontSize: 15.0);
   }
 }

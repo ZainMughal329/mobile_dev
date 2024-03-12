@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/Dashboard.dart';
 import 'package:lesedi/forms/PersonalInformationB1.dart';
@@ -246,117 +247,140 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
     // checkInternetAvailability();
     LocalStorage.localStorage.saveFormData(data);
     if (MyConstants.myConst.internet ?? false) {
-      var jsonResponse;
-      if (applicant_id == null) {
-        print('yuppp');
-        http.Response response = await http.post(
-            Uri.parse(
-                "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
-            headers: {
-              'Content-Type': 'application/json',
-              'uuid': userID??"",
-              'Authentication': authToken??""
-            },
-            body: jsonEncode(data));
+      try{
+        var jsonResponse;
+        if (applicant_id == null) {
+          print('yuppp');
+          http.Response response = await http.post(
+              Uri.parse(
+                  "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
+              headers: {
+                'Content-Type': 'application/json',
+                'uuid': userID??"",
+                'Authentication': authToken??""
+              },
+              body: jsonEncode(data));
 
-        print(response.headers);
+          print(response.headers);
 
-        print(response.body);
-        print(data);
-        if (response.statusCode == 200) {
-          print('sss');
-          jsonResponse = jsonDecode(response.body);
-          LocalStorage.localStorage.clearCurrentApplication();
+          print(response.body);
+          print(data);
+          if (response.statusCode == 200) {
+            print('sss');
+            jsonResponse = jsonDecode(response.body);
+            LocalStorage.localStorage.clearCurrentApplication();
 
 //      showToastMessage('Some thing Went Wrong try later');
-          print(jsonResponse);
-          sharedPreferences.setInt(
-              'applicant_id', jsonResponse['application_id']);
-          applicant_id = sharedPreferences.getInt('applicant_id');
-          print('id');
-          print(applicant_id);
-          setState(() {
-            print('done');
+            print(jsonResponse);
+            sharedPreferences.setInt(
+                'applicant_id', jsonResponse['application_id']);
+            applicant_id = sharedPreferences.getInt('applicant_id');
+            print('id');
+            print(applicant_id);
+            setState(() {
+              print('done');
 
-            _isLoading = false;
+              _isLoading = false;
 //      print(token);
-            showToastMessage('Form Submitted');
-            previousFormSubmitted = true;
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => new
-                // Attachments(applicant_id, "30", previousFormSubmitted)
-                PersonalInformationB1(
-                    applicant_id, function, previousFormSubmitted)
-            ));
+              showToastMessage('Form Submitted');
+              previousFormSubmitted = true;
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => new
+                  // Attachments(applicant_id, "30", previousFormSubmitted)
+                  PersonalInformationB1(
+                      applicant_id, function, previousFormSubmitted)
+              ));
 //        );
-          });
-        } else {
-          setState(() {
-            _isLoading = false;
-            jsonResponse = json.decode(response.body);
-            print('data');
-            showToastMessage(
-                jsonResponse.toString().replaceAll("[\\[\\](){}]", ""));
-          });
-        }
-      } else if (applicant_id != null) {
-        print('weeeee');
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+              jsonResponse = json.decode(response.body);
+              print('data');
+              showToastMessage(
+                  jsonResponse.toString().replaceAll("[\\[\\](){}]", ""));
+            });
+          }
+        } else if (applicant_id != null) {
+          print('weeeee');
 
-        Map data = {
-          'application_id': applicant_id,
-          'date_of_application': dateOfApplication,
-          'surname': surname,
-          'first_name': firstname,
-          'address': address,
-          'account_number': municipalAccountNumber,
-          'dob': birthDate,
-          'occupant_id': dependantID,
-          'spouse_id_number': spouseID,
-          'id_number': applicantID,
-        };
-        var jsonResponse;
-        http.Response response = await http.post(
-            Uri.parse(
-                "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
-            headers: {
-              'Content-Type': 'application/json',
-              'uuid': userID??"",
-              'Authentication': authToken??""
-            },
-            body: jsonEncode(data));
+          Map data = {
+            'application_id': applicant_id,
+            'date_of_application': dateOfApplication,
+            'surname': surname,
+            'first_name': firstname,
+            'address': address,
+            'account_number': municipalAccountNumber,
+            'dob': birthDate,
+            'occupant_id': dependantID,
+            'spouse_id_number': spouseID,
+            'id_number': applicantID,
+          };
+          var jsonResponse;
+          http.Response response = await http.post(
+              Uri.parse(
+                  "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
+              headers: {
+                'Content-Type': 'application/json',
+                'uuid': userID??"",
+                'Authentication': authToken??""
+              },
+              body: jsonEncode(data));
 
-        print(response.headers);
+          print(response.headers);
 
-        print(response.body);
-        print(data);
-        if (response.statusCode == 200) {
-          print('sss');
-          jsonResponse = jsonDecode(response.body);
-          sharedPreferences.setInt('applicant_id', data['application_id']);
-          LocalStorage.localStorage.clearCurrentApplication();
-          setState(() {
-            print('done');
+          print(response.body);
+          print(data);
+          if (response.statusCode == 200) {
+            print('sss');
+            jsonResponse = jsonDecode(response.body);
+            sharedPreferences.setInt('applicant_id', data['application_id']);
+            LocalStorage.localStorage.clearCurrentApplication();
+            setState(() {
+              print('done');
 
-            _isLoading = false;
-            showToastMessage('Form Submitted');
-            previousFormSubmitted = true;
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => new
-                // Attachments(applicant_id, "30", previousFormSubmitted)
-                PersonalInformationB1(
-                    applicant_id, function, previousFormSubmitted)
-            ));
-          });
-        } else {
-          setState(() {
-            _isLoading = false;
-            jsonResponse = json.decode(response.body);
-            print('data');
+              _isLoading = false;
+              showToastMessage('Form Submitted');
+              previousFormSubmitted = true;
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => new
+                  // Attachments(applicant_id, "30", previousFormSubmitted)
+                  PersonalInformationB1(
+                      applicant_id, function, previousFormSubmitted)
+              ));
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+              jsonResponse = json.decode(response.body);
+              print('data');
 //        print(jsonResponse);
-            showToastMessage(jsonResponse['message']);
-          });
+              showToastMessage(jsonResponse['message']);
+            });
+          }
         }
       }
+      on SocketException catch (e) {
+        Fluttertoast.showToast(msg: "Internet not available");
+        setState(() {
+          _isLoading = false;
+        });
+        print('dsa');
+        print(e);
+      } on FormatException catch (e) {
+        Fluttertoast.showToast(msg: "Bad Request");
+        setState(() {
+          _isLoading = false;
+        });
+        print(e);
+      } catch (e) {
+        Fluttertoast.showToast(msg: "Something went wrong");
+        setState(() {
+          _isLoading = false;
+        });
+        print(e);
+      }
+
     } else {
       setState(() {
         _isLoading = false;

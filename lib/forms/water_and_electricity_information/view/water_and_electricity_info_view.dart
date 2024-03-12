@@ -12,7 +12,7 @@ class WaterAndElectricityView extends ConsumerWidget {
       super.key});
 
   final int applicant_id;
-  final bool previousFormSubmitted;
+  late final bool previousFormSubmitted;
 
   final waterAndElectricityFormProvider = ChangeNotifierProvider((ref) {
     return WaterAndElectricityFormNotifier();
@@ -48,61 +48,180 @@ class WaterAndElectricityView extends ConsumerWidget {
           ),
         ),
       ),
-       body: Container(
-         alignment: Alignment.center,
-         margin: EdgeInsets.only(left: 30, right: 30, top: 40, bottom: 40),
-         padding:
-         const EdgeInsets.only(left: 20.0, right: 20, bottom: 20),
-         decoration: BoxDecoration(
-           borderRadius: BorderRadius.circular(5.0),
-           color: const Color(0xffffffff),
-           boxShadow: [
-             BoxShadow(
-               color: const Color(0x29000000),
-               offset: Offset(0, 3),
-               blurRadius: 6,
-             ),
-           ],
-         ),
-         child: SingleChildScrollView(
-           child: Column(
-             children: [
-               FormFieldWidget(
-                 controller: notifier.waterMeterNumberController,
-                 label: "Water Meter Number",
-               ),
-               FormFieldWidget(
-                 controller: notifier.waterMeterNumberController,
-                 label: "Water Meter Readings",
-               ),
-               FormFieldWidget(
-                 controller: notifier.waterMeterNumberController,
-                 label: "Electricity Meter Number",
-               ),
-               FormFieldWidget(
-                 controller: notifier.waterMeterNumberController,
-                 label: "Electricity Meter Readings",
-               ),
-           
-               WaterMeterAttachments(
-                 title: "Water Attachments",
-                 notifier: notifier,
-                 applicant_id: applicant_id, imageName: "water_meter_attachment",
-               ),
-               WaterMeterAttachments(
-                 title: "Electricity Attachments",
-                 notifier: notifier,
-                 applicant_id: applicant_id,imageName: "electricity_meter_attachment",
-               ),     WaterMeterAttachments(
-                 title: "Property Attachments",
-                 notifier: notifier,
-                 applicant_id: applicant_id,
-                 imageName: "property_attachment",
-               ),
-             ],
-           ),
-         ),
-       ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(left: 30, right: 30, top: 40, bottom: 40),
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                color: const Color(0xffffffff),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x29000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  FormFieldWidget(
+                    controller: notifier.waterMeterNumberController,
+                    label: "Water Meter Number",
+                  ),
+                  FormFieldWidget(
+                    controller: notifier.waterMeterReadingController,
+                    label: "Water Meter Readings",
+                  ),
+                  FormFieldWidget(
+                    controller: notifier.electricityMeterNumberController,
+                    label: "Electricity Meter Number",
+                  ),
+                  FormFieldWidget(
+                    controller: notifier.electricityMeterReadingsController,
+                    label: "Electricity Meter Readings",
+                  ),
+                  MeterAttachments(
+                    title: "Water Attachments",
+                    notifier: notifier,
+                    applicant_id: applicant_id,
+                    attachments: notifier.waterMeterAttachmentsList,
+                    isLoading: notifier.isWaterAttachments,
+                    onCameraTap: () {
+                      notifier.getWaterAttachments(
+                          context: context,
+                          applicant_id: applicant_id,
+                          image_name: "water_meter_attachment");
+                      Navigator.pop(context);
+                    },
+                    onGalleryTap: () {
+                      notifier.getWaterAttachments(
+                          context: context,
+                          isCamera: false,
+                          applicant_id: applicant_id,
+                          image_name: "water_meter_attachment");
+                      Navigator.pop(context);
+                    },
+                  ),
+                  MeterAttachments(
+                    title: "Electricity Attachments",
+                    notifier: notifier,
+                    applicant_id: applicant_id,
+                    attachments: notifier.electricMeterAttachmentsList,
+                    isLoading: notifier.isElectricityAttachments,
+                    onCameraTap: () {
+                      notifier.getElectricAttachments(
+                          context: context,
+                          applicant_id: applicant_id,
+                          image_name: "electricity_meter_attachment");
+                      Navigator.pop(context);
+                    },
+                    onGalleryTap: () {
+                      notifier.getElectricAttachments(
+                          context: context,
+                          isCamera: false,
+                          applicant_id: applicant_id,
+                          image_name: "electricity_meter_attachment");
+                      Navigator.pop(context);
+                    },
+                  ),
+                  MeterAttachments(
+                    title: "Property Attachments",
+                    notifier: notifier,
+                    applicant_id: applicant_id,
+                    attachments: notifier.propertyAttachmentsList,
+                    isLoading: notifier.isPropertyAttachments,
+                    onCameraTap: () {
+                      notifier.getPropertyAttachments(
+                          context: context,
+                          applicant_id: applicant_id,
+                          image_name: "property_attachment");
+                      Navigator.pop(context);
+                    },
+                    onGalleryTap: () {
+                      notifier.getPropertyAttachments(
+                          context: context,
+                          isCamera: false,
+                          applicant_id: applicant_id,
+                          image_name: "property_attachment");
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 30),
+              child: InkWell(
+                onTap: () async {
+                  print(applicant_id);
+                  bool? previousSubmitted = await notifier.submitForm(
+                      context: context,
+                      applicantId: applicant_id,
+                      previousFormSubmitted: previousFormSubmitted);
+                  if(previousSubmitted!=null)
+                    {
+                       previousFormSubmitted=previousSubmitted;
+                    }
+                  // setState(() {
+                  //   _isLoading = true;
+                  // });
+                  // // await checkFormStatus();
+                  // print("Applicant ID :::: ${widget.applicant_id}");
+                  // print(
+                  //     "Previous Form Submitted ::: ${widget.previousFormSubmitted}");
+                  // Navigator.of(context).push(PageRouteBuilder(
+                  //     pageBuilder: (_, __, ___) => WaterAndElectricityView(
+                  //         applicant_id:    widget.applicant_id,previousFormSubmitted:  widget.previousFormSubmitted)));
+                  // // Navigator.of(context).push(PageRouteBuilder(
+                  // //     pageBuilder: (_, __, ___) => Declaration(
+                  // //         widget.applicant_id, widget.previousFormSubmitted)));
+                },
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                      margin: EdgeInsets.only(right: 0),
+//                alignment: Alignment.bottomRight,
+                      width: 80.0,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        color: AppColors.PRIMARY_COLOR,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x29000000),
+                            offset: Offset(-4, 0),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                            child: notifier.isFormLoading
+                                ? Container(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      valueColor:
+                                          new AlwaysStoppedAnimation<Color>(
+                                              Colors.white),
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 30,
+                                    color: Colors.white,
+                                  )),
+                      )),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -154,21 +273,24 @@ class FormFieldWidget extends StatelessWidget {
     );
   }
 }
-showAlertDialog({required BuildContext context,required String userRole,required int applicantID}) {
+
+showAlertDialog(
+    {required BuildContext context,
+    required String userRole,
+    required int applicantID}) {
   // set up the buttons
-  Widget cancelButton = TextButton (
+  Widget cancelButton = TextButton(
     child: Text("Cancel"),
     onPressed: () {
       Navigator.of(context).pop(false);
     },
   );
-  Widget continueButton = TextButton (
+  Widget continueButton = TextButton(
     child: Text("Okay"),
     onPressed: () {
 //        Navigator.of(context).pop(true);
       Navigator.of(context).pushReplacement(PageRouteBuilder(
-          pageBuilder: (_, __, ___) =>
-              Dashboard(userRole, applicantID)));
+          pageBuilder: (_, __, ___) => Dashboard(userRole, applicantID)));
     },
   );
 
