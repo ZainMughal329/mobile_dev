@@ -158,14 +158,15 @@ class WaterAndElectricityView extends ConsumerWidget {
               child: InkWell(
                 onTap: () async {
                   print(applicant_id);
-                  bool? previousSubmitted = await notifier.submitForm(
+                  // bool? previousSubmitted =
+                  await notifier.submitForm(
                       context: context,
                       applicantId: applicant_id,
                       previousFormSubmitted: previousFormSubmitted);
-                  if(previousSubmitted!=null)
-                    {
-                       previousFormSubmitted=previousSubmitted;
-                    }
+                  // if(previousSubmitted!=null)
+                  //   {
+                  //      previousFormSubmitted=previousSubmitted;
+                  //   }
                   // setState(() {
                   //   _isLoading = true;
                   // });

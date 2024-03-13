@@ -226,7 +226,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
     print(userID);
     print('okay');
     Map<String, dynamic> data = {
-      // 'application_id': widget.applicant_id,
+      'application_id': widget.applicant_id,
       'date_of_application': dateOfApplication,
       'latitude': lat,
       'longitude': lng,
@@ -272,6 +272,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
 
 //      showToastMessage('Some thing Went Wrong try later');
             print(jsonResponse);
+            print("applicant id is ${jsonResponse['application_id']}");
             sharedPreferences.setInt(
                 'applicant_id', jsonResponse['application_id']);
             applicant_id = sharedPreferences.getInt('applicant_id');
@@ -391,7 +392,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
           builder: (BuildContext context) => new
           // Attachments(applicant_id, "30", previousFormSubmitted)
           PersonalInformationB1(
-              widget.applicant_id, function, previousFormSubmitted)
+              widget.applicant_id??"", function, previousFormSubmitted)
       ));
     }
   }

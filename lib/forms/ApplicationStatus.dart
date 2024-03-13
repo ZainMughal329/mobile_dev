@@ -126,7 +126,7 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
     print("Applicant ID is ::: $applicant_id");
     print("Widget Applicant ID is ::: ${widget.applicant_id}");
     // print('okay');
-    Map<dynamic, dynamic> data = {
+    Map<String, dynamic>? data = {
       'application_id': applicant_id,
       'employment_status': checkBoxValue,
       'gross_monthly_income': grossMonthlyController.text,
@@ -190,8 +190,8 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
           sharedPreferences.setInt('applicant_id', apid['application_id']);
           widget.applicant_id = apid['application_id'];
         } else {
-          sharedPreferences.setInt('applicant_id', data['application_id']);
-          widget.applicant_id = data['application_id'];
+          sharedPreferences.setInt('applicant_id', data?['application_id']);
+          widget.applicant_id = data?['application_id'];
         }
 
         // print('data');
@@ -844,10 +844,10 @@ class _ApplicationStatusState extends State<ApplicationStatus> {
                       currentFocus.focusedChild != null) {
                     currentFocus.focusedChild?.unfocus();
                   }
-                     Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> MaritalStatus(1,"",false)));
-                  // if (!_isLoading) {
-                  //   submitForm(checkBoxValue);
-                  // }
+                     // Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> MaritalStatus(1,"",false)));
+                  if (!_isLoading) {
+                    submitForm(checkBoxValue);
+                  }
                 },
                 child: Align(
                   alignment: Alignment.bottomRight,

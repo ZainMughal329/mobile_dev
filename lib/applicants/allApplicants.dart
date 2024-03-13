@@ -343,7 +343,7 @@ class _AllApplicantsState extends State<AllApplicants> {
                                             ),
                                           ),
                                           Text(
-                                            mapData[position]['id_number'],
+                                            mapData[position]['id_number']??"",
                                             style: TextStyle(
                                               fontFamily: "sans",
                                               fontWeight: FontWeight.w300,

@@ -220,7 +220,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
   RegExp pattern = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-  Future<Null> submitForm(
+  Future submitForm(
       String email,
       wardNumber,
       municipalAccountNumber,
@@ -243,7 +243,7 @@ class _PersonalInformationB1State extends State<PersonalInformationB1> {
     print('okay');
     print(userID);
     print('okay');
-    Map<dynamic, dynamic>? data = {
+    Map<String, dynamic>? data = {
       'application_id': widget.applicant_id,
       'email': email,
       'ward_number': wardNumber,

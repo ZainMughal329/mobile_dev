@@ -108,7 +108,7 @@ class _MaritalStatusState extends State<MaritalStatus> {
     print('okay');
     print(applicant_id);
     print('okay');
-    Map<dynamic, dynamic>? data = {
+    Map<String, dynamic>? data = {
       'application_id': applicant_id,
       'marital_status': checkBoxValue
 //      'role': _selectedType
@@ -643,17 +643,17 @@ class _MaritalStatusState extends State<MaritalStatus> {
               InkWell(
                 onTap: () {
                   print("Gesture Detector");
-                  // submitForm(checkBoxValue);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => new BankAccountDetails(
-                          widget.applicant_id,
-                          widget.gross_monthly_income,
-                          widget.previousFormSubmitted)
+                  submitForm(checkBoxValue);
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (BuildContext context) => new BankAccountDetails(
+                  //         widget.applicant_id,
+                  //         widget.gross_monthly_income,
+                  //         widget.previousFormSubmitted)
                     // new Attachments(
                     //     widget.applicant_id,
                     //     widget.gross_monthly_income,
                     //     widget.previousFormSubmitted)
-                  ));
+                  // ));
                 },
                 // onTap: (){
                 //     // {

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorage {
   static final LocalStorage localStorage = LocalStorage._internal();
   SharedPreferences? prefs;
-  Map<dynamic, dynamic> applicationFormData = Map();
+  Map<String, dynamic>? applicationFormData;
   List<String> applications = <String>[];
   factory LocalStorage() {
     return localStorage;
@@ -61,8 +61,9 @@ class LocalStorage {
     print("Applications List :::: ${MyConstants.myConst.applicationsList}");
   }
 
-  void saveFormData(Map<dynamic, dynamic> applicantInfo) async {
+  void saveFormData(Map<String, dynamic> applicantInfo) async {
     String? applicationId = applicantInfo['id_number'];
+    // print("applicationId===>$applicationId");
     print("Application id_number ::: $applicationId");
     if (applicationId != null) {
       MyConstants.myConst.currentApplicantId = applicationId;
@@ -76,7 +77,7 @@ class LocalStorage {
     checkAndupdateApplicantData(applicationId);
     print("Applicants info :: $applicantInfo");
     if (applicationFormData != null) {
-      applicationFormData.addAll(applicantInfo);
+      applicationFormData?.addAll(applicantInfo);
       print("Application ID ::: $applicationId exists");
     } else {
       applicationFormData = applicantInfo;
@@ -84,11 +85,14 @@ class LocalStorage {
 
     // checkIfFileExists();
 
-    log("Application Data saved :: $applicationFormData");
-    print(applicationFormData.length);
+    log("Application Data saved :: $applications");
+    // log("Applications are :${applications.length}");
     prefs?.setString(applicationId, jsonEncode(applicationFormData));
-    prefs?.setStringList('applicationIds', applications);
-    print("Application IDs :::: ${prefs?.getStringList('applicationIds')}");
+    prefs?.setStringList('applicationIds', applications).then((value) {
+      log("Applications are :${applications.length}");
+      print("Application IDs :::: ${prefs?.getStringList('applicationIds')}");
+    });
+
     print("Leaving Local Storage");
   }
 
@@ -109,13 +113,13 @@ class LocalStorage {
     }
   }
 
-  Map getFormData(String applicationId) {
+  Map<String,dynamic> getFormData(String applicationId) {
     print("get form data :::: ${prefs?.getString(applicationId)}");
     String? id =prefs?.getString(applicationId);
     // if (id != null) {
       // applicationFormData = jsonDecode(id);
     if (id != null) {
-      Map formData = jsonDecode(id);
+      Map<String,dynamic> formData = jsonDecode(id);
       print(formData);
       return formData;
     } else {
@@ -177,6 +181,7 @@ class LocalStorage {
     //   applicationFormData = jsonDecode(prefs.getString(applicationId));
     String? id =prefs?.getString(applicationId);
     if (id != null) {
+      print("herer = $id");
       applicationFormData = jsonDecode(id);
       print(applicationFormData);
     } else {

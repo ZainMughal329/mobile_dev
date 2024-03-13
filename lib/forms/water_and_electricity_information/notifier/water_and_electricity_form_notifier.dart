@@ -345,13 +345,15 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
       showToastMessage('File Uploaded');
     } else {}
   }
+
   Future submitForm({
     required BuildContext context,
     int? applicantId,
     required bool previousFormSubmitted,
   }) async {
-    if (
-    waterMeterNumberController.text.isEmpty ||
+
+    /// <<<-------------------------validating form------------------------>>>>
+    if (waterMeterNumberController.text.isEmpty ||
     waterMeterReadingController.text.isEmpty ||
     electricityMeterNumberController.text.isEmpty ||
     electricityMeterNumberController.text.isEmpty  ){
@@ -370,7 +372,7 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
     print('okay');
     print(userID);
     print('okay');
-    Map<String, dynamic> data = {
+    Map<String, dynamic>? data = {
       "application_id": applicantId,
       'water_meter_number': waterMeterNumberController.text,
       'water_meter_reading': waterMeterReadingController.text,
@@ -378,11 +380,19 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
       'electricity_meter_reading': electricityMeterReadingsController.text,
     };
 
+    LocalStorage.localStorage.saveFormData(data);
+
+    /// <<<-------------------------will be called when internet is available------------------------>>>>
+
     if (MyConstants.myConst.internet ?? false) {
 
       try{
         var jsonResponse;
-        http.Response response = await http.post(
+        http.Response response;
+
+        /// <<<-------------------------will work if previous form is submitted------------------------>>>>
+        if(previousFormSubmitted){
+        response = await http.post(
           Uri.parse(
               "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
           headers: {
@@ -392,22 +402,41 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
           },
 
             body: jsonEncode(data)
-        );
+        );}
+        /// <<<-------------------------will work if previous form is not submitted------------------------>>>>
+        else
+          {
+            data = LocalStorage.localStorage
+                .getFormData(MyConstants.myConst.currentApplicantId??"");
+            response = await http.post(
+                Uri.parse(
+                    "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'uuid': userID ?? "",
+                  'Authentication': authToken ?? ""
+                },
+                body: jsonEncode(data));
+          }
 
         print(response.headers);
 
         print(response.body);
-        // print(data);
         if (response.statusCode == 200) {
           jsonResponse = jsonDecode(response.body);
-          // sharedPreferences.setInt('applicant_id', data['application_id']);
-          // LocalStorage.localStorage.clearCurrentApplication();
+
+          if (!previousFormSubmitted) {
+            Map<dynamic,dynamic> appId={};
+            appId = jsonDecode(response.body);
+            sharedPreferences.setInt('applicant_id', appId['application_id']);
+            applicantId = appId['application_id'];
+          } else {
+            sharedPreferences.setInt('applicant_id', data?['application_id']);
+            applicantId = data?['application_id'];
+          }
 
           previousFormSubmitted = true;
-          LocalStorage.localStorage.saveFormData(data);
-
           showToastMessage('Form Submitted');
-
           Navigator.of(context).push(PageRouteBuilder(
               pageBuilder: (_, __, ___) => Declaration(
                   applicantId!, previousFormSubmitted)));
@@ -415,8 +444,6 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
         } else {
           formLoading(false);
           jsonResponse = json.decode(response.body);
-          print('data');
-//        print(jsonResponse);
           showToastMessage(jsonResponse['message']);
 
         }
@@ -439,5 +466,109 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
       }
 
     }
+    else {
+      formLoading(false);
+      print("B1 Navigated from Else");
+      Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (_, __, ___) => Declaration(
+              applicantId!, previousFormSubmitted)));
+    }
   }
+
+
+//   Future submitForm({
+//     required BuildContext context,
+//     int? applicantId,
+//     required bool previousFormSubmitted,
+//   }) async {
+//     if (
+//     waterMeterNumberController.text.isEmpty ||
+//     waterMeterReadingController.text.isEmpty ||
+//     electricityMeterNumberController.text.isEmpty ||
+//     electricityMeterNumberController.text.isEmpty  ){
+//
+//       showToastMessage("Please fill all fields");
+//       return;
+//     }
+//     formLoading(true);
+//
+//
+//     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//     var userID = sharedPreferences.getString('userID');
+//     var authToken = sharedPreferences.getString('auth-token');
+//     // checkInternetAvailability();
+//     await request.ifInternetAvailable();
+//     print('okay');
+//     print(userID);
+//     print('okay');
+//     Map<String, dynamic> data = {
+//       "application_id": applicantId,
+//       'water_meter_number': waterMeterNumberController.text,
+//       'water_meter_reading': waterMeterReadingController.text,
+//       'electricity_meter_number': electricityMeterNumberController.text,
+//       'electricity_meter_reading': electricityMeterReadingsController.text,
+//     };
+//
+//     if (MyConstants.myConst.internet ?? false) {
+//
+//       try{
+//         var jsonResponse;
+//         http.Response response = await http.post(
+//           Uri.parse(
+//               "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
+//           headers: {
+//             'Content-Type': 'application/json',
+//             'uuid': userID ?? "",
+//             'Authentication': authToken ?? ""
+//           },
+//
+//             body: jsonEncode(data)
+//         );
+//
+//         print(response.headers);
+//
+//         print(response.body);
+//         // print(data);
+//         if (response.statusCode == 200) {
+//           jsonResponse = jsonDecode(response.body);
+//           // sharedPreferences.setInt('applicant_id', data['application_id']);
+//           // LocalStorage.localStorage.clearCurrentApplication();
+//
+//           previousFormSubmitted = true;
+//           LocalStorage.localStorage.saveFormData(data);
+//
+//           showToastMessage('Form Submitted');
+//
+//           Navigator.of(context).push(PageRouteBuilder(
+//               pageBuilder: (_, __, ___) => Declaration(
+//                   applicantId!, previousFormSubmitted)));
+//           formLoading(false);
+//         } else {
+//           formLoading(false);
+//           jsonResponse = json.decode(response.body);
+//           print('data');
+// //        print(jsonResponse);
+//           showToastMessage(jsonResponse['message']);
+//
+//         }
+//       }
+//       on SocketException catch (e) {
+//         Fluttertoast.showToast(msg: "Internet not available");
+//         formLoading(false);
+//         print('dsa');
+//         print(e);
+//       } on FormatException catch (e) {
+//         Fluttertoast.showToast(msg: "Bad Request");
+//         formLoading(false);
+//         print('dsa');
+//         print(e);
+//       } catch (e) {
+//         Fluttertoast.showToast(msg: "Something went wrong");
+//         formLoading(false);
+//         print('dsa');
+//         print(e);
+//       }
+//
+//     }
+//   }
 }
