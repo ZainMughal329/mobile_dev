@@ -1,22 +1,12 @@
 import 'dart:convert';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lesedi/Dashboard.dart';
 import 'package:lesedi/app_color.dart';
-import 'package:lesedi/auth/ForgotPassword.dart';
-import 'package:lesedi/auth/Signup.dart';
-import 'package:lesedi/applicants/allApplicants.dart';
 import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/global.dart';
 import 'package:flutter/material.dart';
-import 'package:lesedi/globals.dart' as global;
-//import 'package:flutter_svg/flutter_svg.dart';
-//import 'package:adobe_xd/blend_mask.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import '../example.dart';
-import 'Login.dart';
+import '../../login/view/login_view.dart';
 
 class ResetPassword extends StatefulWidget {
   @override

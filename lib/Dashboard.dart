@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lesedi/app_color.dart';
-import 'auth/Login.dart';
+import 'auth/login/view/login_view.dart';
 import 'helpers/local_storage.dart';
 
 class Dashboard extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lesedi/Dashboard.dart';
-import 'package:lesedi/auth/Login.dart';
+import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:lesedi/constans/Constants.dart';
 import 'package:lesedi/global.dart';
 import 'package:flutter/material.dart';
