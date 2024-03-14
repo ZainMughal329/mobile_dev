@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:lesedi/applicantDetails/localDetails.dart';
+import 'package:lesedi/applicantDetails/details/view/localDetails.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/model/applicants.dart';
@@ -414,7 +414,7 @@ class _FieldWorkerApplicantsState extends State<FieldWorkerApplicants> {
                       print(models[position].extremo1??"");
                       Navigator.of(context).push(PageRouteBuilder(
                           pageBuilder: (_, __, ___) =>
-                              ApplicantDetails(models[position].extremo1??0)));
+                              ApplicantDetails(id: models[position].extremo1??0)));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

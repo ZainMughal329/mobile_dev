@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:lesedi/applicantDetails/details/view/details.dart';
-import 'package:lesedi/applicantDetails/localDetails.dart';
+import 'package:lesedi/applicantDetails/details/view/localDetails.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:flutter/material.dart';
@@ -185,12 +185,8 @@ class _AllApplicantsState extends State<AllApplicants> {
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
-//          reverse: true,
             itemCount: mapData.length,
-//          gridDelegate:
-//              new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
             itemBuilder: (context, position) {
-//            MediaQueryData mediaQueryData = MediaQuery.of(context);
 
               return Dismissible(
                 direction: DismissDirection.endToStart,
@@ -389,12 +385,12 @@ class _AllApplicantsState extends State<AllApplicants> {
                     onTap: () {
                       Navigator.of(context).push(PageRouteBuilder(
                           pageBuilder: (_, __, ___) => ApplicantDetails(
-                              models[position].extremo1 ?? 0)));
+                           id:   models[position].extremo1 ?? 0)));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Slidable(
-                        key: ValueKey(models[position].extremo1.toString()),
+                        key: ValueKey(models[position].extremo1),
                         startActionPane: ActionPane(
                           motion: ScrollMotion(),
                           children: [
@@ -403,6 +399,7 @@ class _AllApplicantsState extends State<AllApplicants> {
                               foregroundColor: Colors.white,
                               icon: Icons.check,
                               onPressed: (context) {
+                                print("pressed");
                                 reviewedApplicant(
                                     models[position].extremo1 ?? 0);
                               },

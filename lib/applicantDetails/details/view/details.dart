@@ -1,594 +1,40 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/utils/global.dart';
-import 'package:lesedi/model/applicantInfo.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lesedi/applicantDetails/details/notifier/details_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'package:lesedi/utils/app_color.dart';
 
 //Check
 
-class ApplicantDetails extends StatefulWidget {
-  int id;
+class ApplicantDetails extends ConsumerStatefulWidget {
+  const ApplicantDetails({required this.id, super.key});
 
-  ApplicantDetails(this.id);
+  final int id;
 
   @override
-  _ApplicantDetailsState createState() => _ApplicantDetailsState();
+  ConsumerState<ApplicantDetails> createState() => _ApplicantDetailsState();
 }
 
-class _ApplicantDetailsState extends State<ApplicantDetails> {
-  bool _isLoading = false;
-  bool _isLoadingReject = false;
-  var role;
+class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
+  final detailsProvider = ChangeNotifierProvider<DetailsNotifier>((ref) {
+    return DetailsNotifier();
+  });
 
-  @override
   void initState() {
+    /// TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      ref.read(detailsProvider).getApplicantDetails(applicationId: widget.id);
+      print(widget.id);
+      ref.read(detailsProvider).getRole();
+    });
+
     super.initState();
-    print('daya');
-    getApplicantDetails();
-    print(widget.id);
-    getRole();
-  }
-
-  bool _isVisible = true;
-
-  getRole() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    role = sharedPreferences.getString('role');
-    print(role);
-  }
-
-  reviewedApplicant() async {
-    setState(() {
-      _isLoading = true;
-    });
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var userID = sharedPreferences.getString('userID');
-    var authToken = sharedPreferences.getString('auth-token');
-    var jsonResponse;
-    http.Response response = await http.put(
-        Uri.parse(
-            "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=${widget.id}&accepted=true"),
-        headers: {
-          'Content-Type': 'application/json',
-          'uuid': userID??"",
-          'Authentication': authToken??""
-        });
-
-    print(response.body);
-
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-
-      print(jsonResponse);
-      showToastMessage(jsonResponse['message']);
-      setState(() {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    } else {
-      setState(() {
-        jsonResponse = json.decode(response.body);
-        print('data');
-        showToastMessage(
-            jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
-      });
-    }
-  }
-
-  removeReviewedApplicant() async {
-    setState(() {
-      _isLoadingReject = true;
-    });
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var userID = sharedPreferences.getString('userID');
-    var authToken = sharedPreferences.getString('auth-token');
-    var jsonResponse;
-    http.Response response = await http.put(
-        Uri.parse(
-            "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=${widget.id}&accepted=false"),
-        headers: {
-          'Content-Type': 'application/json',
-          'uuid': userID??"",
-          'Authentication': authToken??""
-        });
-
-    print(response.body);
-
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-
-      print(jsonResponse);
-      showToastMessage(jsonResponse['message']);
-
-      setState(() {
-        _isLoadingReject = false;
-      });
-    } else {
-      setState(() {
-        jsonResponse = json.decode(response.body);
-        print('data');
-        showToastMessage(
-            jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
-      });
-    }
-  }
-
-  ApplicantInfo? models;
-
-  String? firstname;
-  String? surname;
-  String? id_number;
-  String? date_of_application;
-  String? dob;
-  String? age;
-  String? address;
-  String? department_id_num;
-  String? email;
-  String? ward_number;
-  String? municipal_rates_account_num;
-  String? status_number;
-  List<String>? service_links;
-  String? eskom_accounts;
-  String? contact;
-  String? application_status;
-  String? marital_status;
-  String? signature_date;
-  String? cellphone_number;
-  String? telephone_number;
-  String? applicant_id_proof;
-  String? spouse_id;
-
-
-  var proof_of_income;
-  var spouse_credit_report;
-  var affidavits;
-  var houseHold;
-  var additional_file;
-  var deathCertificate;
-  var marriage_certificate;
-
-  var account_statment;
-  String? saps_affidavit;
-  String? decree_divorce;
-  String? signature;
-  String? spouse_id_number;
-  String? occupant_id;
-  var dependent_ids;
-  List<OccupantIds> response = [];
-  List<BankDetails> bankDetails = [];
-
-  String? water_meter_number;
-  String? water_meter_reading;
-  String? electricity_meter_number;
-  String? electricity_meter_reading;
-  List<OccupantIds> water_meter_attachments=[];
-  List<OccupantIds> electricity_meter_attachments=[];
-  List<OccupantIds> property_meter_attachments=[];
-
-
-  getApplicantDetails() async {
-    ApplicantInfo responseM;
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var userID = sharedPreferences.getString('userID');
-    var authToken = sharedPreferences.getString('auth-token');
-    var jsonResponse;
-    http.Response response = await http.get(
-        Uri.parse(
-            "${MyConstants.myConst.baseUrl}api/v1/users/review?application_id=${widget.id}"),
-        headers: {
-          'Content-Type': 'application/json',
-          'uuid': userID??"",
-          'Authentication': authToken??""
-        });
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-
-      Map<String, dynamic> dataHolder = jsonResponse;
-      log("jsonResponse => $jsonResponse");
-      var dataSort = dataHolder.values.toList();
-
-      print(dataSort);
-
-      ApplicantInfo models = ApplicantInfo.fromJson(dataHolder);
-      responseM = models;
-      print('name');
-      print(responseM.spouseId);
-
-      setState(() {
-        print('done');
-        models = responseM;
-        if (models != null) {
-          _isVisible = !_isVisible;
-        }
-
-        print('done');
-        firstname = responseM.firstName;
-        surname = responseM.surname;
-        id_number = responseM.idNumber;
-        date_of_application = responseM.dateOfApplication;
-        dob = responseM.dob;
-        address = responseM.address;
-        department_id_num = responseM.grossMonthlyIncome;
-        email = responseM.email;
-        ward_number = responseM.wardNumber;
-        municipal_rates_account_num = responseM.accountNumber;
-        status_number = responseM.standNumber;
-        service_links = responseM.servicesLinked;
-        eskom_accounts = responseM.eskomAccountNumber;
-//        contact = responseM.c;
-
-        application_status = responseM.employmentStatus;
-        marital_status = responseM.maritalStatus;
-        signature_date = responseM.signatureDate;
-        cellphone_number = responseM.cellphoneNumber;
-        telephone_number = responseM.telephoneNumber;
-        spouse_credit_report=responseM.spouseCreditReport;
-        applicant_id_proof = responseM.applicantIdProof;
-        spouse_id = responseM.spouseId;
-        proof_of_income = responseM.proofOfIncomes;
-        affidavits = responseM.affidavits;
-        houseHold = responseM.houseHoldList;
-        deathCertificate = responseM.deathCertificate;
-        additional_file = responseM.additionalFile;
-        marriage_certificate = responseM.marriageCertificate;
-        account_statment = responseM.accountStatement;
-        saps_affidavit = responseM.sapsAffidavit;
-        decree_divorce = responseM.decreeDivorce;
-        dependent_ids = responseM.occupantIds;
-        spouse_id_number = responseM.spouseIdNumber;
-
-        occupant_id = responseM.occupantId;
-        bankDetails = responseM.bankDetails??[];
-        age = responseM.age.toString();
-        water_meter_number=responseM.water_meter_number;
-        water_meter_reading=responseM.water_meter_reading;
-        electricity_meter_number=responseM.electricity_meter_number;
-        electricity_meter_reading=responseM.electricity_meter_reading;
-        print("water response ${responseM.property_meter_attachments}");
-        if(responseM.water_meter_attachments!=null)
-        {
-          water_meter_attachments=responseM.water_meter_attachments!;
-
-        }
-        if(responseM.electricity_meter_attachments!=null)
-          {
-            electricity_meter_attachments=responseM.electricity_meter_attachments!;
-
-          }
-        if(responseM.property_meter_attachments!=null)
-        {
-          property_meter_attachments=responseM.property_meter_attachments!;
-
-        }
-
-        if (applicant_id_proof != null) {
-          String fileName = applicant_id_proof??"".split('/').last;
-          print('filename');
-
-          if (fileName.contains('.png') ||
-              fileName.contains('.jpg') ||
-              fileName.contains('.jpeg') ||
-              fileName.contains('.gif')) {
-            print('wiii');
-            applicant_id_proof = responseM.applicantIdProof;
-          } else {
-            applicant_id_proof =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-          }
-        }
-        if (spouse_id != null) {
-          print('agya');
-          spouse_id = responseM.spouseId;
-
-          String fileNameSpouse = spouse_id??"".split('/').last;
-
-          print('filename');
-
-          if (fileNameSpouse.contains('.png') ||
-              fileNameSpouse.contains('.jpg') ||
-              fileNameSpouse.contains('.jpeg') ||
-              fileNameSpouse.contains('.gif')) {
-            print('wiii');
-            spouse_id = responseM.spouseId;
-            print('data ${spouse_id}');
-          } else {
-            spouse_id =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-          }
-        }
-
-        if (decree_divorce != null) {
-          print('agya');
-          decree_divorce = responseM.decreeDivorce;
-
-          String fileNameSpouse = decree_divorce??"".split('/').last;
-
-          print('filename');
-
-          if (fileNameSpouse.contains('.png') ||
-              fileNameSpouse.contains('.jpg') ||
-              fileNameSpouse.contains('.jpeg') ||
-              fileNameSpouse.contains('.gif')) {
-            print('wiii');
-            decree_divorce = responseM.decreeDivorce;
-            print('data ${decree_divorce}');
-          } else {
-            decree_divorce =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-          }
-        }
-
-        if (proof_of_income != null) {
-          proof_of_income = responseM.proofOfIncomes;
-
-          for (int p = 0; p < proof_of_income.length; p++) {
-            print('dependent_idsssss');
-            if (proof_of_income[p].contentType == 'image/jpeg' ||
-                proof_of_income[p].contentType == 'image/png' ||
-                proof_of_income[p].contentType == 'image/jpg' ||
-                proof_of_income[p].contentType == 'image/gif') {
-              proof_of_income = responseM.proofOfIncomes;
-
-              print('dataa proof');
-              print(proof_of_income);
-            } else {
-//            var item = ['https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png'];
-              proof_of_income =
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-            }
-          }
-        }
-        if (houseHold != null) {
-          houseHold = responseM.houseHoldList;
-
-          for (int p = 0; p < houseHold.length; p++) {
-            print('dependent_idsssss');
-            if (houseHold[p].contentType == 'image/jpeg' ||
-                houseHold[p].contentType == 'image/png' ||
-                houseHold[p].contentType == 'image/jpg' ||
-                houseHold[p].contentType == 'image/gif') {
-              houseHold = responseM.houseHoldList;
-
-              print('dataa proof');
-              print(houseHold);
-            } else {
-//            var item = ['https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png'];
-              houseHold =
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-            }
-          }
-        }
-
-        if (deathCertificate != null) {
-          deathCertificate = responseM.deathCertificate;
-
-          for (int p = 0; p < deathCertificate.length; p++) {
-            print('dependent_idsssss');
-            if (deathCertificate[p].contentType == 'image/jpeg' ||
-                deathCertificate[p].contentType == 'image/png' ||
-                deathCertificate[p].contentType == 'image/jpg' ||
-                deathCertificate[p].contentType == 'image/gif') {
-              deathCertificate = responseM.deathCertificate;
-
-              print('dataa proof');
-              print(deathCertificate);
-            } else {
-//            var item = ['https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png'];
-              deathCertificate =
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-            }
-          }
-        }
-        if (affidavits != null) {
-          affidavits = responseM.affidavits;
-
-          for (int p = 0; p < affidavits.length; p++) {
-            print('dependent_idsssss');
-            if (affidavits[p].contentType == 'image/jpeg' ||
-                affidavits[p].contentType == 'image/png' ||
-                affidavits[p].contentType == 'image/jpg' ||
-                affidavits[p].contentType == 'image/gif') {
-              affidavits = responseM.affidavits;
-
-              print('dataa proof');
-              print(proof_of_income);
-            } else {
-//            var item = ['https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png'];
-              affidavits =
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-            }
-          }
-        }
-
-        if (marriage_certificate != null) {
-          print('agya');
-          marriage_certificate = responseM.marriageCertificate;
-
-          String fileNameSpouse = marriage_certificate.split('/').last;
-
-          print('filename');
-
-          if (fileNameSpouse.contains('.png') ||
-              fileNameSpouse.contains('.jpg') ||
-              fileNameSpouse.contains('.jpeg') ||
-              fileNameSpouse.contains('.gif')) {
-            print('wiii');
-            marriage_certificate = responseM.marriageCertificate;
-            print('data ${marriage_certificate}');
-          } else {
-            marriage_certificate =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-          }
-        }
-
-//         if (marriage_certificate != null) {
-//           marriage_certificate = responseM.marriageCertificate;
-//
-//           for (int p = 0; p < affidavits.length; p++) {
-//             print('dependent_idsssss');
-//             if (marriage_certificate[p].contentType == 'image/jpeg' ||
-//                 marriage_certificate[p].contentType == 'image/png' ||
-//                 marriage_certificate[p].contentType == 'image/jpg' ||
-//                 marriage_certificate[p].contentType == 'image/gif') {
-//               marriage_certificate = responseM.marriageCertificate;
-//
-//               print('dataa proof');
-//               print(marriage_certificate);
-//             } else {
-// //            var item = ['https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png'];
-//               marriage_certificate =
-//               'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-//             }
-//           }
-//         }
-
-        if (account_statment != null) {
-          account_statment = responseM.accountStatement;
-
-          String fileNameAcc = account_statment.split('/').last;
-          print('filename');
-
-          if (fileNameAcc.contains('.png') ||
-              fileNameAcc.contains('.jpg') ||
-              fileNameAcc.contains('.jpeg') ||
-              fileNameAcc.contains('.gif')) {
-            print('wiii');
-            account_statment = responseM.accountStatement;
-          } else {
-            account_statment =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-          }
-        }
-        if (saps_affidavit != null) {
-          saps_affidavit = responseM.sapsAffidavit;
-
-          String fileNameSap = saps_affidavit??"".split('/').last;
-          print('filename');
-
-          if (fileNameSap.contains('.png') ||
-              fileNameSap.contains('.jpg') ||
-              fileNameSap.contains('.jpeg') ||
-              fileNameSap.contains('.gif')) {
-            print('wiii');
-            saps_affidavit = responseM.sapsAffidavit;
-          } else {
-            saps_affidavit =
-                'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-          }
-        }
-
-        if (additional_file != null) {
-          additional_file = responseM.additionalFile;
-
-          for (int p = 0; p < additional_file.length; p++) {
-            print('dependent_idsssss');
-            if (additional_file[p].contentType == 'image/jpeg' ||
-                additional_file[p].contentType == 'image/png' ||
-                additional_file[p].contentType == 'image/jpg' ||
-                additional_file[p].contentType == 'image/gif') {
-              additional_file = responseM.additionalFile;
-
-              print('dataa proof');
-              print(additional_file);
-            } else {
-//            var item = ['https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png'];
-              additional_file =
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-            }
-          }
-        }
-
-//
-
-        if (dependent_ids != null) {
-          dependent_ids = responseM.occupantIds;
-          for (int p = 0; p < dependent_ids.length; p++) {
-            print('dependent_idsssss');
-            print(dependent_ids.length);
-            if (dependent_ids[p].contentType == 'image/jpeg' ||
-                dependent_ids[p].contentType == 'image/png' ||
-                dependent_ids[p].contentType == 'image/jpg' ||
-                dependent_ids[p].contentType == 'image/gif') {
-              if (dependent_ids.length == 1) {
-                dependent_ids = responseM.occupantIds;
-              } else {
-                dependent_ids = responseM.occupantIds;
-              }
-            } else {
-              dependent_ids.add(
-                  'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
-//            print( dependent_ids[0].url);
-            }
-          }
-        }
-
-        signature = responseM.signature;
-//    print(applicant_id_proof);
-//        print(dependent_ids.length);
-      });
-    } else {
-      setState(() {
-        jsonResponse = json.decode(response.body);
-        print('data');
-        showToastMessage(
-            jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
-      });
-    }
-  }
-
-  TextStyle _style() {
-    return TextStyle(
-        letterSpacing: 0.0,
-        color: Color(0xff141414),
-        fontFamily: "Open Sans",
-        fontWeight: FontWeight.w700,
-        fontSize: 15.0);
-  }
-
-  showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton (
-      child: Text("Cancel"),
-      onPressed: () {
-        Navigator.of(context).pop(false);
-      },
-    );
-    Widget continueButton = TextButton (
-      child: Text("Okay"),
-      onPressed: () {
-        removeReviewedApplicant();
-        Navigator.of(context).pop(true);
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Confirmation"),
-      content: Text("Are you sure you want to Reject the Application?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final notifier = ref.watch(detailsProvider);
     return Scaffold(
       appBar: AppBar(
 //        elevation: .5,
@@ -600,7 +46,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
           ),
           onPressed: () {
             // do something
-            print(role);
+            print(notifier.role);
             Navigator.pop(context);
 //            if ( role == 'field_worker'){
 //              Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> FieldWorkerApplicants()));
@@ -666,23 +112,38 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-
-                      DetailWidget(title: "Date of application", subtitle:
-                  date_of_application != null
-                      ? DateFormat('yMMMMd')
-                          .format(DateTime.parse(date_of_application??""))
-                      : ''),
-
-                  DetailWidget(title: "Account Number", subtitle: municipal_rates_account_num ??""),
-                  DetailWidget(title: "Surname", subtitle: surname ??""),
-                  DetailWidget(title: "First Name", subtitle: firstname ??""),
-                  DetailWidget(title: "Applicant ID", subtitle: id_number ??""),
-                  DetailWidget(title: "DOB", subtitle: dob ??""),
-                  DetailWidget(title: "Age", subtitle: age ??""),
-                  DetailWidget(title: "Spouse ID", subtitle: spouse_id_number ??""),
-                  DetailWidget(title: "Occupant ID", subtitle: occupant_id ??""),
-                  DetailWidget(title: "Stand/Erf Number", subtitle: status_number ??""),
-
+                      DetailWidget(
+                          title: "Date of application",
+                          subtitle: notifier.models != null
+                              ? DateFormat('yMMMMd').format(DateTime.parse(
+                                  notifier.models?.dateOfApplication ?? ""))
+                              : ''),
+                      DetailWidget(
+                          title: "Account Number",
+                          subtitle: notifier.models?.accountNumber ?? ""),
+                      DetailWidget(
+                          title: "Surname",
+                          subtitle: notifier.models?.surname ?? ""),
+                      DetailWidget(
+                          title: "First Name",
+                          subtitle: notifier.models?.firstName ?? ""),
+                      DetailWidget(
+                          title: "Applicant ID",
+                          subtitle: notifier.models?.idNumber ?? ""),
+                      DetailWidget(
+                          title: "DOB", subtitle: notifier.models?.dob ?? ""),
+                      DetailWidget(
+                          title: "Age",
+                          subtitle: notifier.models?.age.toString() ?? ""),
+                      DetailWidget(
+                          title: "Spouse ID",
+                          subtitle: notifier.models?.spouseIdNumber ?? ""),
+                      DetailWidget(
+                          title: "Occupant ID",
+                          subtitle: notifier.models?.occupantId ?? ""),
+                      DetailWidget(
+                          title: "Stand/Erf Number",
+                          subtitle: notifier.models?.standNumber ?? ""),
                       Text(
                         "Services Linked to Stand",
                         style: _style(),
@@ -690,39 +151,52 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      service_links != null
+                      notifier.models != null
                           ? Row(
                               children: List.generate(
-                                service_links?.length??0,
-                                (index) =>
-                                    Text(service_links?[index].toString()??"" + ","),
+                                notifier.models?.servicesLinked?.length ?? 0,
+                                (index) => Text(notifier
+                                        .models?.servicesLinked?[index]
+                                        .toString() ??
+                                    "" + ","),
                               ),
                             )
                           : Text(''),
-
                       SizedBox(
                         height: 4,
                       ),
-
                       Divider(
                         color: Color(0x29000000),
                       ),
                       SizedBox(
                         height: 4,
                       ),
-                      DetailWidget(title: "Ward Number", subtitle: ward_number ??""),
-                      DetailWidget(title: "Eskom Account Number", subtitle: eskom_accounts ??""),
-                      DetailWidget(title: "Email", subtitle: email ??""),
-                      DetailWidget(title: "Cellphone Number", subtitle: cellphone_number ??""),
-                      DetailWidget(title: "Telephone Number", subtitle: telephone_number ??""),
-                      DetailWidget(title: "Employment Status", subtitle: application_status != null
-                            ? application_status??""
-                                .replaceAll(new RegExp('[\\W_]+'), ' ')
-                                .toLowerCase()
-                            : ''),
-                      DetailWidget(title: "Marital Status", subtitle: marital_status ??""),
-
-
+                      DetailWidget(
+                          title: "Ward Number",
+                          subtitle: notifier.models?.wardNumber ?? ""),
+                      DetailWidget(
+                          title: "Eskom Account Number",
+                          subtitle: notifier.models?.eskomAccountNumber ?? ""),
+                      DetailWidget(
+                          title: "Email",
+                          subtitle: notifier.models?.email ?? ""),
+                      DetailWidget(
+                          title: "Cellphone Number",
+                          subtitle: notifier.models?.cellphoneNumber ?? ""),
+                      DetailWidget(
+                          title: "Telephone Number",
+                          subtitle: notifier.models?.telephoneNumber ?? ""),
+                      DetailWidget(
+                          title: "Employment Status",
+                          subtitle: notifier.models?.employmentStatus != null
+                              ? notifier.models?.employmentStatus ??
+                                  ""
+                                      .replaceAll(new RegExp('[\\W_]+'), ' ')
+                                      .toLowerCase()
+                              : ''),
+                      DetailWidget(
+                          title: "Marital Status",
+                          subtitle: notifier.models?.maritalStatus ?? ""),
                       Text(
                         "Bank Details",
                         style: _style(),
@@ -730,84 +204,129 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                  bankDetails.isEmpty || bankDetails == null? Text(''): ListView(
-                    shrinkWrap: true,
-                    children: List.generate(
-                      bankDetails.length,
-                          (index) => Container(
-                            child: Column(
-                                children: [
-                                 bankDetails.length == 1? SizedBox(height: 5,):Container(
-                                    margin: EdgeInsets.symmetric(vertical: 10),
-                                    child: Center(child: Text("BankDetails ${index+1}",
-                                      style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'opensans',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                    )),
-                                  ),
-                                  Row(children:[ Text("Bank Name :",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'opensans',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold
-                                    ),), Text(bankDetails[index].bankAccountNumber??"",
-                                      style: TextStyle(
-                                          fontFamily: 'opensans',
-                                          fontSize: 13,
-                                      ),
-                                    )]),
-                                  SizedBox(height: 3,),
-                                  Row(children:[ Text("Account No: ",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'opensans',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold
-                                    ),), Text(bankDetails[index].bankNumber??"",
-                                    style: TextStyle(
-                                      fontFamily: 'opensans',
-                                      fontSize: 13,
-                                    ),
-                                    )]),
-                                  SizedBox(height: 3,),
-                                  Row(children:[ Text("Branch Code: ",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'opensans',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold
-                                    ),), Text(bankDetails[index].branchCode??"",
-                                    style: TextStyle(
-                                      fontFamily: 'opensans',
-                                      fontSize: 13,
-                                    ),
-                                    )]),
-                                ],
+                      notifier.models?.bankDetails == null
+                          ? Text('')
+                          : ListView(
+                              shrinkWrap: true,
+                              children: List.generate(
+                                  notifier.models?.bankDetails?.length ?? 0,
+                                  (index) => Container(
+                                        child: Column(
+                                          children: [
+                                            notifier.models?.bankDetails
+                                                        ?.length ==
+                                                    1
+                                                ? SizedBox(
+                                                    height: 5,
+                                                  )
+                                                : Container(
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10),
+                                                    child: Center(
+                                                        child: Text(
+                                                      "BankDetails ${index + 1}",
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily:
+                                                              'opensans',
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )),
+                                                  ),
+                                            Row(children: [
+                                              Text(
+                                                "Bank Name :",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'opensans',
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                notifier
+                                                        .models
+                                                        ?.bankDetails?[index]
+                                                        .bankAccountNumber ??
+                                                    "",
+                                                style: TextStyle(
+                                                  fontFamily: 'opensans',
+                                                  fontSize: 13,
+                                                ),
+                                              )
+                                            ]),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                            Row(children: [
+                                              Text(
+                                                "Account No: ",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'opensans',
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                notifier
+                                                        .models
+                                                        ?.bankDetails?[index]
+                                                        .bankNumber ??
+                                                    "",
+                                                style: TextStyle(
+                                                  fontFamily: 'opensans',
+                                                  fontSize: 13,
+                                                ),
+                                              )
+                                            ]),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                            Row(children: [
+                                              Text(
+                                                "Branch Code: ",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'opensans',
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                notifier
+                                                        .models
+                                                        ?.bankDetails?[index]
+                                                        .branchCode ??
+                                                    "",
+                                                style: TextStyle(
+                                                  fontFamily: 'opensans',
+                                                  fontSize: 13,
+                                                ),
+                                              )
+                                            ]),
+                                          ],
+                                        ),
+                                      )),
                             ),
-                          )
-                    ),
-                  ),
                       Divider(
                         color: Color(0x29000000),
                       ),
                       SizedBox(
                         height: 4,
                       ),
-
-                      DetailWidget(title: "Signature Date", subtitle:
-                      signature_date != null
-                            ? DateFormat('yMMMMd')
-                                .format(DateTime.parse(signature_date??""))
-                            : ''
-                      ),
+                      DetailWidget(
+                          title: "Signature Date",
+                          subtitle: notifier.models?.signatureDate != null
+                              ? DateFormat('yMMMMd').format(DateTime.parse(
+                                  notifier.models?.signatureDate ?? ""))
+                              : ''),
                     ],
                   ),
                 ),
-
+//
               ],
             ),
           ),
@@ -848,11 +367,11 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                     children: <Widget>[
                       DetailImageWidget(
                         title: "Applicant ID ",
-                        image: applicant_id_proof??"",
+                        image: notifier.models?.applicantIdProof ?? "",
                       ),
                       DetailImageWidget(
                         title: "Spouse ID ",
-                        image: spouse_id??"",
+                        image: notifier.models?.spouseId ?? "",
                       ),
                       Text(
                         'Occupant ID',
@@ -861,16 +380,17 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      dependent_ids != null
+                      notifier.models?.occupantIds != null
                           ? Container(
                               height: 150,
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: List.generate(
-                                  dependent_ids.length,
+                                  notifier.models?.occupantIds?.length ?? 0,
                                   (index) => Image(
-                                    image: CachedNetworkImageProvider(
-                                        dependent_ids[index].url),
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models?.occupantIds?[index].url ??
+                                        ""),
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
@@ -886,9 +406,8 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       ),
                       DetailImageWidget(
                         title: 'Municipal Statement of Account',
-                        image: account_statment??"",
+                        image: notifier.models?.accountStatement ?? "",
                       ),
-
                       Text(
                         'Proof of Income ',
                         style: _style(),
@@ -896,7 +415,7 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-                      proof_of_income != null
+                      notifier.models?.proofOfIncomes != null
                           ? Container(
                               height: 150,
                               margin: EdgeInsets.only(top: 10),
@@ -904,10 +423,13 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                                 scrollDirection: Axis.horizontal,
                                 shrinkWrap: true,
                                 children: List.generate(
-                                  proof_of_income.length,
+                                  notifier.models?.proofOfIncomes?.length ?? 0,
                                   (index) => Image(
-                                    image: CachedNetworkImageProvider(
-                                        proof_of_income[index].url),
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.proofOfIncomes?[index]
+                                            .url ??
+                                        ""),
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
@@ -921,35 +443,9 @@ class _ApplicantDetailsState extends State<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
-DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
-//                       Text(
-//                         'Affidavit SAPS',
-//                         style: _style(),
-//                       ),
-//                       SizedBox(
-//                         height: 4,
-//                       ),
-//                       saps_affidavit != null
-//                           ? Center(
-//                               child: Image(
-//                                 image:
-//                                     CachedNetworkImageProvider(saps_affidavit??""),
-//                                 width: 100,
-//                                 fit: BoxFit.cover,
-//                               ),
-// //                              child: Image.network(
-// //                                saps_affidavit,
-// //                              width: 100,
-// //                              fit: BoxFit.cover,
-// //                            )
-//                             )
-//                           : Text(''),
-//                       Divider(
-//                         color: Color(0x29000000),
-//                       ),
-//                       SizedBox(
-//                         height: 4,
-//                       ),
+                      DetailImageWidget(
+                          title: 'Affidavit SAPS',
+                          image: notifier.models?.sapsAffidavit ?? ""),
                       Text(
                         'Death Certificate',
                         style: _style(),
@@ -957,7 +453,7 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      deathCertificate != null
+                      notifier.models?.deathCertificate != null
                           ? Container(
                               height: 150,
                               margin: EdgeInsets.only(top: 10),
@@ -965,10 +461,14 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                                 scrollDirection: Axis.horizontal,
                                 shrinkWrap: true,
                                 children: List.generate(
-                                  deathCertificate.length,
+                                  notifier.models?.deathCertificate?.length ??
+                                      0,
                                   (index) => Image(
-                                    image: CachedNetworkImageProvider(
-                                        deathCertificate[index].url),
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.deathCertificate?[index]
+                                            .url ??
+                                        ""),
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
@@ -982,8 +482,9 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      DetailImageWidget(title: 'Decree Divorce', image: decree_divorce??""),
-
+                      DetailImageWidget(
+                          title: 'Decree Divorce',
+                          image: notifier.models?.decreeDivorce ?? ""),
                       Text(
                         'House Hold',
                         style: _style(),
@@ -991,7 +492,7 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      houseHold != null
+                      notifier.models?.houseHoldList != null
                           ? Container(
                               height: 150,
                               margin: EdgeInsets.only(top: 10),
@@ -999,10 +500,13 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                                 scrollDirection: Axis.horizontal,
                                 shrinkWrap: true,
                                 children: List.generate(
-                                  houseHold.length,
+                                  notifier.models?.houseHoldList?.length ?? 0,
                                   (index) => Image(
-                                    image: CachedNetworkImageProvider(
-                                        houseHold[index].url),
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.houseHoldList?[index]
+                                            .url ??
+                                        ""),
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
@@ -1013,11 +517,12 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       Divider(
                         color: Color(0x29000000),
                       ),
-
                       SizedBox(
                         height: 4,
                       ),
-                      DetailImageWidget(title: "Marriage Certificate", image: marriage_certificate??""),
+                      DetailImageWidget(
+                          title: "Marriage Certificate",
+                          image: notifier.models?.marriageCertificate ?? ""),
                       Text(
                         'Affidavits',
                         style: _style(),
@@ -1025,7 +530,7 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      affidavits != null
+                      notifier.models?.affidavits != null
                           ? Container(
                               height: 150,
                               margin: EdgeInsets.only(top: 10),
@@ -1033,10 +538,11 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                                 scrollDirection: Axis.horizontal,
                                 shrinkWrap: true,
                                 children: List.generate(
-                                  affidavits.length,
+                                  notifier.models?.affidavits?.length ?? 0,
                                   (index) => Image(
-                                    image: CachedNetworkImageProvider(
-                                        affidavits[index].url),
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models?.affidavits?[index].url ??
+                                        ""),
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
@@ -1057,7 +563,7 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      additional_file != null
+                      notifier.models?.additionalFile != null
                           ? Container(
                               height: 150,
                               margin: EdgeInsets.only(top: 10),
@@ -1065,10 +571,13 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                                 scrollDirection: Axis.horizontal,
                                 shrinkWrap: true,
                                 children: List.generate(
-                                  additional_file.length,
+                                  notifier.models?.additionalFile?.length ?? 0,
                                   (index) => Image(
-                                    image: CachedNetworkImageProvider(
-                                        additional_file[index].url),
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.additionalFile?[index]
+                                            .url ??
+                                        ""),
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
@@ -1089,24 +598,28 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      spouse_credit_report != null
+                      notifier.models?.spouseCreditReport != null
                           ? Container(
-                        height: 150,
-                        margin: EdgeInsets.only(top: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          children: List.generate(
-                            spouse_credit_report.length,
-                                (index) => Image(
-                              image: CachedNetworkImageProvider(
-                                  spouse_credit_report[index].url),
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      )
+                              height: 150,
+                              margin: EdgeInsets.only(top: 10),
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children: List.generate(
+                                  notifier.models?.spouseCreditReport?.length ??
+                                      0,
+                                  (index) => Image(
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.spouseCreditReport?[index]
+                                            .url ??
+                                        ""),
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
                           : Text(''),
                       Divider(
                         color: Color(0x29000000),
@@ -1114,7 +627,9 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                       SizedBox(
                         height: 4,
                       ),
-                      DetailImageWidget(title: "Signature", image: signature??""),
+                      DetailImageWidget(
+                          title: "Signature",
+                          image: notifier.models?.signature ?? ""),
                     ],
                   ),
                 ),
@@ -1122,13 +637,14 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
             ),
           ),
 
-          role == 'reviewer'
+          notifier.role == 'reviewer'
               ? Row(
                   children: <Widget>[
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          reviewedApplicant();
+                          notifier.reviewedApplicant(
+                              applicationId: widget.id);
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -1148,11 +664,12 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                                 ),
                               ],
                             ),
-                            child: _isLoading
+                            child: notifier.isLoading
                                 ? Container(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
+                                      strokeWidth: 2,
                                       valueColor:
                                           new AlwaysStoppedAnimation<Color>(
                                               Colors.white),
@@ -1175,7 +692,10 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          showAlertDialog(context);
+                          showAlertDialog(
+                              context: context,
+                              onOkayTap: () => notifier.removeReviewedApplicant(
+                                  applicationId: widget.id));
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -1195,7 +715,7 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                                 ),
                               ],
                             ),
-                            child: _isLoadingReject
+                            child: notifier.isLoadingReject
                                 ? Container(
                                     width: 20,
                                     height: 20,
@@ -1222,6 +742,7 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   ],
                 )
               : Text(''),
+
           /// bills updated work
 
           SizedBox(
@@ -1238,8 +759,8 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
           ),
           Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                  top: 20.0, bottom: 12, left: 20, right: 20),
+              padding:
+                  EdgeInsets.only(top: 20.0, bottom: 12, left: 20, right: 20),
               margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
 //          height: 665.0,
               decoration: BoxDecoration(
@@ -1253,11 +774,15 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   ),
                 ],
               ),
-              child:Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DetailWidget(title: "Water Meter Number", subtitle:water_meter_number??""),
-                  DetailWidget(title: "Water Meter Reading", subtitle:water_meter_reading??""),
+                  DetailWidget(
+                      title: "Water Meter Number",
+                      subtitle: notifier.models?.water_meter_number ?? ""),
+                  DetailWidget(
+                      title: "Water Meter Reading",
+                      subtitle: notifier.models?.water_meter_reading ?? ""),
                   // DetailImageWidget(title: "Water Meter Attachment", image:water_meter_attachments??""),
 
                   Text(
@@ -1267,24 +792,29 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   SizedBox(
                     height: 4,
                   ),
-                  water_meter_attachments.isNotEmpty
+                  notifier.models?.water_meter_attachments != null
                       ? Container(
-                    height: 150,
-                    margin: EdgeInsets.only(top: 10),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      children: List.generate(
-                        water_meter_attachments.length,
-                            (index) => Image(
-                          image: CachedNetworkImageProvider(
-                              water_meter_attachments[index].url??""),
-                          width: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  )
+                          height: 150,
+                          margin: EdgeInsets.only(top: 10),
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            children: List.generate(
+                              notifier.models?.water_meter_attachments
+                                      ?.length ??
+                                  0,
+                              (index) => Image(
+                                image: CachedNetworkImageProvider(notifier
+                                        .models
+                                        ?.water_meter_attachments?[index]
+                                        .url ??
+                                    ""),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        )
                       : Text(''),
                   SizedBox(
                     height: 4,
@@ -1295,8 +825,14 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   SizedBox(
                     height: 4,
                   ),
-                  DetailWidget(title: "Electricity Meter Number", subtitle:electricity_meter_number??""),
-                  DetailWidget(title: "Electricity Meter Reading", subtitle:electricity_meter_reading??""),
+                  DetailWidget(
+                      title: "Electricity Meter Number",
+                      subtitle:
+                          notifier.models?.electricity_meter_number ?? ""),
+                  DetailWidget(
+                      title: "Electricity Meter Reading",
+                      subtitle:
+                          notifier.models?.electricity_meter_reading ?? ""),
 
                   Text(
                     "Electricity Meter Attachments",
@@ -1305,24 +841,29 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   SizedBox(
                     height: 4,
                   ),
-                  electricity_meter_attachments.isNotEmpty
+                  notifier.models?.electricity_meter_attachments != null
                       ? Container(
-                    height: 150,
-                    margin: EdgeInsets.only(top: 10),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      children: List.generate(
-                        electricity_meter_attachments.length,
-                            (index) => Image(
-                          image: CachedNetworkImageProvider(
-                              electricity_meter_attachments[index].url??""),
-                          width: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  )
+                          height: 150,
+                          margin: EdgeInsets.only(top: 10),
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            children: List.generate(
+                              notifier.models?.electricity_meter_attachments
+                                      ?.length ??
+                                  0,
+                              (index) => Image(
+                                image: CachedNetworkImageProvider(notifier
+                                        .models
+                                        ?.electricity_meter_attachments?[index]
+                                        .url ??
+                                    ""),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        )
                       : Text(''),
                   SizedBox(
                     height: 4,
@@ -1341,24 +882,29 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   SizedBox(
                     height: 4,
                   ),
-                  property_meter_attachments.isNotEmpty
+                  notifier.models?.property_meter_attachments != null
                       ? Container(
-                    height: 150,
-                    margin: EdgeInsets.only(top: 10),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      children: List.generate(
-                        property_meter_attachments.length,
-                            (index) => Image(
-                          image: CachedNetworkImageProvider(
-                              property_meter_attachments[index].url??""),
-                          width: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  )
+                          height: 150,
+                          margin: EdgeInsets.only(top: 10),
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            children: List.generate(
+                              notifier.models?.property_meter_attachments
+                                      ?.length ??
+                                  0,
+                              (index) => Image(
+                                image: CachedNetworkImageProvider(notifier
+                                        .models
+                                        ?.property_meter_attachments?[index]
+                                        .url ??
+                                    ""),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        )
                       : Text(''),
                   Divider(
                     color: Color(0x29000000),
@@ -1367,22 +913,57 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                     height: 4,
                   ),
                 ],
-              )
-          ),
+              )),
         ],
       )),
     );
   }
+
+  showAlertDialog(
+      {required BuildContext context, required Function() onOkayTap}) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop(false);
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Okay"),
+      onPressed: () {
+        onOkayTap();
+        Navigator.of(context).pop(true);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Confirmation"),
+      content: Text("Are you sure you want to Reject the Application?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }
 
+
 class DetailImageWidget extends StatelessWidget {
-  const DetailImageWidget({
-    required this.title,
-    required this.image,
-    super.key});
+  const DetailImageWidget(
+      {required this.title, required this.image, super.key});
 
   final String title;
   final String image;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1397,13 +978,12 @@ class DetailImageWidget extends StatelessWidget {
         ),
         image.isNotEmpty
             ? Center(
-          child: Image(
-            image: CachedNetworkImageProvider(
-                image??""),
-            width: 100,
-            fit: BoxFit.cover,
-          ),
-        )
+                child: Image(
+                  image: CachedNetworkImageProvider(image ?? ""),
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
+              )
             : Text(''),
         Divider(
           color: Color(0x29000000),
@@ -1417,17 +997,13 @@ class DetailImageWidget extends StatelessWidget {
 }
 
 class DetailWidget extends StatelessWidget {
-  const DetailWidget({
-    required this.title,
-    required this.subtitle,
-    super.key});
+  const DetailWidget({required this.title, required this.subtitle, super.key});
 
   final String title;
   final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1438,8 +1014,7 @@ class DetailWidget extends StatelessWidget {
         SizedBox(
           height: 4,
         ),
-        Text(subtitle??""),
-
+        Text(subtitle),
         Divider(
           color: Color(0x29000000),
         ),
@@ -1450,6 +1025,7 @@ class DetailWidget extends StatelessWidget {
     );
   }
 }
+
 TextStyle _style() {
   return TextStyle(
       letterSpacing: 0.0,

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:lesedi/dashboard/view/dashboard_view.dart';
-import 'package:lesedi/applicantDetails/localDetails.dart';
+import 'package:lesedi/applicantDetails/details/view/localDetails.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/Verifications.dart';
 import 'package:lesedi/applicantDetails/details/view/details.dart';

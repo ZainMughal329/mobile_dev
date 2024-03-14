@@ -20,13 +20,8 @@ class _LocalDetailsState extends State<LocalDetails> {
   @override
   Widget build(BuildContext context) {
     log(widget.map.toString());
-    print("property_attachment => ${widget.map["property_attachment[]"]}");
-    print("electric_attachment => ${widget.map["electricity_meter_attachment[]"]}");
-    print("water_attachment => ${widget.map["water_meter_attachment[]"]}");
-    print("called");
     return Scaffold(
       appBar: AppBar(
-//        elevation: .5,
         centerTitle: true,
         leading: IconButton(
           icon: Icon(
@@ -34,8 +29,6 @@ class _LocalDetailsState extends State<LocalDetails> {
             color: Colors.white,
           ),
           onPressed: () {
-            // do something
-            // print(role);
             Navigator.pop(context);
 //            if ( role == 'field_worker'){
 //              Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> FieldWorkerApplicants()));
