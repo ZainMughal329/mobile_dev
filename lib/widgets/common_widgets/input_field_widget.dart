@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 
 class InputFieldWidget extends StatelessWidget {
   const InputFieldWidget({
@@ -9,6 +9,7 @@ class InputFieldWidget extends StatelessWidget {
     this.hasSuffix=false,
     this.isObscure=false,
     this.suffixIcon,
+    this.validator,
     this.textInputType =TextInputType.text,
   });
 
@@ -17,6 +18,7 @@ class InputFieldWidget extends StatelessWidget {
   final bool hasSuffix;
   final bool isObscure;
   final Widget? suffixIcon;
+  final Function(String val)? validator;
   final TextInputType textInputType;
 
   @override
@@ -54,12 +56,18 @@ class InputFieldWidget extends StatelessWidget {
                 new BorderRadius.circular(4.0),
                 borderSide: new BorderSide(
                     color: Colors.blue.shade700)), floatingLabelBehavior: FloatingLabelBehavior.auto),
-        keyboardType: TextInputType.emailAddress,
+        keyboardType: textInputType,
         style: new TextStyle(
             fontFamily: 'opensans',
             color:AppColors.PRIMARY_COLOR,
             fontSize: 13.0),
-
+validator: (val){
+          if(validator!=null)
+            {
+              validator!(val!);
+            }
+          return null;
+},
       ),
     );
   }

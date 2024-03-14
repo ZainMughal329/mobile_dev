@@ -1,4 +1,4 @@
-import 'package:lesedi/env/ap_flavour_configurations.dart';
+import 'package:lesedi/utils/ap_flavour_configurations.dart';
 import 'main.dart' as app;
 import 'package:lesedi/model/app_flavour_model.dart';
 

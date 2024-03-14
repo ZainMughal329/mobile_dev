@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lesedi/constans/Constants.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/utils/constants.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/model/applicantInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 
 //Check
 
@@ -1297,8 +1297,6 @@ DetailImageWidget(title: 'Affidavit SAPS', image: saps_affidavit??""),
                   ),
                   DetailWidget(title: "Electricity Meter Number", subtitle:electricity_meter_number??""),
                   DetailWidget(title: "Electricity Meter Reading", subtitle:electricity_meter_reading??""),
-                  // DetailImageWidget(title: "Electricity Meter Attachment", image:electricity_meter_attachments??""),
-                  // DetailImageWidget(title: "Property Attachments", image:property_meter_attachments??""),
 
                   Text(
                     "Electricity Meter Attachments",

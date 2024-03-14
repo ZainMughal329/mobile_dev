@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/auth/forgot_password/notifier/forgot_password_notifier.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +65,7 @@ class ForgotPassword extends ConsumerWidget {
                       InputFieldWidget(
                         controller: notifier.passwordController,
                         label: "Cell Number",
-                        textInputType: TextInputType.number,
+                        textInputType: TextInputType.phone,
                       ),
 
                       Padding(
@@ -97,9 +97,7 @@ class ForgotPassword extends ConsumerWidget {
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5.0),
-                                      color: AppColors.PRIMARY_COLOR != null
-                                          ? AppColors.PRIMARY_COLOR
-                                          : Color(0xffDE626C),
+                                      color: AppColors.PRIMARY_COLOR,
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color(0x1a000000),

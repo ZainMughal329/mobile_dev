@@ -10,14 +10,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mime/mime.dart';
-import '../global.dart';
-import 'package:lesedi/globals.dart' as global;
+import '../utils/global.dart';
+import 'package:lesedi/utils/globals.dart' as global;
 
 class Affidavits extends StatefulWidget {
   int applicant_id;

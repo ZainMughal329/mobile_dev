@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/applicants/allApplicants.dart';
-import 'package:lesedi/constans/Constants.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/utils/constants.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/model/applicantInfo.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/verificationsListing.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 
 class Verifications extends StatefulWidget {
 

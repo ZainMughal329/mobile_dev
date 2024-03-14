@@ -4,11 +4,11 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:lesedi/Dashboard.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/dashboard/view/dashboard_view.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/MaritalStatus.dart';
 import 'package:lesedi/forms/attachments.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -23,7 +23,7 @@ import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 
 class Declaration extends StatefulWidget {
   int applicant_id;
@@ -204,7 +204,7 @@ class _DeclarationState extends State<Declaration> {
             LocalStorage.localStorage.clearCurrentApplication();
             MyConstants.myConst.currentApplicantId = null;
             Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (_, __, ___) => Dashboard(role, applicant_id)));
+                pageBuilder: (_, __, ___) => Dashboard(userRole: role??"",applicant_id:  applicant_id??0)));
             setState(() {
               _isLoadingSecondary = false;
             });
@@ -220,7 +220,7 @@ class _DeclarationState extends State<Declaration> {
           print("Form Saved, Not Submitted");
           MyConstants.myConst.currentApplicantId = null;
           Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => Dashboard(role, applicant_id)));
+              pageBuilder: (_, __, ___) => Dashboard(userRole: role??"",applicant_id:  applicant_id??0)));
         }
       } catch (e) {
         // Fluttertoast.showToast(msg: "Something went wrong");

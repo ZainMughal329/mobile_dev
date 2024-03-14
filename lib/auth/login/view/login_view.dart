@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/auth/forgot_password/view/forgot_password_view.dart';
-import 'package:lesedi/auth/Signup.dart';
+import 'package:lesedi/auth/sign_up/view/sign_up.dart';
 import 'package:lesedi/auth/login/notifier/login_notifier.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 

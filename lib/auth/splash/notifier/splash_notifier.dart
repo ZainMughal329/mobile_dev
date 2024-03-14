@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lesedi/globals.dart' as global;
+import 'package:lesedi/utils/globals.dart' as global;
 
 
 class SplashNotifier extends ChangeNotifier {
@@ -30,7 +30,7 @@ class SplashNotifier extends ChangeNotifier {
     var applicant_id = sharedPreferences.getInt('applicant_id');
     if (isLogin != null && isLogin) {
       Navigator.of(context).pushReplacement(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => Dashboard(role, applicant_id)));
+          pageBuilder: (_, __, ___) => Dashboard(userRole: role??"",applicant_id:  applicant_id??0)));
     } else {
       Navigator.of(context).pushReplacement(
           PageRouteBuilder(pageBuilder: (_, __, ___) => Login()));

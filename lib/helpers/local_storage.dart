@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/helpers/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lesedi/model/bank_details_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../constans/Constants.dart';
-import '../global.dart';
+import '../utils/constants.dart';
+import '../utils/global.dart';
 import 'package:http/http.dart' as http;
 import '../networkRequest/services_request.dart';
 import 'attachments.dart';
-import '../app_color.dart';
+import '../utils/app_color.dart';
 
 class BankAccountDetails extends StatefulWidget {
   int applicant_id;

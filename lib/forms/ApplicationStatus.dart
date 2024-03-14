@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/MaritalStatus.dart';
 import 'package:lesedi/forms/PersonalInformationB1.dart';
 import 'package:lesedi/forms/attachments.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 
 class ApplicationStatus extends StatefulWidget {
   int applicant_id;

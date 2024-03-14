@@ -6,14 +6,14 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:camera_camera/camera_camera.dart';
 
-import '../global.dart';
+import '../utils/global.dart';
 
 class FileHolderAccountStatement extends StatefulWidget {
   int applicant_id;

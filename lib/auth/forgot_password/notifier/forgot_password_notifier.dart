@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lesedi/auth/reset_password_view/view/reset_password.dart';
-import 'package:lesedi/constans/Constants.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/utils/constants.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

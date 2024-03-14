@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lesedi/constans/Constants.dart';
-import 'package:lesedi/Dashboard.dart';
+import 'package:lesedi/utils/constants.dart';
+import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/forms/PersonalInformationB1.dart';
 import 'package:lesedi/forms/attachments.dart';
 import 'package:lesedi/forms/water_and_electricity_information/view/water_and_electricity_info_view.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/utils/app_color.dart';
 import 'package:location/location.dart';
 
 class PersonalInformationA1 extends StatefulWidget {
@@ -467,7 +467,7 @@ class _PersonalInformationA1State extends State<PersonalInformationA1> {
 //        Navigator.of(context).pop(true);
         Navigator.of(context).pushReplacement(PageRouteBuilder(
             pageBuilder: (_, __, ___) =>
-                Dashboard(widget.userRole, widget.applicant_id)));
+                Dashboard(userRole: widget.userRole,applicant_id:  widget.applicant_id)));
       },
     );
 

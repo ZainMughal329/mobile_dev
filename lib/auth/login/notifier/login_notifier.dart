@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:lesedi/Dashboard.dart';
-import 'package:lesedi/constans/Constants.dart';
-import 'package:lesedi/global.dart';
+import 'package:lesedi/dashboard/view/dashboard_view.dart';
+import 'package:lesedi/utils/constants.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginNotifier extends ChangeNotifier {
@@ -18,7 +18,7 @@ class LoginNotifier extends ChangeNotifier {
   TextEditingController emailController =
       TextEditingController(text: "hanan@gmail.com");
   TextEditingController passwordController =
-      TextEditingController(text: "11223344");
+      TextEditingController(text: "112233");
   SharedPreferences? prefs;
   String? _checkUserAuthImage;
 
@@ -90,7 +90,7 @@ class LoginNotifier extends ChangeNotifier {
         showToastMessage('SignIn successfully');
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => new Dashboard(role , applicant_id)));
+            builder: (BuildContext context) => new Dashboard(userRole: role??"" ,applicant_id: applicant_id??0)));
     } else {
       setLoading(false);
         jsonResponse = json.decode(response.body);

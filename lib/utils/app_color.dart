@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:lesedi/globals.dart' as global;
+import 'package:lesedi/utils/globals.dart' as global;
 
 /// App Colors Class - Resource class for storing app level color constants
 class AppColors {

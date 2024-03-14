@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lesedi/constans/Constants.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/ApplicationStatus.dart';
 import 'package:lesedi/forms/MaritalStatus.dart';
 import 'package:lesedi/forms/deathCertificate.dart';
@@ -17,7 +17,7 @@ import 'package:camera/camera.dart';
 import 'package:lesedi/helpers/utils.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 
-import '../Dashboard.dart';
+import '../dashboard/view/dashboard_view.dart';
 import 'Declaration.dart';
 import 'occupantID.dart';
 import 'filePicker.dart';
@@ -31,8 +31,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:camera_camera/camera_camera.dart';
-import 'package:lesedi/app_color.dart';
-import '../global.dart';
+import 'package:lesedi/utils/app_color.dart';
+import '../utils/global.dart';
 import 'filePickerApplicationID.dart';
 import 'filePickerMarriageCertificate.dart';
 import 'filePickerSpouseReport.dart';

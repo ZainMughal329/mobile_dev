@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lesedi/Dashboard.dart';
-import 'package:lesedi/app_color.dart';
+import 'package:lesedi/dashboard/view/dashboard_view.dart';
+import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/forms/water_and_electricity_information/notifier/water_and_electricity_form_notifier.dart';
 import 'package:lesedi/forms/water_meter_attachments.dart';
 
@@ -291,7 +291,7 @@ showAlertDialog(
     onPressed: () {
 //        Navigator.of(context).pop(true);
       Navigator.of(context).pushReplacement(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => Dashboard(userRole, applicantID)));
+          pageBuilder: (_, __, ___) => Dashboard(userRole: userRole, applicant_id: applicantID)));
     },
   );
 
