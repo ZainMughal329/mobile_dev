@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:lesedi/dashboard/view/dashboard_view.dart';
-import 'package:lesedi/applicants/allApplicants.dart';
+import 'package:lesedi/applicants/view/allApplicants.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/model/applicantInfo.dart';
-import 'package:lesedi/networkRequest/services_request.dart';
+import 'package:lesedi/common_services/services_request.dart';
 import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

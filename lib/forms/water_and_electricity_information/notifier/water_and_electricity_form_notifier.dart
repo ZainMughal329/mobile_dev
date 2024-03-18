@@ -9,8 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/Declaration.dart';
 import 'package:lesedi/utils/global.dart';
-import 'package:lesedi/helpers/local_storage.dart';
-import 'package:lesedi/networkRequest/services_request.dart';
+import 'package:lesedi/common_services/local_storage.dart';
+import 'package:lesedi/common_services/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WaterAndElectricityFormNotifier extends ChangeNotifier {

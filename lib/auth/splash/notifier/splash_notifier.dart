@@ -5,8 +5,8 @@ import 'package:http/http.dart';
 import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/helpers/local_storage.dart';
-import 'package:lesedi/networkRequest/services_request.dart';
+import 'package:lesedi/common_services/local_storage.dart';
+import 'package:lesedi/common_services/services_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lesedi/utils/globals.dart' as global;
 

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lesedi/auth/splash/view/splash_view.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/model/app_flavour_model.dart';
-import 'helpers/local_storage.dart';
+import 'common_services/local_storage.dart';
 
 Future<void> main({AppFlavourModel? appFlavourModel}) async {
   if(appFlavourModel!=null)

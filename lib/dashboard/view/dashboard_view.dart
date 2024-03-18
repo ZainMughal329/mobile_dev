@@ -1,16 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lesedi/dashboard/dahboard_notifier/dashboard_notifier.dart';
 import 'package:lesedi/dashboard/widgets/verification_widget.dart';
-import 'package:lesedi/forms/PersonalInformationA1.dart';
+import 'package:lesedi/forms/personal_information_A1/view/personal_information_A1.dart';
 import 'package:lesedi/widgets/common_widgets/seprator.dart';
-import 'package:lesedi/applicants/allApplicants.dart';
+import 'package:lesedi/applicants/view/allApplicants.dart';
 import 'package:lesedi/fieldWorker/fieldWorkerApplicant.dart';
 import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lesedi/utils/app_color.dart';
 import '../../auth/login/view/login_view.dart';
-import '../../helpers/local_storage.dart';
+import '../../common_services/local_storage.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   final String userRole;

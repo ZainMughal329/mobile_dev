@@ -7,9 +7,12 @@ class InputFieldWidget extends StatelessWidget {
     required this.controller,
     required this.label,
     this.hasSuffix=false,
+    this.enable=true,
     this.isObscure=false,
     this.suffixIcon,
     this.validator,
+    this.horizontalPadding=50,
+    this.verticalPadding=20,
     this.textInputType =TextInputType.text,
   });
 
@@ -17,19 +20,21 @@ class InputFieldWidget extends StatelessWidget {
   final String label;
   final bool hasSuffix;
   final bool isObscure;
+  final bool enable;
   final Widget? suffixIcon;
   final Function(String val)? validator;
   final TextInputType textInputType;
+  final double horizontalPadding;
+  final double verticalPadding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-          left: 50.0, right: 50, bottom: 20, top: 20),
+      padding:  EdgeInsets.symmetric(horizontal: horizontalPadding,vertical: verticalPadding),
       child: new TextFormField(
         obscureText:isObscure,
         controller: controller,
-
+enabled: enable,
         decoration: new InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(

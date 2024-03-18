@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/global.dart';
 import 'package:http/http.dart' as http;
-import '../networkRequest/services_request.dart';
+import '../common_services/services_request.dart';
 import 'attachments.dart';
 import '../utils/app_color.dart';
 

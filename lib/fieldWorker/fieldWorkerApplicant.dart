@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'package:lesedi/applicantDetails/details/view/localDetails.dart';
 import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/helpers/local_storage.dart';
+import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/model/applicants.dart';
 import 'package:flutter/material.dart';
-import 'package:lesedi/networkRequest/services_request.dart';
+import 'package:lesedi/common_services/services_request.dart';
 import 'dart:convert';
 import 'package:lesedi/applicantDetails/details/view/details.dart';
 import 'package:lesedi/utils/global.dart';

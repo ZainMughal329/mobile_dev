@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:lesedi/helpers/local_storage.dart';
-import 'package:lesedi/networkRequest/services_request.dart';
+import 'package:lesedi/common_services/local_storage.dart';
+import 'package:lesedi/common_services/services_request.dart';
 
 class Utils {
   static String convertFileToBase64(File file) {
