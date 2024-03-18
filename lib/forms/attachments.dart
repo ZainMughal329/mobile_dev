@@ -14,7 +14,7 @@ import 'package:lesedi/forms/household.dart';
 import 'package:lesedi/forms/water_and_electricity_information/view/water_and_electricity_info_view.dart';
 import 'package:lesedi/helpers/local_storage.dart';
 import 'package:camera/camera.dart';
-import 'package:lesedi/helpers/utils.dart';
+import 'package:lesedi/utils/utils.dart';
 import 'package:lesedi/networkRequest/services_request.dart';
 
 import '../dashboard/view/dashboard_view.dart';

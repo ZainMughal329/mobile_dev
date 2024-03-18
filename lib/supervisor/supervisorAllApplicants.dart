@@ -8,7 +8,7 @@ import 'package:lesedi/forms/Verifications.dart';
 import 'package:lesedi/applicantDetails/details/view/details.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/helpers/local_storage.dart';
-import 'package:lesedi/helpers/utils.dart';
+import 'package:lesedi/utils/utils.dart';
 import 'package:lesedi/model/applicants.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/networkRequest/services_request.dart';

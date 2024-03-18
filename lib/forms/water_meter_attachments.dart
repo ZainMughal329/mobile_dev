@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/water_and_electricity_information/notifier/water_and_electricity_form_notifier.dart';
-import 'package:lesedi/helpers/utils.dart';
+import 'package:lesedi/utils/utils.dart';
 
 class MeterAttachments extends StatelessWidget {
   const MeterAttachments(
