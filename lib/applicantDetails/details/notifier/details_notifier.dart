@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:lesedi/model/applicantInfo.dart';
+import 'package:lesedi/model/applicant_info_model.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -160,9 +160,11 @@ class DetailsNotifier extends ChangeNotifier {
 
         print(dataSort);
 
+        print("bank json is ${jsonResponse["bank_details"]}");
         ApplicantInfo data = ApplicantInfo.fromJson(dataHolder);
         models = data;
-        log("jsonResponse => $models");
+
+        log("jsonResponse => ${models?.bankDetails}");
 
         isVisible = true;
         print('name');
@@ -172,6 +174,8 @@ class DetailsNotifier extends ChangeNotifier {
         showToastMessage(
             jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
       }
+      print("detail of bank == > ${models?.bankDetails} ");
+
     }
     on SocketException catch (e) {
       Fluttertoast.showToast(msg: "Internet not available");

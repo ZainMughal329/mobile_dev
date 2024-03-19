@@ -24,7 +24,7 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
   void initState() {
     /// TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      ref.read(detailsProvider).getApplicantDetails(applicationId: widget.id);
+      await ref.read(detailsProvider).getApplicantDetails(applicationId: widget.id);
       print(widget.id);
       ref.read(detailsProvider).getRole();
     });

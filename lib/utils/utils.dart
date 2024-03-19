@@ -140,7 +140,7 @@ class Utils {
     }
   }
 
-  static alertDialog({required BuildContext context,required Function() onCamera,required Function() onGallery})
+  static imageAlertDialog({required BuildContext context,required Function() onButton1Tap,required Function() onButton2Tap})
   {
     showDialog(
         context: context,
@@ -163,7 +163,7 @@ class Utils {
                     Divider(),
                     InkWell(
                       onTap: () {
-                        onGallery();
+                        onButton2Tap();
                       },
                       child: Container(
                         child: Padding(
@@ -221,7 +221,7 @@ class Utils {
                     ),
                     InkWell(
                       onTap: () async {
-                        onCamera();
+                        onButton1Tap();
                       },
                       child: Container(
                         child: Padding(

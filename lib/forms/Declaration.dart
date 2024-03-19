@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/forms/MaritalStatus.dart';
+import 'package:lesedi/forms/marital_status/view/marital_status.dart';
 import 'package:lesedi/forms/attachments.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:flutter/material.dart';

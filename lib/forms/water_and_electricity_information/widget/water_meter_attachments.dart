@@ -77,10 +77,10 @@ class MeterAttachments extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Utils.alertDialog(
+                    Utils.imageAlertDialog(
                       context: context,
-                      onCamera: onCameraTap,
-                      onGallery: onGalleryTap,
+                      onButton1Tap: onCameraTap,
+                      onButton2Tap: onGalleryTap,
                     );
                   },
                   child: !isLoading

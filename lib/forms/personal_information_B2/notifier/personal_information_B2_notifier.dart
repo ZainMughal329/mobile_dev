@@ -1,25 +1,23 @@
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/common_services/services_request.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
-import '../../ApplicationStatus.dart';
-
+import 'package:lesedi/forms/application_status/view/application_status.dart';
 
 class PersonalInformationB2Notifier extends ChangeNotifier {
   ServicesRequest request = ServicesRequest();
 
   bool checkboxValueCity = false;
   List<String> allCities = ['Water', 'Electricity', 'Refuse Removal', 'None'];
-  List<String>? selectedCities ;
+  List<String> selectedCities=[];
+
   RegExp pattern = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
@@ -47,7 +45,9 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     'Refuse Removal',
     'None'
   ];
-  var maskFormatter;
+  var maskFormatter = new MaskTextInputFormatter(
+      mask: '### ### ######## ##### #### ####',
+      filter: {"#": RegExp(r'[0-9]')});
   var eskonAccountNumber;
   var contactNumber;
   var telephone_number;
@@ -57,6 +57,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     isLoading = val;
     notifyListeners();
   }
+
   checkInternetAvailability() async {
     await request.ifInternetAvailable();
     notifyListeners();
@@ -112,7 +113,11 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     print(role);
     notifyListeners();
   }
-  void formClicked({required bool previousFormSubmitted,required int id,required BuildContext context}) async {
+
+  void formClicked(
+      {required bool previousFormSubmitted,
+      required int id,
+      required BuildContext context}) async {
     // Pattern pattern =
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -120,7 +125,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     if (emailController.text.isNotEmpty) {
       // if (wardNumberController.text.isNotEmpty) {
       if (formattedString.isNotEmpty) {
-        if (selectedCities != null) {
+        if (selectedCities.isNotEmpty) {
           if (eskomAccountNumberController.text.isNotEmpty) {
             if (contectNumberController.text.isNotEmpty) {
               if (telephoneNumberController.text.isNotEmpty) {
@@ -136,15 +141,13 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
                         contectNumberController.text,
                         telephoneNumberController.text,
                         FinancialYearController.text,
-                       previousFormSubmitted,
-                      id,
-                      context
-                    );
+                        previousFormSubmitted,
+                        id,
+                        context);
                   }
                 } else {
-
-                    setLoading(false);
-                    showToastMessage("Please select financial year ");
+                  setLoading(false);
+                  showToastMessage("Please select financial year ");
                 }
               } else {
                 setLoading(false);
@@ -170,7 +173,6 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
         setLoading(false);
 
         showToastMessage("Please enter  stand/ erf number");
-
       }
       // }
       // else {
@@ -185,6 +187,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
       showToastMessage("Please enter email");
     }
   }
+
   Future submitForm(
       String email,
       wardNumber,
@@ -197,8 +200,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
       financial_year,
       previousFormSubmitted,
       applicant_id,
-      context
-      ) async {
+      context) async {
     setLoading(true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var userID = sharedPreferences.getString('userID');
@@ -216,7 +218,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
       'ward_number': wardNumber,
       'stand_number': standNumber,
       'services_linked':
-      selectedCities!.isNotEmpty ? selectedCities : serviceLinkedHolder,
+          selectedCities!.isNotEmpty ? selectedCities : serviceLinkedHolder,
       'eskom_account_number': eskonAccountNumber,
       'cellphone_number': contactNumber,
       'telephone_number': telephone_number,
@@ -224,7 +226,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     };
     // checkInternetAvailability();
     LocalStorage.localStorage.saveFormData(data);
-    if (MyConstants.myConst.internet??false) {
+    if (MyConstants.myConst.internet ?? false) {
       var jsonResponse;
       http.Response response;
 
@@ -240,7 +242,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
             body: jsonEncode(data));
       } else {
         data = LocalStorage.localStorage
-            .getFormData(MyConstants.myConst.currentApplicantId??"");
+            .getFormData(MyConstants.myConst.currentApplicantId ?? "");
         response = await http.post(
             Uri.parse(
                 "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
@@ -266,7 +268,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
         sharedPreferences.setString(
             "municipalAccountNumber", municipalAccountNumber);
         sharedPreferences.setString("standNumber", standNumber);
-        sharedPreferences.setStringList("serviceLinked", selectedCities??[]);
+        sharedPreferences.setStringList("serviceLinked", selectedCities ?? []);
         sharedPreferences.setString("eskonAccountNumber", eskonAccountNumber);
         sharedPreferences.setString("contactNumber", contactNumber);
         sharedPreferences.setString("telephone_number", telephone_number);
@@ -282,31 +284,31 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
           applicant_id = data['application_id'];
         }
 
-          print('done');
+        print('done');
 
-          setLoading(false);//      print(token);
-          showToastMessage('Form Submitted');
-          previousFormSubmitted = true;
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => new ApplicationStatus(
-                  applicant_id??0, previousFormSubmitted)));
+        setLoading(false); //      print(token);
+        showToastMessage('Form Submitted');
+        previousFormSubmitted = true;
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => new ApplicationStatus(
+                applicant_id ?? 0, previousFormSubmitted)));
       } else {
-          setLoading(false);
-          jsonResponse = json.decode(response.body);
-          print('data');
+        setLoading(false);
+        jsonResponse = json.decode(response.body);
+        print('data');
 //        print(jsonResponse);
-          showToastMessage(jsonResponse['message']);
-
+        showToastMessage(jsonResponse['message']);
       }
     } else {
-        setLoading(false);
+      setLoading(false);
       print("B1 Navigated from Else");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => new ApplicationStatus(
-              applicant_id??0, previousFormSubmitted)));
+          builder: (BuildContext context) =>
+              new ApplicationStatus(applicant_id ?? 0, previousFormSubmitted)));
     }
     notifyListeners();
   }
+
   Future selectDateYear(BuildContext context) async {
     DatePicker.showDatePicker(
       context,
@@ -314,10 +316,10 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
       minDateTime: DateTime(1901, 1),
       maxDateTime: DateTime(2100),
       onConfirm: (dateTime, List<int> index) {
-          print(dateTime.year);
+        print(dateTime.year);
 //              _dateTime = dateTime;
-          FinancialYearController.value =
-              TextEditingValue(text: dateTime.year.toString());
+        FinancialYearController.value =
+            TextEditingValue(text: dateTime.year.toString());
         notifyListeners();
       },
     );
@@ -377,5 +379,14 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
 //                              formattedString+=zeroList[i];
     }
     print(formattedString);
+  }
+
+  init() {
+
+    getRole();
+    checkInternetAvailability();
+    // maskFormatter = new MaskTextInputFormatter(
+    //     mask: '### ### ######## ##### #### ####',
+    //     filter: {"#": RegExp(r'[0-9]')});
   }
 }

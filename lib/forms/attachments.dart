@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/forms/ApplicationStatus.dart';
-import 'package:lesedi/forms/MaritalStatus.dart';
+import 'package:lesedi/forms/application_status/view/application_status.dart';
+import 'package:lesedi/forms/marital_status/view/marital_status.dart';
 import 'package:lesedi/forms/deathCertificate.dart';
 import 'package:lesedi/forms/filePickerAdditionalFile.dart';
 import 'package:lesedi/forms/filePickerSapsAffidavit.dart';
