@@ -7,10 +7,13 @@ import 'package:lesedi/model/app_flavour_model.dart';
 import 'common_services/local_storage.dart';
 
 Future<void> main({AppFlavourModel? appFlavourModel}) async {
+  print("main file  is running");
+
   if(appFlavourModel!=null)
     {
       print("this is app name ${appFlavourModel.appName}");
       MyConstants.myConst.baseUrl=appFlavourModel.baseUrl??"";
+      MyConstants.myConst.appName=appFlavourModel.appName??"";
       MyConstants.myConst.appLogo=appFlavourModel.appLogo??"";
       print("base url === > ${MyConstants.myConst.baseUrl}");
       print("base url === > ${MyConstants.myConst.appLogo}");
@@ -35,7 +38,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BTF',
+      title: MyConstants.myConst.appName,
+      // title: 'BTF',
       initialRoute: '/',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.

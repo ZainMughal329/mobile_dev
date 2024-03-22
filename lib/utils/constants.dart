@@ -6,6 +6,7 @@ class MyConstants {
   bool? internet;
   bool? formSubmissionStatus;
   String appLogo='';
+  String appName='';
   List<String>? applicationsList = <String>[];
   String? currentApplicantId;
 }

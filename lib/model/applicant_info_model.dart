@@ -234,9 +234,9 @@ class ApplicantInfo {
         remarks?.add(new Remarks.fromJson(v));
       });
     }
-    if (json['bank_details'] != null) {
+    if (json['bank_details_attributes'] != null) {
       bankDetails = <BankDetails>[];
-      json['bank_details'].forEach((v) {
+      json['bank_details_attributes'].forEach((v) {
         bankDetails?.add(new BankDetails.fromJson(v));
       });
     }
@@ -315,7 +315,7 @@ class ApplicantInfo {
       data['remarks'] = this.remarks?.map((v) => v.toJson()).toList();
     }
     if (this.bankDetails != null) {
-      data['bank_details'] = this.bankDetails?.map((v) => v.toJson()).toList();
+      data['bank_details_attributes'] = this.bankDetails?.map((v) => v.toJson()).toList();
     }
     data['age'] = this.age;
     data['user_latitude'] = this.userLatitude;

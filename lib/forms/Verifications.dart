@@ -6,7 +6,7 @@ import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/model/applicant_info_model.dart';
 import 'package:lesedi/common_services/services_request.dart';
-import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
+import 'package:lesedi/supervisor/view/supervisorAllApplicants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

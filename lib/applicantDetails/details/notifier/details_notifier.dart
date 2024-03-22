@@ -71,11 +71,10 @@ class DetailsNotifier extends ChangeNotifier {
       print('dsa');
       print(e);
     } on FormatException catch (e) {
-      Fluttertoast.showToast(msg: "Bad Request");
+      Fluttertoast.showToast(msg: "Something went wrong");
       print('dsa');
       print(e);
-    }
-    catch (e) {
+    } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
       print('dsa');
       print(e);
@@ -136,6 +135,7 @@ class DetailsNotifier extends ChangeNotifier {
 
   getApplicantDetails({required int applicationId}) async {
     // ApplicantInfo responseM;
+    log("api is called");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var userID = await sharedPreferences.getString('userID');
     var authToken = await sharedPreferences.getString('auth-token');
@@ -150,7 +150,7 @@ class DetailsNotifier extends ChangeNotifier {
             'uuid': userID ?? "",
             'Authentication': authToken ?? ""
           });
-      log("jsonResponse => ${response.body}");
+      log("body => ${response.body}");
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
 
@@ -160,7 +160,7 @@ class DetailsNotifier extends ChangeNotifier {
 
         print(dataSort);
 
-        print("bank json is ${jsonResponse["bank_details"]}");
+        print("bank json is ${dataHolder["bank_details_attributes"]}");
         ApplicantInfo data = ApplicantInfo.fromJson(dataHolder);
         models = data;
 

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/common_services/services_request.dart';
-import 'package:lesedi/forms/attachments.dart';
+import 'package:lesedi/forms/attachments/view/attachments.dart';
 import 'package:lesedi/forms/bank_account_details/view/bank_account_details.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';

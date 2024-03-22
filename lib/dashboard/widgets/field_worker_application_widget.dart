@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lesedi/widgets/common_widgets/seprator.dart';
 import 'package:lesedi/utils/app_color.dart';
-import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
+import 'package:lesedi/supervisor/view/supervisorAllApplicants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget? getFieldWorkerApplication(

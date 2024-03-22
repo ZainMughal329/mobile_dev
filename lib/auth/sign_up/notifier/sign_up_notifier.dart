@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
@@ -90,37 +92,53 @@ class SignUpNotifier extends ChangeNotifier {
       'role': roleHolder,
 //      'role': _selectedType
     };
-    var jsonResponse;
-    http.Response response = await http.post(
-        Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/register"),
-        body: data);
-    print(response.body);
-    print(data);
-    if (response.statusCode == 200) {
-      print('sss');
-      jsonResponse = json.decode(response.body);
-      print(jsonResponse);
+    try{
+      var jsonResponse;
+      http.Response response = await http.post(
+          Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/register"),
+          body: data);
+      print(response.body);
+      print(data);
+      if (response.statusCode == 200) {
+        print('sss');
+        jsonResponse = json.decode(response.body);
+        print(jsonResponse);
 
-      sharedPreferences.setString("userID", jsonResponse['uuid']);
-      sharedPreferences.setString('auth-token', jsonResponse['Authentication']);
-      sharedPreferences.setString('email', jsonResponse['email']);
-      sharedPreferences.setString('role', jsonResponse['role']);
-      var userID = sharedPreferences.getString('userID');
-      print(userID);
-      print('done');
+        sharedPreferences.setString("userID", jsonResponse['uuid']);
+        sharedPreferences.setString('auth-token', jsonResponse['Authentication']);
+        sharedPreferences.setString('email', jsonResponse['email']);
+        sharedPreferences.setString('role', jsonResponse['role']);
+        var userID = sharedPreferences.getString('userID');
+        print(userID);
+        print('done');
 
-      setLoading(false);
-      showToastMessage("Please Contact your admin first.");
+        setLoading(false);
+        showToastMessage("Please Contact your admin first.");
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (BuildContext context) => new Login()));
-    } else {
-      setLoading(false);
-      jsonResponse = json.decode(response.body);
-      print('data');
-      print(jsonResponse['password']);
-      showToastMessage(jsonResponse.toString().replaceAll("[\\[\\](){}]", ""));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => new Login()));
+      } else {
+        setLoading(false);
+        jsonResponse = json.decode(response.body);
+        print('data');
+        print(jsonResponse['password']);
+        showToastMessage(jsonResponse.toString().replaceAll("[\\[\\](){}]", ""));
+      }
     }
+    on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('dsa');
+      print(e);
+    } on FormatException catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('dsa');
+      print(e);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print('dsa');
+      print(e);
+    }
+
     notifyListeners();
   }
 }

@@ -5,7 +5,7 @@ import 'package:lesedi/forms/personal_information_A1/view/personal_information_A
 import 'package:lesedi/widgets/common_widgets/seprator.dart';
 import 'package:lesedi/applicants/view/allApplicants.dart';
 import 'package:lesedi/fieldWorker/fieldWorkerApplicant.dart';
-import 'package:lesedi/supervisor/supervisorAllApplicants.dart';
+import 'package:lesedi/supervisor/view/supervisorAllApplicants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lesedi/utils/app_color.dart';

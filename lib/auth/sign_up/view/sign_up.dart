@@ -1,21 +1,9 @@
-import 'dart:convert';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:lesedi/auth/sign_up/notifier/sign_up_notifier.dart';
-import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/utils/global.dart';
 import 'package:flutter/material.dart';
-import 'package:lesedi/utils/globals.dart' as global;
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
-
-//import 'package:flutter_svg/flutter_svg.dart';
-//import 'package:adobe_xd/blend_mask.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-
 import '../../../utils/app_color.dart';
 
 class SignUp extends ConsumerWidget {
@@ -55,10 +43,12 @@ class SignUp extends ConsumerWidget {
                           padding: EdgeInsets.only(top: 80.0),
                         ),
                         Container(
-                            child: Image.asset(
-                          'assets/images/emfuleni.jpg',
-                          width: 200,
-                        )),
+                          child: Image.asset(
+                            MyConstants.myConst.appLogo,
+                            width: 150,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsets.only(top: 20.0),
                         ),

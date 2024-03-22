@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/forms/Declaration.dart';
+import 'package:lesedi/forms/declaration/view/declaration_view.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/common_services/services_request.dart';
@@ -70,7 +70,6 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
     }
 
     if (imageList.isNotEmpty) {
-      // List<File> files = result.paths.map((path) => File(path!)).toList();
       List<File> files = imageList.map((path) => File(path.path)).toList();
       waterAttachmentsLoading(true);
       for (var file in files) {
@@ -118,7 +117,7 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
           print('dsa');
           print(e);
         } on FormatException catch (e) {
-          Fluttertoast.showToast(msg: "Bad Request");
+          Fluttertoast.showToast(msg: "Something went wrong");
           electricityAttachmentsLoading(false);
           print('dsa');
           print(e);

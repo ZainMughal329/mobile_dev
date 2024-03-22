@@ -44,17 +44,14 @@ class Login extends ConsumerWidget {
                         padding: EdgeInsets.only(top: 80.0),
                       ),
                       Container(
-                        child:
-                            Image(
+                        child: Image(
                           image: AssetImage(MyConstants.myConst.appLogo),
                           width: 200,
                         ),
                       ),
-
                       Padding(
                         padding: EdgeInsets.only(top: 40.0),
                       ),
-
                       Text(
                         'LOGIN',
                         style: TextStyle(
@@ -64,7 +61,6 @@ class Login extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-
                       InputFieldWidget(
                         controller: notifier.emailController,
                         label: 'Email',
@@ -87,7 +83,6 @@ class Login extends ConsumerWidget {
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.only(right: 50.0),
                         child: InkWell(
@@ -113,7 +108,6 @@ class Login extends ConsumerWidget {
                           ),
                         ),
                       ),
-
                       InkWell(
                           onTap: () {
                             if (!notifier.isLoading) {
@@ -192,13 +186,11 @@ class Login extends ConsumerWidget {
                           ),
                         ),
                       ),
-
                       InkWell(
                         onTap: () {
                           if (!notifier.isLoading) {
-                            Navigator.of(context).push(
-                                PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => SignUp()));
+                            Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => SignUp()));
                           }
                         },
                         child: Padding(

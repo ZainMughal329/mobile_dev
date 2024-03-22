@@ -50,7 +50,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "emfuleni.com"
+//        applicationId "emfuleni.com"
+        applicationId "iimass.com"
         minSdkVersion 21
         targetSdkVersion 30
         ndkVersion "25.2.9519653"
@@ -69,7 +70,7 @@ android {
             dimension "app"
             applicationIdSuffix ".lesedi"
             resValue "string", "app_name", "Lesedi"
-            versionNameSuffix ".lasedi"
+            versionNameSuffix ".lesedi"
         }
         modimolle {
             dimension "app"

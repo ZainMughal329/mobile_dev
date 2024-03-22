@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:lesedi/applicants/widgets/gridview_widget.dart';
@@ -64,41 +66,57 @@ class AllApplicantsNotifier extends ChangeNotifier {
     var jsonResponse;
     if (MyConstants.myConst.internet ?? false) {
       setLoading(true);
-      http.Response response = await http.get(
-          Uri.parse(
-              "${MyConstants.myConst.baseUrl}api/v1/users/all_applications"),
-          headers: {
-            'Content-Type': 'application/json',
-            'uuid': userID ?? "",
-            'Authentication': authToken ?? ""
-          });
-      if (response.statusCode == 200) {
-        jsonResponse = json.decode(response.body);
+      try{
+        http.Response response = await http.get(
+            Uri.parse(
+                "${MyConstants.myConst.baseUrl}api/v1/users/all_applications"),
+            headers: {
+              'Content-Type': 'application/json',
+              'uuid': userID ?? "",
+              'Authentication': authToken ?? ""
+            });
+        if (response.statusCode == 200) {
+          jsonResponse = json.decode(response.body);
 
-        List<dynamic> dataHolder = jsonResponse;
-        print(jsonResponse);
-        print('total length');
-        print(dataHolder.length);
-        for (int j = 0; j < dataHolder.length; j++) {
-          var dataSort = dataHolder.toList()[j];
-          NodoPOJO models = NodoPOJO.fromJson(dataSort);
-          responseM.add(models);
-          print(responseM[0].extremo1);
-        }
+          List<dynamic> dataHolder = jsonResponse;
+          print(jsonResponse);
+          print('total length');
+          print(dataHolder.length);
+          for (int j = 0; j < dataHolder.length; j++) {
+            var dataSort = dataHolder.toList()[j];
+            NodoPOJO models = NodoPOJO.fromJson(dataSort);
+            responseM.add(models);
+            print(responseM[0].extremo1);
+          }
 
-        print('done');
-        models = responseM;
-        if (models.length == 0) {
-          setVisibility();
+          print('done');
+          models = responseM;
+          if (models.length == 0) {
+            setVisibility();
+          }
+          setLoading(false);
+        } else {
+          jsonResponse = json.decode(response.body);
+          print('data');
+          setLoading(false);
+          showToastMessage(
+              jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
         }
-        setLoading(false);
-      } else {
-        jsonResponse = json.decode(response.body);
-        print('data');
-        setLoading(false);
-        showToastMessage(
-            jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
       }
+      on SocketException catch (e) {
+        Fluttertoast.showToast(msg: "Internet not available");
+        print('dsa');
+        print(e);
+      } on FormatException catch (e) {
+        Fluttertoast.showToast(msg: "Something went wrong");
+        print('dsa');
+        print(e);
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+        print('dsa');
+        print(e);
+      }
+
     }
     notifyListeners();
   }
@@ -108,7 +126,7 @@ class AllApplicantsNotifier extends ChangeNotifier {
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
     var jsonResponse;
-    http.Response response = await http.put(
+    try{    http.Response response = await http.put(
         Uri.parse(
             "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&accepted=true"),
         headers: {
@@ -134,7 +152,22 @@ class AllApplicantsNotifier extends ChangeNotifier {
       print('data');
       showToastMessage(
           jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
+    }}
+    on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('dsa');
+      print(e);
+    } on FormatException catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('dsa');
+      print(e);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print('dsa');
+      print(e);
     }
+
+
     notifyListeners();
   }
 
@@ -143,32 +176,48 @@ class AllApplicantsNotifier extends ChangeNotifier {
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
     var jsonResponse;
-    http.Response response = await http.put(
-        Uri.parse(
-            "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&accepted=false"),
-        headers: {
-          'Content-Type': 'application/json',
-          'uuid': userID ?? "",
-          'Authentication': authToken ?? ""
-        });
+    try{
 
-    print(response.body);
+      http.Response response = await http.put(
+          Uri.parse(
+              "${MyConstants.myConst.baseUrl}api/v1/users/application_reviewed?application_id=$id&accepted=false"),
+          headers: {
+            'Content-Type': 'application/json',
+            'uuid': userID ?? "",
+            'Authentication': authToken ?? ""
+          });
 
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
+      print(response.body);
 
-      print(jsonResponse);
-      showToastMessage(jsonResponse['message']);
-      getAllApplicant();
-      gridViewWidget(
-        mapData: mapData,
-        notifier: AllApplicantsNotifier(),
-      );
-    } else {
-      jsonResponse = json.decode(response.body);
-      print('data');
-      showToastMessage(
-          jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
+      if (response.statusCode == 200) {
+        jsonResponse = json.decode(response.body);
+
+        print(jsonResponse);
+        showToastMessage(jsonResponse['message']);
+        getAllApplicant();
+        gridViewWidget(
+          mapData: mapData,
+          notifier: AllApplicantsNotifier(),
+        );
+      } else {
+        jsonResponse = json.decode(response.body);
+        print('data');
+        showToastMessage(
+            jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
+      }
+    }
+    on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('dsa');
+      print(e);
+    } on FormatException catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('dsa');
+      print(e);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print('dsa');
+      print(e);
     }
     notifyListeners();
   }

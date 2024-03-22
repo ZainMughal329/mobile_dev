@@ -3,6 +3,7 @@ import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/auth/forgot_password/notifier/forgot_password_notifier.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:flutter/material.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 
 class ForgotPassword extends ConsumerWidget {
@@ -44,8 +45,9 @@ class ForgotPassword extends ConsumerWidget {
                       ),
                       Container(
                         child: Image.asset(
-                          'assets/images/emfuleni.jpg',
-                          width: 250,
+                          MyConstants.myConst.appLogo,
+                          width: 150,
+                          fit: BoxFit.fill,
                         ),
                       ),
 

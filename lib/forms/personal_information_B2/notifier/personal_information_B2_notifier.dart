@@ -43,7 +43,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     'Water',
     'Electricity',
     'Refuse Removal',
-    'None'
+    // 'None'
   ];
   var maskFormatter = new MaskTextInputFormatter(
       mask: '### ### ######## ##### #### ####',

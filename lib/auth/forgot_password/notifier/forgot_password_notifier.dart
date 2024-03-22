@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lesedi/auth/reset_password_view/view/reset_password.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
@@ -29,7 +31,7 @@ class ForgotPasswordNotifier extends ChangeNotifier {
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (emailController.text.isNotEmpty || passwordController.text.isNotEmpty) {
-      signUp(email: emailController.text, pass: passwordController.text,context: context);
+      forgotPassword(email: emailController.text, pass: passwordController.text,context: context);
     } else {
       setLoading(false);
       showToastMessage(
@@ -38,7 +40,7 @@ class ForgotPasswordNotifier extends ChangeNotifier {
     }
   }
 
-  Future<Null> signUp({required String email,required String pass,required BuildContext context}) async {
+  Future forgotPassword({required String email,required String pass,required BuildContext context}) async {
     setLoading(true);
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -47,7 +49,7 @@ class ForgotPasswordNotifier extends ChangeNotifier {
       'email': email,
       'cellphone_number':pass
     };
-    var jsonResponse;
+    try{var jsonResponse;
     http.Response response = await http.put(
         Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/forgot_password?email=$email"));
     print(response.body);
@@ -64,18 +66,32 @@ class ForgotPasswordNotifier extends ChangeNotifier {
       // print(userID);
 
       setLoading(false);
-        showToastMessage(jsonResponse['message']);
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => new ResetPassword()));
+      showToastMessage(jsonResponse['message']);
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => new ResetPassword()));
 
     } else {
       setLoading(false);
-        jsonResponse = json.decode(response.body);
-        print('data');
-        showToastMessage(
-            jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
+      jsonResponse = json.decode(response.body);
+      print('data');
+      showToastMessage(
+          jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
 
+    }}
+    on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('dsa');
+      print(e);
+    } on FormatException catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('dsa');
+      print(e);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print('dsa');
+      print(e);
     }
+
     notifyListeners();
   }
 }

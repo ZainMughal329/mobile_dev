@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:lesedi/dashboard/view/dashboard_view.dart';
@@ -16,9 +18,9 @@ class LoginNotifier extends ChangeNotifier {
   bool isLoading = false;
   bool isSecure = true;
   TextEditingController emailController =
-      TextEditingController(text: "hanan@gmail.com");
+      TextEditingController();
   TextEditingController passwordController =
-      TextEditingController(text: "112233");
+      TextEditingController();
   SharedPreferences? prefs;
   String? _checkUserAuthImage;
 
@@ -47,7 +49,7 @@ class LoginNotifier extends ChangeNotifier {
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-      signUp(email: emailController.text, pass: passwordController.text,context: context);
+      login(email: emailController.text, pass: passwordController.text,context: context);
     } else {
 
         setLoading(false);
@@ -58,7 +60,7 @@ class LoginNotifier extends ChangeNotifier {
     }
   }
 
-  Future signUp({required String email,required String pass,required BuildContext context}) async {
+  Future login({required String email,required String pass,required BuildContext context}) async {
     setLoading(true);
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -69,20 +71,21 @@ class LoginNotifier extends ChangeNotifier {
       'password': pass,
     };
     var jsonResponse;
-    http.Response response = await http.get(
-        Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/sign_in?email=$email&password=$pass&role='reviewer'"));
-    print(response.body);
-    print(data);
-    if (response.statusCode == 200) {
-      print('sss');
-      jsonResponse = json.decode(response.body);
-      sharedPreferences.setString("userID", jsonResponse['uuid']);
-      sharedPreferences.setString('auth-token', jsonResponse['Authentication']);
-      sharedPreferences.setString('email', jsonResponse['email']);
-      sharedPreferences.setString('role', jsonResponse['role']);
-      var applicant_id = sharedPreferences.getInt('applicant_id');
-      sharedPreferences.setBool('login', true);
-      String? role = sharedPreferences.getString('role');
+    try{
+      http.Response response = await http.get(
+          Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/sign_in?email=$email&password=$pass&role='reviewer'"));
+      print(response.body);
+      print(data);
+      if (response.statusCode == 200) {
+        print('sss');
+        jsonResponse = json.decode(response.body);
+        sharedPreferences.setString("userID", jsonResponse['uuid']);
+        sharedPreferences.setString('auth-token', jsonResponse['Authentication']);
+        sharedPreferences.setString('email', jsonResponse['email']);
+        sharedPreferences.setString('role', jsonResponse['role']);
+        var applicant_id = sharedPreferences.getInt('applicant_id');
+        sharedPreferences.setBool('login', true);
+        String? role = sharedPreferences.getString('role');
 
         print('done');
 
@@ -91,12 +94,25 @@ class LoginNotifier extends ChangeNotifier {
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => new Dashboard(userRole: role??"" ,applicant_id: applicant_id??0)));
-    } else {
-      setLoading(false);
+      } else {
+        setLoading(false);
         jsonResponse = json.decode(response.body);
         print('data');
         showToastMessage(
             jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
+      }}
+    on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('dsa');
+      print(e);
+    } on FormatException catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('dsa');
+      print(e);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print('dsa');
+      print(e);
     }
     notifyListeners();
   }

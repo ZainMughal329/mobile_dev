@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lesedi/common_services/services_request.dart';
-import 'package:lesedi/forms/attachments.dart';
+import 'package:lesedi/forms/attachments/view/attachments.dart';
 import 'package:lesedi/model/bank_details_model.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
@@ -65,7 +67,7 @@ class BankAccountDetailNotifier extends ChangeNotifier {
 
       bankDetailsModel.applicationId = applicant_id;
       var jsonResponse;
-      http.Response response = await http.post(
+      try{      http.Response response = await http.post(
           Uri.parse(
               "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
           headers: {
@@ -89,26 +91,40 @@ class BankAccountDetailNotifier extends ChangeNotifier {
         jsonResponse = jsonDecode(response.body);
         // sharedPreferences.setInt('applicant_id', data['application_id']);
         // LocalStorage.localStorage.clearCurrentApplication();
-          print('done');
+        print('done');
 
-          setLoading(false);
-          previousFormSubmitted = true;
-          showToastMessage('Form Submitted');
-          Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => Attachments(
-                  applicant_id: applicant_id,
-                  gross_monthly_income: gross_monthly_income,
-                  previousFormSubmitted: previousFormSubmitted)));
+        setLoading(false);
+        previousFormSubmitted = true;
+        showToastMessage('Form Submitted');
+        Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => Attachments(
+                applicant_id: applicant_id,
+                gross_monthly_income: gross_monthly_income,
+                previousFormSubmitted: previousFormSubmitted)));
         notifyListeners();
       } else {
         setLoading(false);
 
         jsonResponse = json.decode(response.body);
-          print('data');
+        print('data');
 //        print(jsonResponse);
-          showToastMessage(jsonResponse['message']);
+        showToastMessage(jsonResponse['message']);
         notifyListeners();
+      }}
+      on SocketException catch (e) {
+        Fluttertoast.showToast(msg: "Internet not available");
+        print('dsa');
+        print(e);
+      } on FormatException catch (e) {
+        Fluttertoast.showToast(msg: "Something went wrong");
+        print('dsa');
+        print(e);
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+        print('dsa');
+        print(e);
       }
+
     }
   }
   init(){

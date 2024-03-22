@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/auth/reset_password_view/notifier/reset_password_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 import '../../login/view/login_view.dart';
 
@@ -45,12 +46,13 @@ class ResetPassword extends ConsumerWidget {
                       Padding(
                         padding: EdgeInsets.only(top: 80.0),
                       ),
-
                       Container(
-                          child: Image.asset(
-                        'assets/images/emfuleni.jpg',
-                        width: 200,
-                      )),
+                        child: Image.asset(
+                          MyConstants.myConst.appLogo,
+                          width: 150,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.only(top: 40.0),
                       ),
@@ -63,7 +65,6 @@ class ResetPassword extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-
                       InputFieldWidget(
                           controller: notifier.tokenNumberController,
                           textInputType: TextInputType.number,
@@ -102,7 +103,6 @@ class ResetPassword extends ConsumerWidget {
                           ),
                         ),
                       ),
-
                       InkWell(
                           onTap: () {
                             if (!notifier.isLoading) {
@@ -176,12 +176,10 @@ class ResetPassword extends ConsumerWidget {
                           width: 150,
                           height: 2,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            color: AppColors.PRIMARY_COLOR
-                          ),
+                              borderRadius: BorderRadius.circular(5.0),
+                              color: AppColors.PRIMARY_COLOR),
                         ),
                       ),
-
                       InkWell(
                         onTap: () {
                           if (!notifier.isLoading) {
@@ -214,7 +212,6 @@ class ResetPassword extends ConsumerWidget {
                           ),
                         ),
                       )
-
                     ],
                   ),
                 ),

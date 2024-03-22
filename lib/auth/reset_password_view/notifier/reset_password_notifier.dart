@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lesedi/auth/login/view/login_view.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 
 class ResetPasswordNotifier extends ChangeNotifier {
   String? brand_name;
@@ -23,17 +24,18 @@ class ResetPasswordNotifier extends ChangeNotifier {
   SharedPreferences? prefs;
   String? checkUserAuthImage;
 
-  setLoading(bool val){
-    isLoading=val;
+  setLoading(bool val) {
+    isLoading = val;
     notifyListeners();
   }
 
-  setSecure(){
-    isSecure=!isSecure;
+  setSecure() {
+    isSecure = !isSecure;
     notifyListeners();
   }
-  setResetSecure(){
-    isResetSecure=!isResetSecure;
+
+  setResetSecure() {
+    isResetSecure = !isResetSecure;
     notifyListeners();
   }
 
@@ -53,9 +55,12 @@ class ResetPasswordNotifier extends ChangeNotifier {
     if (tokenNumberController.text.isNotEmpty &&
         passwordController.text.isNotEmpty) {
       if (passwordController.text == confirmPasswordController.text) {
-        resetPassword(token: tokenNumberController.text,pass:  passwordController.text,context: context);
+        resetPassword(
+            token: tokenNumberController.text,
+            pass: passwordController.text,
+            context: context);
       } else {
-      setLoading(false);
+        setLoading(false);
         showToastMessage(
           "Password Not Match!",
         );
@@ -69,22 +74,23 @@ class ResetPasswordNotifier extends ChangeNotifier {
     }
   }
 
-  Future resetPassword({required String token,required String pass,required BuildContext context}) async  {
+  Future resetPassword(
+      {required String token,
+      required String pass,
+      required BuildContext context}) async {
     setLoading(true);
 
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     print('okay');
-
-    var jsonResponse;
-    http.Response response = await http.put(Uri.parse(
-        "${MyConstants.myConst.baseUrl}api/v1/users/reset_password?reset_password_token=$token&password=$pass"));
-    print(response.body);
-//    print(data);
-    if (response.statusCode == 200) {
-      print('sss');
-      jsonResponse = json.decode(response.body);
-
+    try {
+      var jsonResponse;
+      http.Response response = await http.put(Uri.parse(
+          "${MyConstants.myConst.baseUrl}api/v1/users/reset_password?reset_password_token=$token&password=$pass"));
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('sss');
+        jsonResponse = json.decode(response.body);
 
         if (jsonResponse['message'] == 'password updated successfully') {
           setLoading(false);
@@ -96,15 +102,25 @@ class ResetPasswordNotifier extends ChangeNotifier {
           setLoading(false);
           showToastMessage('Please Insert Valid Token!');
         }
-
-    } else {
-
+      } else {
         setLoading(false);
         jsonResponse = json.decode(response.body);
         print('data');
         showToastMessage(
             jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
-
+      }
+    } on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('dsa');
+      print(e);
+    } on FormatException catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('dsa');
+      print(e);
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print('dsa');
+      print(e);
     }
   }
 }

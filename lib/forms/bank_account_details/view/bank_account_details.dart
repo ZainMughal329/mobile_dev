@@ -9,7 +9,7 @@ import '../../../utils/constants.dart';
 import '../../../utils/global.dart';
 import 'package:http/http.dart' as http;
 import '../../../common_services/services_request.dart';
-import '../../attachments.dart';
+import '../../attachments/view/attachments.dart';
 import '../../../utils/app_color.dart';
 
 //
@@ -485,10 +485,11 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
 
       print(response.headers);
 
-      print(response.body);
       // print(data);
       if (response.statusCode == 200) {
         jsonResponse = jsonDecode(response.body);
+        print("response.body) ==> ${response.body}");
+
         // sharedPreferences.setInt('applicant_id', data['application_id']);
         // LocalStorage.localStorage.clearCurrentApplication();
         setState(() {
