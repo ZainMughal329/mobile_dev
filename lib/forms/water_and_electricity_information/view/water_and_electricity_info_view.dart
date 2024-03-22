@@ -85,7 +85,7 @@ class WaterAndElectricityView extends ConsumerWidget {
                     label: "Electricity Meter Readings",
                   ),
                   MeterAttachments(
-                    title: "Water Attachments",
+                    title: "Water Meter Attachments",
                     notifier: notifier,
                     applicant_id: applicant_id,
                     attachments: notifier.waterMeterAttachmentsList,
@@ -107,7 +107,7 @@ class WaterAndElectricityView extends ConsumerWidget {
                     },
                   ),
                   MeterAttachments(
-                    title: "Electricity Attachments",
+                    title: "Electricity Meter Attachments",
                     notifier: notifier,
                     applicant_id: applicant_id,
                     attachments: notifier.electricMeterAttachmentsList,
