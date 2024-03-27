@@ -71,7 +71,9 @@ class _OccupantIDState extends State<OccupantID> {
     // List<File> listFiles = await FilePicker.getMultiFile(
     //     type: FileType.custom, allowedExtensions: ['jpg','png']);
     FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['jpg','png']);
+        type: FileType.custom, allowedExtensions: ['jpg','png'],
+      allowMultiple: true,
+    );
     Navigator.pop(context, true);
     setState(() {
       _isLoadingSecondary = true;

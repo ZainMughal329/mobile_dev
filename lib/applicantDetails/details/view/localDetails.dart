@@ -442,6 +442,11 @@ class _LocalDetailsState extends State<LocalDetails> {
                       SizedBox(
                         height: 4,
                       ),
+                      DetailWidget(title: "Water Meter Number", subtitle:widget.map["water_meter_number"]??""),
+                      DetailWidget(title: "Water Meter Reading", subtitle:widget.map["water_meter_reading"]??""),
+                      DetailWidget(title: "Electricity Meter Number", subtitle:widget.map["electricity_meter_number"]??""),
+                      DetailWidget(title: "Electricity Meter Reading", subtitle:widget.map["electricity_meter_reading"]??""),
+
                       Text(
                         "Signature Date",
                         style: _style(),
@@ -742,6 +747,10 @@ class _LocalDetailsState extends State<LocalDetails> {
                       SizedBox(
                         height: 4,
                       ),
+                      OfflineDetailImageWidget(title: "Water Meter Attachment", image:widget.map["water_meter_attachment"]??""),
+                      OfflineDetailImageWidget(title: "Electricity Meter Attachment", image:widget.map["electricity_meter_attachment"]??""),
+                      OfflineDetailImageWidget(title: "Property Attachments", image:widget.map["electricity_meter_attachment"]??""),
+
                       Text(
                         'Signature',
                         style: _style(),
@@ -768,45 +777,45 @@ class _LocalDetailsState extends State<LocalDetails> {
               ],
             ),
           ),
-          Text(
-            "Bills",
-            style: TextStyle(
-                letterSpacing: 0.0,
-                color: Color(0xff141414),
-                fontFamily: "Open Sans",
-                fontWeight: FontWeight.w700,
-                fontSize: 18.0),
-          ),
-          Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                  top: 20.0, bottom: 12, left: 20, right: 20),
-              margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
-//          height: 665.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                color: const Color(0xffffffff),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x29000000),
-                    offset: Offset(0, 3),
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
-              child:Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DetailWidget(title: "Water Meter Number", subtitle:widget.map["water_meter_number"]??""),
-                  DetailWidget(title: "Water Meter Reading", subtitle:widget.map["water_meter_reading"]??""),
-                  OfflineDetailImageWidget(title: "Water Meter Attachment", image:widget.map["water_meter_attachment"]??""),
-                  DetailWidget(title: "Electricity Meter Number", subtitle:widget.map["electricity_meter_number"]??""),
-                  DetailWidget(title: "Electricity Meter Reading", subtitle:widget.map["electricity_meter_reading"]??""),
-                  OfflineDetailImageWidget(title: "Electricity Meter Attachment", image:widget.map["electricity_meter_attachment"]??""),
-                  OfflineDetailImageWidget(title: "Property Attachments", image:widget.map["electricity_meter_attachment"]??""),
-                ],
-              )
-          ),
+//           Text(
+//             "Bills",
+//             style: TextStyle(
+//                 letterSpacing: 0.0,
+//                 color: Color(0xff141414),
+//                 fontFamily: "Open Sans",
+//                 fontWeight: FontWeight.w700,
+//                 fontSize: 18.0),
+//           ),
+//           Container(
+//               alignment: Alignment.center,
+//               padding: EdgeInsets.only(
+//                   top: 20.0, bottom: 12, left: 20, right: 20),
+//               margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
+// //          height: 665.0,
+//               decoration: BoxDecoration(
+//                 borderRadius: BorderRadius.circular(5.0),
+//                 color: const Color(0xffffffff),
+//                 boxShadow: [
+//                   BoxShadow(
+//                     color: const Color(0x29000000),
+//                     offset: Offset(0, 3),
+//                     blurRadius: 6,
+//                   ),
+//                 ],
+//               ),
+//               child:Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   DetailWidget(title: "Water Meter Number", subtitle:widget.map["water_meter_number"]??""),
+//                   DetailWidget(title: "Water Meter Reading", subtitle:widget.map["water_meter_reading"]??""),
+//                   OfflineDetailImageWidget(title: "Water Meter Attachment", image:widget.map["water_meter_attachment"]??""),
+//                   DetailWidget(title: "Electricity Meter Number", subtitle:widget.map["electricity_meter_number"]??""),
+//                   DetailWidget(title: "Electricity Meter Reading", subtitle:widget.map["electricity_meter_reading"]??""),
+//                   OfflineDetailImageWidget(title: "Electricity Meter Attachment", image:widget.map["electricity_meter_attachment"]??""),
+//                   OfflineDetailImageWidget(title: "Property Attachments", image:widget.map["electricity_meter_attachment"]??""),
+//                 ],
+//               )
+//           ),
         ],
       )),
     );

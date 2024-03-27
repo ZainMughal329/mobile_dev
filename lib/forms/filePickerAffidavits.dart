@@ -35,6 +35,7 @@ class _AffidavitsState extends State<Affidavits> {
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
+
   // List<String> affidavits_id = List<String>();
   List<String> affidavits_id = [];
   ServicesRequest request = ServicesRequest();
@@ -82,11 +83,14 @@ class _AffidavitsState extends State<Affidavits> {
     //     type: FileType.custom, allowedExtensions: ['jpg','png']);
 
     FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['jpg','png']);
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+      allowMultiple: true,
+    );
     final Map<String, dynamic> _formData = {};
 
     _formData['application_id'] = widget.applicant_id;
-    if(listFiles!=null){
+    if (listFiles != null) {
       List<File> files = listFiles.paths.map((path) => File(path!)).toList();
 
       var img = [];
@@ -117,16 +121,16 @@ class _AffidavitsState extends State<Affidavits> {
 //
         print(formData);
         // checkInternetAvailability();
-        if (MyConstants.myConst.internet??false) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
               connectTimeout: Duration(minutes: 3), // 3 minutes
               receiveTimeout: Duration(minutes: 3) // 3 minuntes
-          ));
+              ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+              await SharedPreferences.getInstance();
           var userID = sharedPreferences.getString('userID');
           var authToken = sharedPreferences.getString('auth-token');
 
@@ -161,7 +165,6 @@ class _AffidavitsState extends State<Affidavits> {
                 fileName = dependent_List[p].split('/').last;
 
 //              global.occupantImages = dependent_idss;
-
               }
 
               if (fileName!.contains('.png') ||
@@ -197,7 +200,6 @@ class _AffidavitsState extends State<Affidavits> {
         print(e);
       }
     }
-
 
     // var img = [];
     // List<String> img_paths = <String>[];
@@ -334,23 +336,23 @@ class _AffidavitsState extends State<Affidavits> {
         context,
         MaterialPageRoute(
             builder: (context) => CameraCamera(
-              onFile: (onFile) {
-                print("Inside house hold file");
-                file = onFile;
-                Navigator.pop(context);
-              },
-              enableZoom: true,
-              resolutionPreset: ResolutionPreset.medium,
-              cameraSide: CameraSide.all,
-            )
-          // Camera(
-          //   mode: CameraMode.normal,
-          //   imageMask: CameraFocus.rectangle(
-          //     color: Colors.black.withOpacity(0.5),
-          //   ),
-          // )
+                  onFile: (onFile) {
+                    print("Inside house hold file");
+                    file = onFile;
+                    Navigator.pop(context);
+                  },
+                  enableZoom: true,
+                  resolutionPreset: ResolutionPreset.medium,
+                  cameraSide: CameraSide.all,
+                )
+            // Camera(
+            //   mode: CameraMode.normal,
+            //   imageMask: CameraFocus.rectangle(
+            //     color: Colors.black.withOpacity(0.5),
+            //   ),
+            // )
 
-        ));
+            ));
     print(file?.path);
     print(file);
 
@@ -381,16 +383,16 @@ class _AffidavitsState extends State<Affidavits> {
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet??false) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
               connectTimeout: Duration(minutes: 3), // 3 minutes
               receiveTimeout: Duration(minutes: 3) // 3 minuntes
-          ));
+              ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+              await SharedPreferences.getInstance();
           var userID = sharedPreferences.getString('userID');
           var authToken = sharedPreferences.getString('auth-token');
 
@@ -447,84 +449,84 @@ class _AffidavitsState extends State<Affidavits> {
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-              title: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Upload File"),
-                  InkWell(
-                      onTap: () => Navigator.pop(context, true),
-                      child: Icon(Icons.clear))
-                ],
-              ),
-              content: SingleChildScrollView(
-                child: Container(
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  title: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Divider(),
+                      Text("Upload File"),
                       InkWell(
-                        onTap: () {
-                          _filePicker();
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 30, bottom: 0, top: 20),
+                          onTap: () => Navigator.pop(context, true),
+                          child: Icon(Icons.clear))
+                    ],
+                  ),
+                  content: SingleChildScrollView(
+                    child: Container(
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(),
+                          InkWell(
+                            onTap: () {
+                              _filePicker();
+                            },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
-                              height: 55.0,
-                              width: 600.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(
-                                        Icons.image,
-                                        color: Colors.black,
-                                        size: 20,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 30, bottom: 0, top: 20),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  height: 55.0,
+                                  width: 600.0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.image,
+                                            color: Colors.black,
+                                            size: 20,
+                                          )),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Chosse From Gallery',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            fontFamily: "Open Sans",
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Chosse From Gallery',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        fontFamily: "Open Sans",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              alignment: FractionalOffset.center,
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black38,
-                                        blurRadius: 0.0)
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(colors: <Color>[
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFFFFFFF)
-                                  ])),
+                                  alignment: FractionalOffset.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 0.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(colors: <Color>[
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFFFFFFFF)
+                                      ])),
 //                          decoration: BoxDecoration(
 //                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
 //                              borderRadius: BorderRadius.circular(10.0),
 //                              gradient: LinearGradient(
 //                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          uploadImage();
+                          InkWell(
+                            onTap: () async {
+                              uploadImage();
 
 //                        File file = await  Navigator.push(context, MaterialPageRoute(builder: (context) =>
 //                            Camera(
@@ -543,70 +545,70 @@ class _AffidavitsState extends State<Affidavits> {
 //                        _isLoadingSecondary = true;
 //
 //                      });
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 30, bottom: 0, top: 0),
+                            },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
-                              height: 55.0,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 30, bottom: 0, top: 0),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  height: 55.0,
 //                        width: 600.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(
-                                        Icons.camera_enhance,
-                                        color: Colors.black,
-                                        size: 20,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.camera_enhance,
+                                            color: Colors.black,
+                                            size: 20,
+                                          )),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Chosse From Camera',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            fontFamily: "Open Sans",
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Chosse From Camera',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        fontFamily: "Open Sans",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              alignment: FractionalOffset.center,
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black38,
-                                        blurRadius: 0.0)
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(colors: <Color>[
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFFFFFFF)
-                                  ])),
+                                  alignment: FractionalOffset.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 0.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(colors: <Color>[
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFFFFFFFF)
+                                      ])),
 //                          decoration: BoxDecoration(
 //                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
 //                              borderRadius: BorderRadius.circular(10.0),
 //                              gradient: LinearGradient(
 //                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      )
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ));
+                ));
       },
       child: Column(
         children: [
@@ -624,43 +626,45 @@ class _AffidavitsState extends State<Affidavits> {
                       alignment: Alignment.centerRight,
                       child: !_isLoadingSecondary
                           ? Icon(
-                        Icons.file_upload,
-                        color: Colors.black,
-                        size: 20,
-                      )
-                          : MyConstants.myConst.internet??false
-                          ? Container(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(),
-                      )
-                          : Icon(
-                        Icons.done,
-                        color: Colors.black,
-                        size: 20,
-                      )),
+                              Icons.file_upload,
+                              color: Colors.black,
+                              size: 20,
+                            )
+                          : MyConstants.myConst.internet ?? false
+                              ? Container(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Icon(
+                                  Icons.done,
+                                  color: Colors.black,
+                                  size: 20,
+                                )),
                   SizedBox(
                     width: 10,
                   ),
                   !_isLoadingSecondary
                       ? Text(
-                    'Upload',
-                    style: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.2,
-                        fontFamily: "Open Sans",
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w800),
-                  )
+                          'Upload',
+                          style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.2,
+                              fontFamily: "Open Sans",
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w800),
+                        )
                       : Text(
-                    MyConstants.myConst.internet??false ? 'Uploading' : "Saved",
-                    style: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.2,
-                        fontFamily: "Open Sans",
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w800),
-                  ),
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
+                          style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.2,
+                              fontFamily: "Open Sans",
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w800),
+                        ),
                 ],
               ),
               alignment: FractionalOffset.center,
@@ -680,45 +684,45 @@ class _AffidavitsState extends State<Affidavits> {
           ),
           (house_hold != null && affidavits_list.isEmpty)
               ? Center(
-            child: Container(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-              alignment: Alignment.center,
-              height: house_hold != null ? 150 : 0,
-              child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: List.generate(house_hold.length, (index) {
-                    return CachedNetworkImage(
-                      placeholder: (context, url) =>
-                          CircularProgressIndicator(),
-                      imageUrl: house_hold[index] != null
-                          ? house_hold[index]
-                          : 'http://via.placeholder.com/1x1',
+                  child: Container(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    alignment: Alignment.center,
+                    height: house_hold != null ? 150 : 0,
+                    child: ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: List.generate(house_hold.length, (index) {
+                          return CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            imageUrl: house_hold[index] != null
+                                ? house_hold[index]
+                                : 'http://via.placeholder.com/1x1',
 //            errorWidget: (context, url, error) => Icon(Icons.error),
-                    );
-                  })),
-            ),
-          )
+                          );
+                        })),
+                  ),
+                )
               : affidavits_list.isNotEmpty
-              ? Container(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0),
-            alignment: Alignment.center,
-            height: 150,
-            child: ListView(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children:
-                List.generate(affidavits_list.length, (index) {
-                  return Center(
-                    child: Image.file(
-                      File(affidavits_list[index]),
-                      width: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                })),
-          )
-              : SizedBox(),
+                  ? Container(
+                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                      alignment: Alignment.center,
+                      height: 150,
+                      child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          children:
+                              List.generate(affidavits_list.length, (index) {
+                            return Center(
+                              child: Image.file(
+                                File(affidavits_list[index]),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          })),
+                    )
+                  : SizedBox(),
         ],
       ),
     );

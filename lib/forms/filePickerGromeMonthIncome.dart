@@ -79,94 +79,96 @@ class _FileHolderGrossMonthState extends State<FileHolderGrossMonth> {
     // List<File> listFiles = await FilePicker.getMultiFile(
     //     type: FileType.custom, allowedExtensions: ['jpg']);
     FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['jpg']);
+      type: FileType.custom,
+      allowedExtensions: ['jpg'],
+      allowMultiple: true,
+    );
 
-    if(listFiles!=null)
-      {
-        List<File> files = listFiles.paths.map((path) => File(path!)).toList();
-        print(files.length);
-        final Map<String, dynamic> _formData = {};
-        _formData['application_id'] = widget.applicant_id;
-        var img = [];
-        print(img);
-        List<String> img_paths = <String>[];
-        for (int j = 0; j < files.length; j++) {
-          print('files');
-          print(files[j]);
-          img.add(await MultipartFile.fromFile(files[j].path,
-              filename: 'ProofIncomes($j).jpg'));
-          img_paths.add(files[j].path);
-          gross_monthly_income_list.add(files[j].path);
+    if (listFiles != null) {
+      List<File> files = listFiles.paths.map((path) => File(path!)).toList();
+      print(files.length);
+      final Map<String, dynamic> _formData = {};
+      _formData['application_id'] = widget.applicant_id;
+      var img = [];
+      print(img);
+      List<String> img_paths = <String>[];
+      for (int j = 0; j < files.length; j++) {
+        print('files');
+        print(files[j]);
+        img.add(await MultipartFile.fromFile(files[j].path,
+            filename: 'ProofIncomes($j).jpg'));
+        img_paths.add(files[j].path);
+        gross_monthly_income_list.add(files[j].path);
 
-          print('_formData');
-          print(_formData);
-        }
-        print(img);
-        _formData['proof_of_incomes[]'] = img;
-        setState(() {
-          _isLoadingSecondary = true;
-          print('state');
-          print(_isLoadingSecondary);
-        });
-        try {
-          if (_isLoadingSecondary == true) {
+        print('_formData');
+        print(_formData);
+      }
+      print(img);
+      _formData['proof_of_incomes[]'] = img;
+      setState(() {
+        _isLoadingSecondary = true;
+        print('state');
+        print(_isLoadingSecondary);
+      });
+      try {
+        if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
-            print(widget.applicant_id);
-          }
+          print(widget.applicant_id);
+        }
 
-          FormData formData = new FormData.fromMap(_formData);
+        FormData formData = new FormData.fromMap(_formData);
 
-          Map<String, dynamic> map = {
-            "application_id": widget.applicant_id,
-            'proof_of_incomes[]': jsonEncode(img_paths)
-          };
-          LocalStorage.localStorage.saveFormData(map);
+        Map<String, dynamic> map = {
+          "application_id": widget.applicant_id,
+          'proof_of_incomes[]': jsonEncode(img_paths)
+        };
+        LocalStorage.localStorage.saveFormData(map);
 
-          print('daataaaa');
+        print('daataaaa');
 //
-          print(formData);
+        print(formData);
 
-          if (MyConstants.myConst.internet ?? false) {
-            showToastMessage('File Uploading Please wait');
-            var dio = Dio(BaseOptions(
-                receiveDataWhenStatusError: true,
-                connectTimeout: Duration(minutes: 3), // 3 minutes
-                receiveTimeout: Duration(minutes: 3) // 3 minuntes
-            ));
-            dio.interceptors.add(LogInterceptor(responseBody: true));
-            SharedPreferences sharedPreferences =
-            await SharedPreferences.getInstance();
-            var userID = sharedPreferences.getString('userID');
-            var authToken = sharedPreferences.getString('auth-token');
-            var jsonResponse;
-            Response response = await dio.post(
-              '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-              data: formData, // Post with Stream<List<int>>
-              options: Options(
-                  headers: {'uuid': userID, 'Authentication': authToken},
-                  contentType: "*/*",
-                  responseType: ResponseType.json),
-            );
-            if (response.statusCode == 200) {
-              jsonResponse = response.data;
-              // jsonResponse = json.decode(response.data);
-              print('data');
-              print(jsonResponse['data']['spouse_id']);
+        if (MyConstants.myConst.internet ?? false) {
+          showToastMessage('File Uploading Please wait');
+          var dio = Dio(BaseOptions(
+              receiveDataWhenStatusError: true,
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
+              ));
+          dio.interceptors.add(LogInterceptor(responseBody: true));
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          var userID = sharedPreferences.getString('userID');
+          var authToken = sharedPreferences.getString('auth-token');
+          var jsonResponse;
+          Response response = await dio.post(
+            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+            data: formData, // Post with Stream<List<int>>
+            options: Options(
+                headers: {'uuid': userID, 'Authentication': authToken},
+                contentType: "*/*",
+                responseType: ResponseType.json),
+          );
+          if (response.statusCode == 200) {
+            jsonResponse = response.data;
+            // jsonResponse = json.decode(response.data);
+            print('data');
+            print(jsonResponse['data']['spouse_id']);
 
-              showToastMessage(jsonResponse['message']);
-              var dependent_List = jsonResponse['data']['proof_of_incomes'];
-              print('data proof of income');
+            showToastMessage(jsonResponse['message']);
+            var dependent_List = jsonResponse['data']['proof_of_incomes'];
+            print('data proof of income');
+            print(dependent_List);
+
+            setState(() {
               print(dependent_List);
+              for (int p = 0; p < dependent_List.length; p++) {
+                print('dependent_idsssss');
+                print(dependent_List[p]);
+                print(dependent_idss);
 
-              setState(() {
-                print(dependent_List);
-                for (int p = 0; p < dependent_List.length; p++) {
-                  print('dependent_idsssss');
-                  print(dependent_List[p]);
-                  print(dependent_idss);
-
-                  String fileName = dependent_List[p].split('/').last;
-                  print('filename');
+                String fileName = dependent_List[p].split('/').last;
+                print('filename');
 //              print( jsonResponse['data']['content_type'][0].toString() );
 //              if (jsonResponse['data']['content_type'][0].toString() == 'image/jpeg' || jsonResponse['data']['content_type'][0].toString() == 'image/jpg'
 //                  || jsonResponse['data']['content_type'][0].toString() == 'image/png' || jsonResponse['data']['content_type'][0].toString() == 'image/gif'
@@ -177,40 +179,40 @@ class _FileHolderGrossMonthState extends State<FileHolderGrossMonth> {
 //
 //              }
 
-                  if (fileName.contains('.png') ||
-                      fileName.contains('.jpg') ||
-                      fileName.contains('.jpeg') ||
-                      fileName.contains('.gif')) {
-                    print('wiii');
-                    dependent_idss.add(dependent_List[p]);
-                  } else {
-                    dependent_idss.add(
-                        'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
-                  }
+                if (fileName.contains('.png') ||
+                    fileName.contains('.jpg') ||
+                    fileName.contains('.jpeg') ||
+                    fileName.contains('.gif')) {
+                  print('wiii');
+                  dependent_idss.add(dependent_List[p]);
+                } else {
+                  dependent_idss.add(
+                      'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
                 }
-                sharedPreferences.setStringList(
-                    "proof_of_income", dependent_idss);
+              }
+              sharedPreferences.setStringList(
+                  "proof_of_income", dependent_idss);
 
-                _isLoadingSecondary = false;
+              _isLoadingSecondary = false;
 //            Navigator.pop(context, true);
 
-                getAttachment();
-              });
+              getAttachment();
+            });
 
-              showToastMessage('File Uploaded');
-            }
-          } else {
-            setState(() {});
+            showToastMessage('File Uploaded');
           }
-        } catch (e) {
-          Fluttertoast.showToast(msg: "Something went wrong");
-          setState(() {
-            _isLoading = false;
-          });
-          print('dsa');
-          print(e);
+        } else {
+          setState(() {});
         }
+      } catch (e) {
+        Fluttertoast.showToast(msg: "Something went wrong");
+        setState(() {
+          _isLoading = false;
+        });
+        print('dsa');
+        print(e);
       }
+    }
 
     // final Map<String, dynamic> _formData = {};
     //
@@ -232,11 +234,11 @@ class _FileHolderGrossMonthState extends State<FileHolderGrossMonth> {
     // print(img);
     // _formData['proof_of_incomes[]'] = img;
     // if (listFiles != null) {
-      // setState(() {
-      //   _isLoadingSecondary = true;
-      //   print('state');
-      //   print(_isLoadingSecondary);
-      // });
+    // setState(() {
+    //   _isLoadingSecondary = true;
+    //   print('state');
+    //   print(_isLoadingSecondary);
+    // });
 
 //       try {
 //         if (_isLoadingSecondary == true) {
@@ -660,7 +662,9 @@ class _FileHolderGrossMonthState extends State<FileHolderGrossMonth> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet??false ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,

@@ -42,6 +42,7 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
+
   // List<String> additional_file_id = List<String>();
   List<String> additional_file_id = [];
   ServicesRequest request = ServicesRequest();
@@ -73,7 +74,8 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
     setState(() {
 //      global.occupantImages;
 //      print(global.occupantImages);
-      additional_certificate = sharedPreferences.getStringList('additional_file');
+      additional_certificate =
+          sharedPreferences.getStringList('additional_file');
     });
   }
 
@@ -90,11 +92,14 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
     // List<File> listFiles = await FilePicker.getMultiFile(
     //     type: FileType.custom, allowedExtensions: ['jpg']);
     FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['jpg']);
+      type: FileType.custom,
+      allowedExtensions: ['jpg'],
+      allowMultiple: true,
+    );
     final Map<String, dynamic> _formData = {};
 
     _formData['application_id'] = widget.applicant_id;
-    if(listFiles!=null){
+    if (listFiles != null) {
       List<File> files = listFiles.paths.map((path) => File(path!)).toList();
       var img = [];
       List<String> img_paths = <String>[];
@@ -133,10 +138,10 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
               receiveDataWhenStatusError: true,
               connectTimeout: Duration(minutes: 3), // 3 minutes
               receiveTimeout: Duration(minutes: 3) // 3 minuntes
-          ));
+              ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+              await SharedPreferences.getInstance();
           var userID = sharedPreferences.getString('userID');
           var authToken = sharedPreferences.getString('auth-token');
 
@@ -171,7 +176,6 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
                 fileName = dependent_List[p].split('/').last;
 
 //              global.occupantImages = dependent_idss;
-
               }
 
               if (fileName!.contains('.png') ||
@@ -188,7 +192,8 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
                 additional_file_id.add(
                     'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
               }
-              sharedPreferences.setStringList("additional_file", additional_file_id);
+              sharedPreferences.setStringList(
+                  "additional_file", additional_file_id);
 
               getAttachment();
             });
@@ -345,25 +350,24 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
         context,
         MaterialPageRoute(
             builder: (context) => CameraCamera(
-              onFile: (onFile) {
-                print(file);
-                print("Inside house hold file");
-                file = onFile;
-                Navigator.pop(context);
-              },
-              enableZoom: true,
-              resolutionPreset: ResolutionPreset.medium,
-              cameraSide: CameraSide.all,
-            )
-          // Camera(
-          //   mode: CameraMode.normal,
-          //   imageMask: CameraFocus.rectangle(
-          //     color: Colors.black.withOpacity(0.5),
-          //   ),
-          // )
+                  onFile: (onFile) {
+                    print(file);
+                    print("Inside house hold file");
+                    file = onFile;
+                    Navigator.pop(context);
+                  },
+                  enableZoom: true,
+                  resolutionPreset: ResolutionPreset.medium,
+                  cameraSide: CameraSide.all,
+                )
+            // Camera(
+            //   mode: CameraMode.normal,
+            //   imageMask: CameraFocus.rectangle(
+            //     color: Colors.black.withOpacity(0.5),
+            //   ),
+            // )
 
-        ));
-
+            ));
 
     if (file != null) {
       try {
@@ -392,16 +396,16 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet??false) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
               connectTimeout: Duration(minutes: 3), // 3 minutes
               receiveTimeout: Duration(minutes: 3) // 3 minuntes
-          ));
+              ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+              await SharedPreferences.getInstance();
           var userID = sharedPreferences.getString('userID');
           var authToken = sharedPreferences.getString('auth-token');
 
@@ -430,7 +434,8 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
 //              print(additional_file_id);
               }
               additional_file_id.add(newEntry);
-              sharedPreferences.setStringList("additional_file", additional_file_id);
+              sharedPreferences.setStringList(
+                  "additional_file", additional_file_id);
               getAttachment();
             });
 
@@ -458,84 +463,84 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-              title: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Upload File"),
-                  InkWell(
-                      onTap: () => Navigator.pop(context, true),
-                      child: Icon(Icons.clear))
-                ],
-              ),
-              content: SingleChildScrollView(
-                child: Container(
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  title: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Divider(),
+                      Text("Upload File"),
                       InkWell(
-                        onTap: () {
-                          _filePicker();
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 30, bottom: 0, top: 20),
+                          onTap: () => Navigator.pop(context, true),
+                          child: Icon(Icons.clear))
+                    ],
+                  ),
+                  content: SingleChildScrollView(
+                    child: Container(
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(),
+                          InkWell(
+                            onTap: () {
+                              _filePicker();
+                            },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
-                              height: 55.0,
-                              width: 600.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(
-                                        Icons.image,
-                                        color: Colors.black,
-                                        size: 20,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 30, bottom: 0, top: 20),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  height: 55.0,
+                                  width: 600.0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.image,
+                                            color: Colors.black,
+                                            size: 20,
+                                          )),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Chosse From Gallery',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            fontFamily: "Open Sans",
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Chosse From Gallery',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        fontFamily: "Open Sans",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              alignment: FractionalOffset.center,
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black38,
-                                        blurRadius: 0.0)
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(colors: <Color>[
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFFFFFFF)
-                                  ])),
+                                  alignment: FractionalOffset.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 0.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(colors: <Color>[
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFFFFFFFF)
+                                      ])),
 //                          decoration: BoxDecoration(
 //                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
 //                              borderRadius: BorderRadius.circular(10.0),
 //                              gradient: LinearGradient(
 //                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          uploadImage();
+                          InkWell(
+                            onTap: () async {
+                              uploadImage();
 
 //                        File file = await  Navigator.push(context, MaterialPageRoute(builder: (context) =>
 //                            Camera(
@@ -554,70 +559,70 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
 //                        _isLoadingSecondary = true;
 //
 //                      });
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 30, bottom: 0, top: 0),
+                            },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
-                              height: 55.0,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 30, bottom: 0, top: 0),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  height: 55.0,
 //                        width: 600.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(
-                                        Icons.camera_enhance,
-                                        color: Colors.black,
-                                        size: 20,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.camera_enhance,
+                                            color: Colors.black,
+                                            size: 20,
+                                          )),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Chosse From Camera',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            fontFamily: "Open Sans",
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Chosse From Camera',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        fontFamily: "Open Sans",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              alignment: FractionalOffset.center,
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black38,
-                                        blurRadius: 0.0)
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(colors: <Color>[
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFFFFFFF)
-                                  ])),
+                                  alignment: FractionalOffset.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 0.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(colors: <Color>[
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFFFFFFFF)
+                                      ])),
 //                          decoration: BoxDecoration(
 //                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
 //                              borderRadius: BorderRadius.circular(10.0),
 //                              gradient: LinearGradient(
 //                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      )
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ));
+                ));
       },
       child: Column(
         children: [
@@ -635,43 +640,45 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
                       alignment: Alignment.centerRight,
                       child: !_isLoadingSecondary
                           ? Icon(
-                        Icons.file_upload,
-                        color: Colors.black,
-                        size: 20,
-                      )
-                          : MyConstants.myConst.internet??false
-                          ? Container(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(),
-                      )
-                          : Icon(
-                        Icons.done,
-                        color: Colors.black,
-                        size: 20,
-                      )),
+                              Icons.file_upload,
+                              color: Colors.black,
+                              size: 20,
+                            )
+                          : MyConstants.myConst.internet ?? false
+                              ? Container(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Icon(
+                                  Icons.done,
+                                  color: Colors.black,
+                                  size: 20,
+                                )),
                   SizedBox(
                     width: 10,
                   ),
                   !_isLoadingSecondary
                       ? Text(
-                    'Upload',
-                    style: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.2,
-                        fontFamily: "Open Sans",
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w800),
-                  )
+                          'Upload',
+                          style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.2,
+                              fontFamily: "Open Sans",
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w800),
+                        )
                       : Text(
-                    MyConstants.myConst.internet??false ? 'Uploading' : "Saved",
-                    style: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.2,
-                        fontFamily: "Open Sans",
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w800),
-                  ),
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
+                          style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.2,
+                              fontFamily: "Open Sans",
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w800),
+                        ),
                 ],
               ),
               alignment: FractionalOffset.center,
@@ -691,45 +698,46 @@ class _FileHolderAdditionalState extends State<FileHolderAdditional> {
           ),
           (additional_certificate != null && additional_file_List.isEmpty)
               ? Center(
-            child: Container(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-              alignment: Alignment.center,
-              height: additional_certificate != null ? 150 : 0,
-              child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: List.generate(additional_certificate.length, (index) {
-                    return CachedNetworkImage(
-                      placeholder: (context, url) =>
-                          CircularProgressIndicator(),
-                      imageUrl: additional_certificate[index] != null
-                          ? additional_certificate[index]
-                          : 'http://via.placeholder.com/1x1',
+                  child: Container(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    alignment: Alignment.center,
+                    height: additional_certificate != null ? 150 : 0,
+                    child: ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: List.generate(additional_certificate.length,
+                            (index) {
+                          return CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            imageUrl: additional_certificate[index] != null
+                                ? additional_certificate[index]
+                                : 'http://via.placeholder.com/1x1',
 //            errorWidget: (context, url, error) => Icon(Icons.error),
-                    );
-                  })),
-            ),
-          )
+                          );
+                        })),
+                  ),
+                )
               : additional_file_List.isNotEmpty
-              ? Container(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0),
-            alignment: Alignment.center,
-            height: 150,
-            child: ListView(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children:
-                List.generate(additional_file_List.length, (index) {
-                  return Center(
-                    child: Image.file(
-                      File(additional_file_List[index]),
-                      width: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                })),
-          )
-              : SizedBox(),
+                  ? Container(
+                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                      alignment: Alignment.center,
+                      height: 150,
+                      child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          children: List.generate(additional_file_List.length,
+                              (index) {
+                            return Center(
+                              child: Image.file(
+                                File(additional_file_List[index]),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          })),
+                    )
+                  : SizedBox(),
         ],
       ),
     );

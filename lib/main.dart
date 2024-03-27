@@ -11,11 +11,11 @@ Future<void> main({AppFlavourModel? appFlavourModel}) async {
 
   if(appFlavourModel!=null)
     {
-      print("this is app name ${appFlavourModel.appName}");
       MyConstants.myConst.baseUrl=appFlavourModel.baseUrl??"";
       MyConstants.myConst.appName=appFlavourModel.appName??"";
       MyConstants.myConst.appLogo=appFlavourModel.appLogo??"";
       print("base url === > ${MyConstants.myConst.baseUrl}");
+      print("this is app name ${appFlavourModel.appName}");
       print("base url === > ${MyConstants.myConst.appLogo}");
     }
   HttpOverrides.global = MyHttpOverrides();

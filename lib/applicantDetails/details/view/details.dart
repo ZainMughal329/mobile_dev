@@ -318,6 +318,20 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                         height: 4,
                       ),
                       DetailWidget(
+                          title: "Water Meter Number",
+                          subtitle: notifier.models?.water_meter_number ?? ""),
+                      DetailWidget(
+                          title: "Water Meter Reading",
+                          subtitle: notifier.models?.water_meter_reading ?? ""),
+                      DetailWidget(
+                          title: "Electricity Meter Number",
+                          subtitle:
+                          notifier.models?.electricity_meter_number ?? ""),
+                      DetailWidget(
+                          title: "Electricity Meter Reading",
+                          subtitle:
+                          notifier.models?.electricity_meter_reading ?? ""),
+                      DetailWidget(
                           title: "Signature Date",
                           subtitle: notifier.models?.signatureDate != null
                               ? DateFormat('yMMMMd').format(DateTime.parse(
@@ -627,6 +641,124 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       SizedBox(
                         height: 4,
                       ),
+                      Text(
+                        "Water Meter Attachments",
+                        style: _style(),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      notifier.models?.water_meter_attachments != null
+                          ? Container(
+                        height: 150,
+                        margin: EdgeInsets.only(top: 10),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          children: List.generate(
+                            notifier.models?.water_meter_attachments
+                                ?.length ??
+                                0,
+                                (index) => Image(
+                              image: CachedNetworkImageProvider(notifier
+                                  .models
+                                  ?.water_meter_attachments?[index]
+                                  .url ??
+                                  ""),
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                          : Text(''),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Divider(
+                        color: Color(0x29000000),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        "Electricity Meter Attachments",
+                        style: _style(),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      notifier.models?.electricity_meter_attachments != null
+                          ? Container(
+                        height: 150,
+                        margin: EdgeInsets.only(top: 10),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          children: List.generate(
+                            notifier.models?.electricity_meter_attachments
+                                ?.length ??
+                                0,
+                                (index) => Image(
+                              image: CachedNetworkImageProvider(notifier
+                                  .models
+                                  ?.electricity_meter_attachments?[index]
+                                  .url ??
+                                  ""),
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                          : Text(''),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Divider(
+                        color: Color(0x29000000),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        "Property Attachments",
+                        style: _style(),
+                      ),
+
+                      SizedBox(
+                        height: 4,
+                      ),
+                      notifier.models?.property_meter_attachments != null
+                          ? Container(
+                        height: 150,
+                        margin: EdgeInsets.only(top: 10),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          children: List.generate(
+                            notifier.models?.property_meter_attachments
+                                ?.length ??
+                                0,
+                                (index) => Image(
+                              image: CachedNetworkImageProvider(notifier
+                                  .models
+                                  ?.property_meter_attachments?[index]
+                                  .url ??
+                                  ""),
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                          : Text(''),
+                      Divider(
+                        color: Color(0x29000000),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
                       DetailImageWidget(
                           title: "Signature",
                           image: notifier.models?.signature ?? ""),
@@ -743,177 +875,177 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                 )
               : Text(''),
 
-          /// bills updated work
-
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            "Bills",
-            style: TextStyle(
-                letterSpacing: 0.0,
-                color: Color(0xff141414),
-                fontFamily: "Open Sans",
-                fontWeight: FontWeight.w700,
-                fontSize: 18.0),
-          ),
-          Container(
-              alignment: Alignment.center,
-              padding:
-                  EdgeInsets.only(top: 20.0, bottom: 12, left: 20, right: 20),
-              margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
-//          height: 665.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                color: const Color(0xffffffff),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x29000000),
-                    offset: Offset(0, 3),
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DetailWidget(
-                      title: "Water Meter Number",
-                      subtitle: notifier.models?.water_meter_number ?? ""),
-                  DetailWidget(
-                      title: "Water Meter Reading",
-                      subtitle: notifier.models?.water_meter_reading ?? ""),
-                  // DetailImageWidget(title: "Water Meter Attachment", image:water_meter_attachments??""),
-
-                  Text(
-                    "Water Meter Attachments",
-                    style: _style(),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  notifier.models?.water_meter_attachments != null
-                      ? Container(
-                          height: 150,
-                          margin: EdgeInsets.only(top: 10),
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            children: List.generate(
-                              notifier.models?.water_meter_attachments
-                                      ?.length ??
-                                  0,
-                              (index) => Image(
-                                image: CachedNetworkImageProvider(notifier
-                                        .models
-                                        ?.water_meter_attachments?[index]
-                                        .url ??
-                                    ""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
-                      : Text(''),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Divider(
-                    color: Color(0x29000000),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  DetailWidget(
-                      title: "Electricity Meter Number",
-                      subtitle:
-                          notifier.models?.electricity_meter_number ?? ""),
-                  DetailWidget(
-                      title: "Electricity Meter Reading",
-                      subtitle:
-                          notifier.models?.electricity_meter_reading ?? ""),
-
-                  Text(
-                    "Electricity Meter Attachments",
-                    style: _style(),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  notifier.models?.electricity_meter_attachments != null
-                      ? Container(
-                          height: 150,
-                          margin: EdgeInsets.only(top: 10),
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            children: List.generate(
-                              notifier.models?.electricity_meter_attachments
-                                      ?.length ??
-                                  0,
-                              (index) => Image(
-                                image: CachedNetworkImageProvider(notifier
-                                        .models
-                                        ?.electricity_meter_attachments?[index]
-                                        .url ??
-                                    ""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
-                      : Text(''),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Divider(
-                    color: Color(0x29000000),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Property Attachments",
-                    style: _style(),
-                  ),
-
-                  SizedBox(
-                    height: 4,
-                  ),
-                  notifier.models?.property_meter_attachments != null
-                      ? Container(
-                          height: 150,
-                          margin: EdgeInsets.only(top: 10),
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            children: List.generate(
-                              notifier.models?.property_meter_attachments
-                                      ?.length ??
-                                  0,
-                              (index) => Image(
-                                image: CachedNetworkImageProvider(notifier
-                                        .models
-                                        ?.property_meter_attachments?[index]
-                                        .url ??
-                                    ""),
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
-                      : Text(''),
-                  Divider(
-                    color: Color(0x29000000),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                ],
-              )),
+//           /// bills updated work
+//
+//           SizedBox(
+//             height: 20,
+//           ),
+//           Text(
+//             "Bills",
+//             style: TextStyle(
+//                 letterSpacing: 0.0,
+//                 color: Color(0xff141414),
+//                 fontFamily: "Open Sans",
+//                 fontWeight: FontWeight.w700,
+//                 fontSize: 18.0),
+//           ),
+//           Container(
+//               alignment: Alignment.center,
+//               padding:
+//                   EdgeInsets.only(top: 20.0, bottom: 12, left: 20, right: 20),
+//               margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
+// //          height: 665.0,
+//               decoration: BoxDecoration(
+//                 borderRadius: BorderRadius.circular(5.0),
+//                 color: const Color(0xffffffff),
+//                 boxShadow: [
+//                   BoxShadow(
+//                     color: const Color(0x29000000),
+//                     offset: Offset(0, 3),
+//                     blurRadius: 6,
+//                   ),
+//                 ],
+//               ),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   DetailWidget(
+//                       title: "Water Meter Number",
+//                       subtitle: notifier.models?.water_meter_number ?? ""),
+//                   DetailWidget(
+//                       title: "Water Meter Reading",
+//                       subtitle: notifier.models?.water_meter_reading ?? ""),
+//                   // DetailImageWidget(title: "Water Meter Attachment", image:water_meter_attachments??""),
+//
+//                   Text(
+//                     "Water Meter Attachments",
+//                     style: _style(),
+//                   ),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   notifier.models?.water_meter_attachments != null
+//                       ? Container(
+//                           height: 150,
+//                           margin: EdgeInsets.only(top: 10),
+//                           child: ListView(
+//                             scrollDirection: Axis.horizontal,
+//                             shrinkWrap: true,
+//                             children: List.generate(
+//                               notifier.models?.water_meter_attachments
+//                                       ?.length ??
+//                                   0,
+//                               (index) => Image(
+//                                 image: CachedNetworkImageProvider(notifier
+//                                         .models
+//                                         ?.water_meter_attachments?[index]
+//                                         .url ??
+//                                     ""),
+//                                 width: 100,
+//                                 fit: BoxFit.cover,
+//                               ),
+//                             ),
+//                           ),
+//                         )
+//                       : Text(''),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   Divider(
+//                     color: Color(0x29000000),
+//                   ),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   DetailWidget(
+//                       title: "Electricity Meter Number",
+//                       subtitle:
+//                           notifier.models?.electricity_meter_number ?? ""),
+//                   DetailWidget(
+//                       title: "Electricity Meter Reading",
+//                       subtitle:
+//                           notifier.models?.electricity_meter_reading ?? ""),
+//
+//                   Text(
+//                     "Electricity Meter Attachments",
+//                     style: _style(),
+//                   ),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   notifier.models?.electricity_meter_attachments != null
+//                       ? Container(
+//                           height: 150,
+//                           margin: EdgeInsets.only(top: 10),
+//                           child: ListView(
+//                             scrollDirection: Axis.horizontal,
+//                             shrinkWrap: true,
+//                             children: List.generate(
+//                               notifier.models?.electricity_meter_attachments
+//                                       ?.length ??
+//                                   0,
+//                               (index) => Image(
+//                                 image: CachedNetworkImageProvider(notifier
+//                                         .models
+//                                         ?.electricity_meter_attachments?[index]
+//                                         .url ??
+//                                     ""),
+//                                 width: 100,
+//                                 fit: BoxFit.cover,
+//                               ),
+//                             ),
+//                           ),
+//                         )
+//                       : Text(''),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   Divider(
+//                     color: Color(0x29000000),
+//                   ),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   Text(
+//                     "Property Attachments",
+//                     style: _style(),
+//                   ),
+//
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                   notifier.models?.property_meter_attachments != null
+//                       ? Container(
+//                           height: 150,
+//                           margin: EdgeInsets.only(top: 10),
+//                           child: ListView(
+//                             scrollDirection: Axis.horizontal,
+//                             shrinkWrap: true,
+//                             children: List.generate(
+//                               notifier.models?.property_meter_attachments
+//                                       ?.length ??
+//                                   0,
+//                               (index) => Image(
+//                                 image: CachedNetworkImageProvider(notifier
+//                                         .models
+//                                         ?.property_meter_attachments?[index]
+//                                         .url ??
+//                                     ""),
+//                                 width: 100,
+//                                 fit: BoxFit.cover,
+//                               ),
+//                             ),
+//                           ),
+//                         )
+//                       : Text(''),
+//                   Divider(
+//                     color: Color(0x29000000),
+//                   ),
+//                   SizedBox(
+//                     height: 4,
+//                   ),
+//                 ],
+//               )),
         ],
       )),
     );

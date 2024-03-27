@@ -42,6 +42,7 @@ class _DeathCertificateState extends State<DeathCertificate> {
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
+
   // List<String> death_certificate_id = List<String>();
   List<String> death_certificate_id = [];
   ServicesRequest request = ServicesRequest();
@@ -89,125 +90,127 @@ class _DeathCertificateState extends State<DeathCertificate> {
     // List<File> listFiles = await FilePicker.getMultiFile(
     //     type: FileType.custom, allowedExtensions: ['jpg']);
     FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['jpg']);
-    if(listFiles!=null)
-      {
-        final Map<String, dynamic> _formData = {};
+      type: FileType.custom,
+      allowedExtensions: ['jpg'],
+      allowMultiple: true,
+    );
+    if (listFiles != null) {
+      final Map<String, dynamic> _formData = {};
 
-        _formData['application_id'] = widget.applicant_id;
-        List<File> files = listFiles.paths.map((path) => File(path!)).toList();
+      _formData['application_id'] = widget.applicant_id;
+      List<File> files = listFiles.paths.map((path) => File(path!)).toList();
 
-        var img = [];
-        List<String> img_paths = <String>[];
-        for (int j = 0; j < files.length; j++) {
-          img.add(await MultipartFile.fromFile(files[j].path,
-              filename: 'household($j)'));
-          img_paths.add(files[j].path);
-          deathCertificate_list.add(files[j].path);
-          print(_formData);
+      var img = [];
+      List<String> img_paths = <String>[];
+      for (int j = 0; j < files.length; j++) {
+        img.add(await MultipartFile.fromFile(files[j].path,
+            filename: 'household($j)'));
+        img_paths.add(files[j].path);
+        deathCertificate_list.add(files[j].path);
+        print(_formData);
+      }
+
+      _formData['death_certificate[]'] = img;
+      print('idsss ++++++++');
+      print(_formData['household[]']);
+      _isLoadingSecondary = true;
+
+      try {
+        if (_isLoadingSecondary == true) {
+          print(widget.applicant_id);
         }
+        FormData formData = new FormData.fromMap(_formData);
 
-        _formData['death_certificate[]'] = img;
-        print('idsss ++++++++');
-        print(_formData['household[]']);
-        _isLoadingSecondary = true;
+        Map<String, dynamic> map = {
+          "application_id": widget.applicant_id,
+          'death_certificate[]': jsonEncode(img_paths)
+        };
+        LocalStorage.localStorage.saveFormData(map);
 
-        try {
-          if (_isLoadingSecondary == true) {
-            print(widget.applicant_id);
-          }
-          FormData formData = new FormData.fromMap(_formData);
-
-          Map<String, dynamic> map = {
-            "application_id": widget.applicant_id,
-            'death_certificate[]': jsonEncode(img_paths)
-          };
-          LocalStorage.localStorage.saveFormData(map);
-
-          print('daataaaa');
+        print('daataaaa');
 //
-          print(formData);
-          // checkInternetAvailability();
-          if (MyConstants.myConst.internet ?? false) {
-            showToastMessage('File Uploading Please wait');
-            var dio = Dio(BaseOptions(
-                receiveDataWhenStatusError: true,
-                connectTimeout: Duration(minutes: 3), // 3 minutes
-                receiveTimeout: Duration(minutes: 3) // 3 minuntes
-            ));
-            dio.interceptors.add(LogInterceptor(responseBody: true));
-            SharedPreferences sharedPreferences =
-            await SharedPreferences.getInstance();
-            var userID = sharedPreferences.getString('userID');
-            var authToken = sharedPreferences.getString('auth-token');
+        print(formData);
+        // checkInternetAvailability();
+        if (MyConstants.myConst.internet ?? false) {
+          showToastMessage('File Uploading Please wait');
+          var dio = Dio(BaseOptions(
+              receiveDataWhenStatusError: true,
+              connectTimeout: Duration(minutes: 3), // 3 minutes
+              receiveTimeout: Duration(minutes: 3) // 3 minuntes
+              ));
+          dio.interceptors.add(LogInterceptor(responseBody: true));
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          var userID = sharedPreferences.getString('userID');
+          var authToken = sharedPreferences.getString('auth-token');
 
-            Response response = await dio.post(
-              '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-              data: formData, // Post with Stream<List<int>>
-              options: Options(
-                  headers: {'uuid': userID, 'Authentication': authToken},
-                  contentType: "*/*",
-                  responseType: ResponseType.json),
-            );
+          Response response = await dio.post(
+            '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+            data: formData, // Post with Stream<List<int>>
+            options: Options(
+                headers: {'uuid': userID, 'Authentication': authToken},
+                contentType: "*/*",
+                responseType: ResponseType.json),
+          );
 
-            print(response.data.toString());
-            // var jsonResponse = json.decode(response.data);
-            var jsonResponse = response.data;
-            print('yaha aya');
-            if (response.statusCode == 200) {
-              setState(() {
-                _isLoadingSecondary = false;
-                print('uploading occupant');
-                print(jsonResponse);
-                print('yaha aya');
-                var dependent_List = jsonResponse['data']['death_certificate'];
-                String? fileName;
+          print(response.data.toString());
+          // var jsonResponse = json.decode(response.data);
+          var jsonResponse = response.data;
+          print('yaha aya');
+          if (response.statusCode == 200) {
+            setState(() {
+              _isLoadingSecondary = false;
+              print('uploading occupant');
+              print(jsonResponse);
+              print('yaha aya');
+              var dependent_List = jsonResponse['data']['death_certificate'];
+              String? fileName;
+              print('filename');
+              print(dependent_List);
+              var newEntry;
+              print('yaha aya');
+              for (int p = 0; p < dependent_List.length; p++) {
                 print('filename');
-                print(dependent_List);
-                var newEntry;
-                print('yaha aya');
-                for (int p = 0; p < dependent_List.length; p++) {
-                  print('filename');
-                  newEntry = dependent_List[p];
-                  fileName = dependent_List[p].split('/').last;
+                newEntry = dependent_List[p];
+                fileName = dependent_List[p].split('/').last;
 
 //              global.occupantImages = dependent_idss;
+              }
 
-                }
-
-                if (fileName!.contains('.png') ||
-                    fileName.contains('.jpg') ||
-                    fileName.contains('.jpeg') ||
-                    fileName.contains('.gif')) {
+              if (fileName!.contains('.png') ||
+                  fileName.contains('.jpg') ||
+                  fileName.contains('.jpeg') ||
+                  fileName.contains('.gif')) {
 //            if (jsonResponse['data']['content_type'][0].toString() == 'image/jpeg' || jsonResponse['data']['content_type'][0].toString() == 'image/jpg'
 //                || jsonResponse['data']['content_type'][0].toString() == 'image/png' || jsonResponse['data']['content_type'][0].toString() == 'image/gif'
 //            ){
-                  print('wiii');
+                print('wiii');
 
-                  death_certificate_id.add(newEntry);
-                } else {
-                  death_certificate_id.add(
-                      'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
-                }
-                sharedPreferences.setStringList("DeathCertificate", death_certificate_id);
+                death_certificate_id.add(newEntry);
+              } else {
+                death_certificate_id.add(
+                    'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png');
+              }
+              sharedPreferences.setStringList(
+                  "DeathCertificate", death_certificate_id);
 
-                getAttachment();
-              });
+              getAttachment();
+            });
 
-              showToastMessage('File Uploaded');
-            }
-          } else {
-            setState(() {});
+            showToastMessage('File Uploaded');
           }
-        } catch (e) {
-          Fluttertoast.showToast(msg: "Something went wrong");
-          setState(() {
-            _isLoading = false;
-          });
-          print('dsa');
-          print(e);
+        } else {
+          setState(() {});
         }
+      } catch (e) {
+        Fluttertoast.showToast(msg: "Something went wrong");
+        setState(() {
+          _isLoading = false;
+        });
+        print('dsa');
+        print(e);
       }
+    }
 
     // final Map<String, dynamic> _formData = {};
     //
@@ -350,25 +353,23 @@ class _DeathCertificateState extends State<DeathCertificate> {
         context,
         MaterialPageRoute(
             builder: (context) => CameraCamera(
-              onFile: (onFile) {
-                print(file);
-                print("Inside house hold file");
-                file = onFile;
-                Navigator.pop(context);
-              },
-              enableZoom: true,
-              resolutionPreset: ResolutionPreset.medium,
-              cameraSide: CameraSide.all,
-            )
-
-        ));
+                  onFile: (onFile) {
+                    print(file);
+                    print("Inside house hold file");
+                    file = onFile;
+                    Navigator.pop(context);
+                  },
+                  enableZoom: true,
+                  resolutionPreset: ResolutionPreset.medium,
+                  cameraSide: CameraSide.all,
+                )));
     print(file?.path);
     print(file);
 
     if (file != null) {
       try {
         setState(() {
-          _image = File(file?.path??"");
+          _image = File(file?.path ?? "");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
@@ -378,12 +379,13 @@ class _DeathCertificateState extends State<DeathCertificate> {
         FormData formData = new FormData.fromMap({
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          'death_certificate[]': await MultipartFile.fromFile(_image?.path??"",
+          'death_certificate[]': await MultipartFile.fromFile(
+              _image?.path ?? "",
               filename: 'DeathCertificate.jpg')
         });
 
-        img_paths.add(_image?.path??"");
-        deathCertificate_list.add(_image?.path??"");
+        img_paths.add(_image?.path ?? "");
+        deathCertificate_list.add(_image?.path ?? "");
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
           'death_certificate[]': jsonEncode(img_paths)
@@ -398,10 +400,10 @@ class _DeathCertificateState extends State<DeathCertificate> {
               receiveDataWhenStatusError: true,
               connectTimeout: Duration(minutes: 3), // 3 minutes
               receiveTimeout: Duration(minutes: 3) // 3 minuntes
-          ));
+              ));
           dio.interceptors.add(LogInterceptor(responseBody: true));
           SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+              await SharedPreferences.getInstance();
           var userID = sharedPreferences.getString('userID');
           var authToken = sharedPreferences.getString('auth-token');
 
@@ -430,7 +432,8 @@ class _DeathCertificateState extends State<DeathCertificate> {
 //              print(death_certificate_id);
               }
               death_certificate_id.add(newEntry);
-              sharedPreferences.setStringList("DeathCertificate", death_certificate_id);
+              sharedPreferences.setStringList(
+                  "DeathCertificate", death_certificate_id);
               getAttachment();
             });
 
@@ -454,88 +457,88 @@ class _DeathCertificateState extends State<DeathCertificate> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-       _filePicker();
+        _filePicker();
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-              title: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Upload File"),
-                  InkWell(
-                      onTap: () => Navigator.pop(context, true),
-                      child: Icon(Icons.clear))
-                ],
-              ),
-              content: SingleChildScrollView(
-                child: Container(
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  title: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Divider(),
+                      Text("Upload File"),
                       InkWell(
-                        onTap: () {
-                          _filePicker();
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 30, bottom: 0, top: 20),
+                          onTap: () => Navigator.pop(context, true),
+                          child: Icon(Icons.clear))
+                    ],
+                  ),
+                  content: SingleChildScrollView(
+                    child: Container(
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(),
+                          InkWell(
+                            onTap: () {
+                              _filePicker();
+                            },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
-                              height: 55.0,
-                              width: 600.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(
-                                        Icons.image,
-                                        color: Colors.black,
-                                        size: 20,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 30, bottom: 0, top: 20),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  height: 55.0,
+                                  width: 600.0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.image,
+                                            color: Colors.black,
+                                            size: 20,
+                                          )),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Chosse From Gallery',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            fontFamily: "Open Sans",
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Chosse From Gallery',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        fontFamily: "Open Sans",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              alignment: FractionalOffset.center,
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black38,
-                                        blurRadius: 0.0)
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(colors: <Color>[
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFFFFFFF)
-                                  ])),
+                                  alignment: FractionalOffset.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 0.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(colors: <Color>[
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFFFFFFFF)
+                                      ])),
 //                          decoration: BoxDecoration(
 //                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
 //                              borderRadius: BorderRadius.circular(10.0),
 //                              gradient: LinearGradient(
 //                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          uploadImage();
+                          InkWell(
+                            onTap: () async {
+                              uploadImage();
 
 //                        File file = await  Navigator.push(context, MaterialPageRoute(builder: (context) =>
 //                            Camera(
@@ -554,70 +557,70 @@ class _DeathCertificateState extends State<DeathCertificate> {
 //                        _isLoadingSecondary = true;
 //
 //                      });
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 30, bottom: 0, top: 0),
+                            },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
-                              height: 55.0,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 30, bottom: 0, top: 0),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  height: 55.0,
 //                        width: 600.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(
-                                        Icons.camera_enhance,
-                                        color: Colors.black,
-                                        size: 20,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.camera_enhance,
+                                            color: Colors.black,
+                                            size: 20,
+                                          )),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Chosse From Camera',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            fontFamily: "Open Sans",
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Chosse From Camera',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        fontFamily: "Open Sans",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              alignment: FractionalOffset.center,
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black38,
-                                        blurRadius: 0.0)
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(colors: <Color>[
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFFFFFFF)
-                                  ])),
+                                  alignment: FractionalOffset.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 0.0)
+                                      ],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(colors: <Color>[
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFFFFFFFF)
+                                      ])),
 //                          decoration: BoxDecoration(
 //                              boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 15.0)],
 //                              borderRadius: BorderRadius.circular(10.0),
 //                              gradient: LinearGradient(
 //                                  colors: <Color>[Color(0xFF121940), Color(0xFF6E48AA)])),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      )
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ));
+                ));
       },
       child: Column(
         children: [
@@ -635,43 +638,45 @@ class _DeathCertificateState extends State<DeathCertificate> {
                       alignment: Alignment.centerRight,
                       child: !_isLoadingSecondary
                           ? Icon(
-                        Icons.file_upload,
-                        color: Colors.black,
-                        size: 20,
-                      )
-                          : MyConstants.myConst.internet??false
-                          ? Container(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(),
-                      )
-                          : Icon(
-                        Icons.done,
-                        color: Colors.black,
-                        size: 20,
-                      )),
+                              Icons.file_upload,
+                              color: Colors.black,
+                              size: 20,
+                            )
+                          : MyConstants.myConst.internet ?? false
+                              ? Container(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Icon(
+                                  Icons.done,
+                                  color: Colors.black,
+                                  size: 20,
+                                )),
                   SizedBox(
                     width: 10,
                   ),
                   !_isLoadingSecondary
                       ? Text(
-                    'Upload',
-                    style: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.2,
-                        fontFamily: "Open Sans",
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w800),
-                  )
+                          'Upload',
+                          style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.2,
+                              fontFamily: "Open Sans",
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w800),
+                        )
                       : Text(
-                    MyConstants.myConst.internet??false ? 'Uploading' : "Saved",
-                    style: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.2,
-                        fontFamily: "Open Sans",
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w800),
-                  ),
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
+                          style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.2,
+                              fontFamily: "Open Sans",
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w800),
+                        ),
                 ],
               ),
               alignment: FractionalOffset.center,
@@ -691,45 +696,45 @@ class _DeathCertificateState extends State<DeathCertificate> {
           ),
           (death_cert != null && deathCertificate_list.isEmpty)
               ? Center(
-            child: Container(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-              alignment: Alignment.center,
-              height: death_cert != null ? 150 : 0,
-              child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: List.generate(death_cert.length, (index) {
-                    return CachedNetworkImage(
-                      placeholder: (context, url) =>
-                          CircularProgressIndicator(),
-                      imageUrl: death_cert[index] != null
-                          ? death_cert[index]
-                          : 'http://via.placeholder.com/1x1',
+                  child: Container(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    alignment: Alignment.center,
+                    height: death_cert != null ? 150 : 0,
+                    child: ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: List.generate(death_cert.length, (index) {
+                          return CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            imageUrl: death_cert[index] != null
+                                ? death_cert[index]
+                                : 'http://via.placeholder.com/1x1',
 //            errorWidget: (context, url, error) => Icon(Icons.error),
-                    );
-                  })),
-            ),
-          )
+                          );
+                        })),
+                  ),
+                )
               : deathCertificate_list.isNotEmpty
-              ? Container(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0),
-            alignment: Alignment.center,
-            height: 150,
-            child: ListView(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children:
-                List.generate(deathCertificate_list.length, (index) {
-                  return Center(
-                    child: Image.file(
-                      File(deathCertificate_list[index]),
-                      width: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                })),
-          )
-              : SizedBox(),
+                  ? Container(
+                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                      alignment: Alignment.center,
+                      height: 150,
+                      child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          children: List.generate(deathCertificate_list.length,
+                              (index) {
+                            return Center(
+                              child: Image.file(
+                                File(deathCertificate_list[index]),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          })),
+                    )
+                  : SizedBox(),
         ],
       ),
     );
