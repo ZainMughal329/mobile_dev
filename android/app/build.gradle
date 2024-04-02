@@ -84,6 +84,12 @@ android {
             resValue "string", "app_name", "Ramotshere"
             versionNameSuffix ".ramotshere"
         }
+        metsimaholo {
+            dimension "app"
+            applicationIdSuffix ".metsimaholo"
+            resValue "string", "app_name", "Metsimaholo"
+            versionNameSuffix ".ramotshere"
+        }
     }
 //
 //    signingConfigs {

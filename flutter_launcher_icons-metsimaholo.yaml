@@ -1,0 +1,4 @@
+flutter_launcher_icons:
+  image_path: "assets/images/logos_and_icons/metsimaholo_icon.jpg"
+  android: true
+  ios: true

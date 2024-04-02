@@ -19,6 +19,7 @@ Future<void> main({AppFlavourModel? appFlavourModel}) async {
       print("base url === > ${MyConstants.myConst.appLogo}");
     }
   HttpOverrides.global = MyHttpOverrides();
+
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage.localStorage.init();
   runApp(ProviderScope(child: MyApp()));

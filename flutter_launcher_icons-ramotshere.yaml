@@ -1,4 +1,4 @@
 flutter_launcher_icons:
-  image_path: "assets/images/logos_and_icon/ramotshere_app_icon.JPG"
+  image_path: "assets/images/logos_and_icons/ramotshere_app_icon.JPG"
   android: true
   ios: true
