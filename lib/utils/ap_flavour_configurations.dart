@@ -1,15 +1,17 @@
 class AppFlavoursConfigurations {
   static const configLesediPro = {
     "app_name": "Lesedi",
-    // "base_url": "http://185.193.67.250/",
-    "base_url": "https://f75d-182-185-226-221.ngrok-free.app/",
+    "base_url": "http://167.172.170.109/",
+    // "base_url": "http://185.193.67.250/",  old base url
+    // "base_url": "https://f75d-182-185-226-221.ngrok-free.app/",
     "app_logo": "assets/images/logos_and_icons/logo_lesedi.png",
     "app_icon": "...........",
     "env": "Lasedi"
   };
   static const configEmfuleniPro = {
     "app_name": "Emfuleni",
-    "base_url": "http://185.193.67.250:3000/",
+    "base_url": "http://167.172.170.109:3000/",
+    // "base_url": "http://185.193.67.250:3000/", old base url
     "app_logo": "assets/images/emfuleni.jpg",
     "app_icon": "......",
     "env": "emfuleni"
@@ -30,7 +32,8 @@ class AppFlavoursConfigurations {
   };
   static const configMetsimaholoPro = {
     "app_name": "Metsimaholo",
-    "base_url": "http://185.193.67.250:3001/",
+    "base_url": "http://167.172.170.109:3001/",
+    // "base_url": "http://185.193.67.250:3001/", old base url
     "app_logo": "assets/images/logos_and_icons/ramoteshere_logo.png",
     "app_icon": "......",
     "env": "metsimaholo"
