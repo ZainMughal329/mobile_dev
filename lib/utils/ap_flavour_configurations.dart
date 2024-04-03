@@ -37,4 +37,11 @@ class AppFlavoursConfigurations {
     "app_icon": "......",
     "env": "metsimaholo"
   };
+  static const configJohannesburgPro = {
+    "app_name": "Johannesburg",
+    "base_url": "http://167.172.170.109:3002/",
+    "app_logo": "assets/images/logos_and_icons/joburg_logo.png",
+    "app_icon": "......",
+    "env": "metsimaholo"
+  };
 }

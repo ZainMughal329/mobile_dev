@@ -90,6 +90,12 @@ android {
             resValue "string", "app_name", "Metsimaholo"
             versionNameSuffix ".ramotshere"
         }
+        johannesburg {
+            dimension "app"
+            applicationIdSuffix ".Johannesburg"
+            resValue "string", "app_name", "Johannesburg"
+            versionNameSuffix ".johannesburg"
+        }
     }
 //
 //    signingConfigs {
