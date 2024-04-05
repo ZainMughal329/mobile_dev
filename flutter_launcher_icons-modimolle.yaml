@@ -1,5 +1,4 @@
 flutter_launcher_icons:
-  image_path: "assets/images/logos_and_icons/modimolle_launcher_icon.jpg"
-#  image_path: "assets/images/logos_and_icons/modimolle_app_icon.jpg"
+  image_path: "assets/images/logos_and_icons/modimolle_launcher.jpg"
   android: true
   ios: true
