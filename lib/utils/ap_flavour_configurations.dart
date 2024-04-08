@@ -17,17 +17,18 @@ class AppFlavoursConfigurations {
   };
   static const configModimollePro = {
     "app_name": "Modimolle",
-    "base_url": "http://173.249.14.72/",
+    "base_url": "http://167.172.170.109:3004/",
+    // "base_url": "http://173.249.14.72/",  old base url
     "app_logo": "assets/images/logos_and_icons/modimolle_logo.png",
     "app_icon": "......",
     "env": "modimolle"
   };
   static const configRamotesherePro = {
-    "app_name": "Remoteshere",
-    "base_url": "http://173.249.14.72:3000/",
+    "app_name": "Ramoteshere",
+    "base_url": "http://167.172.170.109:3003/",
     "app_logo": "assets/images/logos_and_icons/ramoteshere_logo.png",
     "app_icon": "......",
-    "env": "remoteshere"
+    "env": "ramoteshere"
   };
   static const configMetsimaholoPro = {
     "app_name": "Metsimaholo",
@@ -42,6 +43,6 @@ class AppFlavoursConfigurations {
     "base_url": "http://167.172.170.109:3002/",
     "app_logo": "assets/images/logos_and_icons/joburg_logo.png",
     "app_icon": "......",
-    "env": "metsimaholo"
+    "env": "johannesburg"
   };
 }
