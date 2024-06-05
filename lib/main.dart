@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +15,7 @@ Future<void> main({AppFlavourModel? appFlavourModel}) async {
       MyConstants.myConst.baseUrl=appFlavourModel.baseUrl??"";
       MyConstants.myConst.appName=appFlavourModel.appName??"";
       MyConstants.myConst.appLogo=appFlavourModel.appLogo??"";
-      print("base url === > ${MyConstants.myConst.baseUrl}");
+      log("base url === > ${MyConstants.myConst.baseUrl}");
       print("this is app name ${appFlavourModel.appName}");
       print("base url === > ${MyConstants.myConst.appLogo}");
     }

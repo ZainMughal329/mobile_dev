@@ -90,40 +90,39 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
                   horizontalPadding: 20,
                   verticalPadding: 10,
                   textInputType: TextInputType.number,
-                  controller: notifier.standNumberController, label: ' Stand/ ERF number',
-                  textInputFormatter: [notifier.maskFormatter],onChange: (value) {
-                  print('value holder');
-                  print(value.length - 32);
-                  var valueHolder =
-                  notifier.maskFormatter.getUnmaskedText();
-                  print(valueHolder.length);
-                  var zeroList = valueHolder.padRight(27, '0');
-                  notifier.formattedString = '';
-                  for (int i = 0; i < zeroList.length; i++) {
-                    print(i);
-                    switch (i) {
-                      case 3:
-                      case 6:
-                      case 14:
-                      case 19:
-                      case 23: {
-                          notifier.formattedString +=
-                              " " + zeroList[i].toString();
-                        }
-                        break;
-                      default:
-                        {
-                          notifier.formattedString +=
-                              zeroList[i].toString();
-                        }
+                  controller: notifier.standNumberController,
+                  label: ' Stand/ ERF number',
+                  textInputFormatter: [notifier.maskFormatter],
+                  onChange: (value) {
+                    print('value holder');
+                    print(value.length - 32);
+                    var valueHolder = notifier.maskFormatter.getUnmaskedText();
+                    print(valueHolder.length);
+                    var zeroList = valueHolder.padRight(27, '0');
+                    notifier.formattedString = '';
+                    for (int i = 0; i < zeroList.length; i++) {
+                      print(i);
+                      switch (i) {
+                        case 3:
+                        case 6:
+                        case 14:
+                        case 19:
+                        case 23:
+                          {
+                            notifier.formattedString +=
+                                " " + zeroList[i].toString();
+                          }
+                          break;
+                        default:
+                          {
+                            notifier.formattedString += zeroList[i].toString();
+                          }
+                      }
                     }
-
-                  }
-                  print(notifier.formattedString);
-                  setState(() {
-                  });
-                  print('new string');
-                },
+                    print(notifier.formattedString);
+                    setState(() {});
+                    print('new string');
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -217,27 +216,50 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
 
                 InputFieldWidget(
                     horizontalPadding: 20,
-                    verticalPadding: 10,controller: notifier.eskomAccountNumberController, label: 'Ward Number'),
-                InputFieldWidget(                  horizontalPadding: 20,
-                    verticalPadding: 10,controller: notifier.wardNumberController, label: 'Eskom Account Number'),
-                InputFieldWidget(                  horizontalPadding: 20,
-                  verticalPadding: 10,controller: notifier.emailController, label: "Email",textInputType: TextInputType.emailAddress,),
-                InputFieldWidget(                  horizontalPadding: 20,
-                  verticalPadding: 10,controller: notifier.contectNumberController, label: 'Cell Phone Number',textInputType: TextInputType.phone,),
-                InputFieldWidget(                  horizontalPadding: 20,
-
-                  verticalPadding: 10,controller: notifier.telephoneNumberController, label: 'Telephone Number',textInputType: TextInputType.phone,),
+                    verticalPadding: 10,
+                    controller: notifier.wardNumberController,
+                    label: 'Ward Number'),
+                InputFieldWidget(
+                    horizontalPadding: 20,
+                    verticalPadding: 10,
+                    controller: notifier.eskomAccountNumberController,
+                    label: 'Eskom Account Number'),
+                InputFieldWidget(
+                  horizontalPadding: 20,
+                  verticalPadding: 10,
+                  controller: notifier.emailController,
+                  label: "Email",
+                  textInputType: TextInputType.emailAddress,
+                ),
+                InputFieldWidget(
+                  horizontalPadding: 20,
+                  verticalPadding: 10,
+                  controller: notifier.contectNumberController,
+                  label: 'Cell Phone Number',
+                  textInputType: TextInputType.phone,
+                ),
+                InputFieldWidget(
+                  horizontalPadding: 20,
+                  verticalPadding: 10,
+                  controller: notifier.telephoneNumberController,
+                  label: 'Telephone Number',
+                  textInputType: TextInputType.phone,
+                ),
                 GestureDetector(
                     onTap: () {
                       if (FocusScope.of(context).isFirstFocus) {
-                        FocusScope.of(context)
-                            .requestFocus(new FocusNode());
+                        FocusScope.of(context).requestFocus(new FocusNode());
                       }
                       notifier.selectDateYear(context);
                     },
-                    child: AbsorbPointer(child: InputFieldWidget(                  horizontalPadding: 20,
-                      verticalPadding: 10,controller: notifier.FinancialYearController, label: 'Financial Year',))),
-            ],
+                    child: AbsorbPointer(
+                        child: InputFieldWidget(
+                      horizontalPadding: 20,
+                      verticalPadding: 10,
+                      controller: notifier.FinancialYearController,
+                      label: 'Financial Year',
+                    ))),
+              ],
             ),
           ),
           Padding(
@@ -310,8 +332,7 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
                           ),
                         ],
                       ),
-                      child:
-                          Align(
+                      child: Align(
                         alignment: Alignment.center,
                         child: Container(
                             child: notifier.isLoading
@@ -339,4 +360,3 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
     );
   }
 }
-

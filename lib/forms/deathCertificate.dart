@@ -457,7 +457,6 @@ class _DeathCertificateState extends State<DeathCertificate> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        _filePicker();
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(

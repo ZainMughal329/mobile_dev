@@ -102,7 +102,7 @@ class LoginNotifier extends ChangeNotifier {
             jsonResponse['message'].toString().replaceAll("[\\[\\](){}]", ""));
       }}
     on SocketException catch (e) {
-      Fluttertoast.showToast(msg: "Internet not available");
+      Fluttertoast.showToast(msg: "Something went wrong");
       print('dsa');
       print(e);
     } on FormatException catch (e) {
@@ -114,6 +114,8 @@ class LoginNotifier extends ChangeNotifier {
       print('dsa');
       print(e);
     }
+    setLoading(false);
+
     notifyListeners();
   }
 

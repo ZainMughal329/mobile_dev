@@ -1,6 +1,7 @@
 class AppFlavoursConfigurations {
   static const configLesediPro = {
     "app_name": "Lesedi",
+    // "base_url": "https://f320-182-178-225-101.ngrok-free.app/",
     "base_url": "http://167.172.170.109/",
     // "base_url": "http://185.193.67.250/",  old base url
     "app_logo": "assets/images/logos_and_icons/logo_lesedi.png",

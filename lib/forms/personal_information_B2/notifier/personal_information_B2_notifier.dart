@@ -212,6 +212,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
     print('okay');
     print(userID);
     print('okay');
+    log("ward number is here $wardNumber");
     Map<String, dynamic>? data = {
       'application_id': applicant_id,
       'email': email,
