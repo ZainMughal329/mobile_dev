@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 import 'package:lesedi/utils/app_color.dart';
 
+import '../../../widgets/common_widgets/coordinate_widget.dart';
+
 
 class ApplicationStatus extends ConsumerStatefulWidget {
   final int applicant_id;
@@ -495,7 +497,15 @@ class _ApplicationStatusState extends ConsumerState<ApplicationStatus> {
                     ),
                     InputFieldWidget(
                       horizontalPadding: 30,verticalPadding: 10,
-                      controller: notifier.remarksController, label: "Remarks",textInputType: TextInputType.text,)
+                      controller: notifier.remarksController, label: "Remarks",textInputType: TextInputType.text,),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 10),
+                      child: CoordinateWidget(lat: notifier.lat, lng: notifier.lng,
+
+                      ),
+                    ),
 
 //
                   ],

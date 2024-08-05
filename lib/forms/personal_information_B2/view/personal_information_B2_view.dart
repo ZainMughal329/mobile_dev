@@ -7,6 +7,8 @@ import 'package:lesedi/forms/personal_information_B2/notifier/widgets/my_dialog.
 import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 
+import '../../../widgets/common_widgets/coordinate_widget.dart';
+
 class PersonalInformationB1 extends ConsumerStatefulWidget {
   final int applicant_id;
   final Function func;
@@ -259,6 +261,14 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
                       controller: notifier.FinancialYearController,
                       label: 'Financial Year',
                     ))),
+                Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 20, bottom: 20, top: 0),
+                    child: CoordinateWidget(
+                      lat: notifier.lat,
+                      lng: notifier.lng,
+                    ),
+                ),
               ],
             ),
           ),

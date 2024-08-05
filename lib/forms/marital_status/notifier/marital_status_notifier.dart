@@ -7,6 +7,7 @@ import 'package:lesedi/forms/attachments/view/attachments.dart';
 import 'package:lesedi/forms/bank_account_details/view/bank_account_details.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,6 +15,7 @@ import 'package:http/http.dart' as http;
 class MaritalStatusNotifier extends ChangeNotifier {
 
   ServicesRequest request = ServicesRequest();
+  Location location = new Location();
 
   bool isLoading = false;
   bool? checked = true;
@@ -22,6 +24,10 @@ class MaritalStatusNotifier extends ChangeNotifier {
   bool? checkedEm = false;
   bool? checkedCh = false;
   bool? checkedESM = false;
+  bool? _coordinatesLoading = false;
+  var lat = '';
+  var lng = '';
+  LocationData? _locationData;
 
   bool? checkedDI = false;
   String checkBoxValue = 'married';
@@ -33,6 +39,36 @@ class MaritalStatusNotifier extends ChangeNotifier {
   checkInternetAvailability() async {
     await request.ifInternetAvailable();
     notifyListeners();
+  }
+
+  getLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    lat = _locationData?.latitude.toString() ?? "";
+    lng = _locationData?.longitude.toString() ?? "";
+    notifyListeners();
+
+    print('coordinates loading: ${_coordinatesLoading}');
+    print('location holdeer');
+    print(_locationData?.latitude);
   }
 
   getCheckValues() async {
@@ -84,7 +120,9 @@ class MaritalStatusNotifier extends ChangeNotifier {
     print('okay');
     Map<String, dynamic>? data = {
       'application_id': applicant_id,
-      'marital_status': checkBoxValue
+      'marital_status': checkBoxValue,
+      'latitude': lat,
+      'longitude': lng,
 //      'role': _selectedType
     };
     LocalStorage.localStorage.saveFormData(data);
@@ -183,6 +221,7 @@ class MaritalStatusNotifier extends ChangeNotifier {
 
   init(){
     getCheckValues();
+    getLocation();
     checkInternetAvailability();
   }
 

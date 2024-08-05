@@ -3,6 +3,8 @@ import 'package:lesedi/forms/marital_status/notifier/marital_status_notifier.dar
 import 'package:flutter/material.dart';
 import 'package:lesedi/utils/app_color.dart';
 
+import '../../../widgets/common_widgets/coordinate_widget.dart';
+
 class MaritalStatus extends ConsumerStatefulWidget {
   final int applicant_id;
   final String gross_monthly_income;
@@ -281,6 +283,14 @@ class _MaritalStatusState extends ConsumerState<MaritalStatus> {
                   ),
                 ),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 30, vertical: 10),
+            child: CoordinateWidget(
+              lat: notifier.lat,
+              lng: notifier.lng,
             ),
           ),
           SizedBox(

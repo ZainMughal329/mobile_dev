@@ -5,6 +5,7 @@ import 'package:lesedi/common_services/services_request.dart';
 import 'package:lesedi/forms/marital_status/view/marital_status.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,7 +13,7 @@ import 'package:http/http.dart' as http;
 class ApplicationStatusNotifier extends ChangeNotifier {
 
   ServicesRequest request = ServicesRequest();
-
+  Location location = new Location();
   TextEditingController grossMonthlyController = TextEditingController();
   TextEditingController remarksController = TextEditingController();
   bool isLoading = false;
@@ -25,6 +26,10 @@ class ApplicationStatusNotifier extends ChangeNotifier {
   bool? heckedDI = false;
   bool? checkedESM = false;
   bool? checkedDI = false;
+  bool? _coordinatesLoading = false;
+  var lat = '';
+  var lng = '';
+  LocationData? _locationData;
 
   bool? checkedGMI = false;
   var grossMonthlyStorage;
@@ -41,6 +46,36 @@ class ApplicationStatusNotifier extends ChangeNotifier {
     await request.ifInternetAvailable();
    notifyListeners();
 
+  }
+
+  getLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    lat = _locationData?.latitude.toString() ?? "";
+    lng = _locationData?.longitude.toString() ?? "";
+    notifyListeners();
+
+    print('coordinates loading: ${_coordinatesLoading}');
+    print('location holdeer');
+    print(_locationData?.latitude);
   }
 
   getCheckValues() async {
@@ -110,6 +145,8 @@ class ApplicationStatusNotifier extends ChangeNotifier {
       'employment_status': checkBoxValue,
       'gross_monthly_income': grossMonthlyController.text,
       'remarks': remarksController.text,
+      'latitude': lat,
+      'longitude': lng,
 //      'role': _selectedType
     };
 
@@ -204,6 +241,7 @@ class ApplicationStatusNotifier extends ChangeNotifier {
 
   init(){
     print('daya');
+    getLocation();
     getCheckValues();
     checkInternetAvailability();
   }

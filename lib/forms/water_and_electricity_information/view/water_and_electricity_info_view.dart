@@ -4,15 +4,16 @@ import 'package:lesedi/dashboard/view/dashboard_view.dart';
 import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/forms/water_and_electricity_information/notifier/water_and_electricity_form_notifier.dart';
 import 'package:lesedi/forms/water_and_electricity_information/widget/water_meter_attachments.dart';
+import 'package:lesedi/widgets/common_widgets/coordinate_widget.dart';
 
 class WaterAndElectricityView extends ConsumerWidget {
   WaterAndElectricityView(
       {required this.applicant_id,
-      required this.previousFormSubmitted,
-      super.key});
+        required this.previousFormSubmitted,
+        super.key});
 
   final int applicant_id;
-  late final bool previousFormSubmitted;
+  final bool previousFormSubmitted;
 
   final waterAndElectricityFormProvider = ChangeNotifierProvider((ref) {
     return WaterAndElectricityFormNotifier();
@@ -20,11 +21,10 @@ class WaterAndElectricityView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("applicant_id  ===> ${applicant_id}");
     final notifier = ref.watch(waterAndElectricityFormProvider);
+
     return Scaffold(
       appBar: AppBar(
-//        elevation: .5,
         centerTitle: true,
         leading: IconButton(
           icon: Icon(
@@ -32,9 +32,7 @@ class WaterAndElectricityView extends ConsumerWidget {
             color: Colors.white,
           ),
           onPressed: () {
-            // do something
-//            Navigator.of(context).pop(false);
-//             showAlertDialog(context);
+            Navigator.of(context).pop(false);
           },
         ),
         backgroundColor: AppColors.PRIMARY_COLOR,
@@ -154,38 +152,27 @@ class WaterAndElectricityView extends ConsumerWidget {
               ),
             ),
             Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20),
+              child: notifier.lat.isNotEmpty && notifier.lng.isNotEmpty
+                  ? CoordinateWidget(
+                lat: notifier.lat,
+                lng: notifier.lng,
+              )
+                  : CircularProgressIndicator(),
+            ),
+            Padding(
               padding: EdgeInsets.only(bottom: 30),
               child: InkWell(
                 onTap: () async {
-                  print(applicant_id);
-                  // bool? previousSubmitted =
                   await notifier.submitForm(
                       context: context,
                       applicantId: applicant_id,
                       previousFormSubmitted: previousFormSubmitted);
-                  // if(previousSubmitted!=null)
-                  //   {
-                  //      previousFormSubmitted=previousSubmitted;
-                  //   }
-                  // setState(() {
-                  //   _isLoading = true;
-                  // });
-                  // // await checkFormStatus();
-                  // print("Applicant ID :::: ${widget.applicant_id}");
-                  // print(
-                  //     "Previous Form Submitted ::: ${widget.previousFormSubmitted}");
-                  // Navigator.of(context).push(PageRouteBuilder(
-                  //     pageBuilder: (_, __, ___) => WaterAndElectricityView(
-                  //         applicant_id:    widget.applicant_id,previousFormSubmitted:  widget.previousFormSubmitted)));
-                  // // Navigator.of(context).push(PageRouteBuilder(
-                  // //     pageBuilder: (_, __, ___) => Declaration(
-                  // //         widget.applicant_id, widget.previousFormSubmitted)));
                 },
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
                       margin: EdgeInsets.only(right: 0),
-//                alignment: Alignment.bottomRight,
                       width: 80.0,
                       height: 40.0,
                       decoration: BoxDecoration(
@@ -200,22 +187,20 @@ class WaterAndElectricityView extends ConsumerWidget {
                       ),
                       child: Align(
                         alignment: Alignment.center,
-                        child: Container(
-                            child: notifier.isFormLoading
-                                ? Container(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      valueColor:
-                                          new AlwaysStoppedAnimation<Color>(
-                                              Colors.white),
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 30,
-                                    color: Colors.white,
-                                  )),
+                        child: notifier.isFormLoading
+                            ? Container(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                                Colors.white),
+                          ),
+                        )
+                            : Icon(
+                          Icons.arrow_forward_ios,
+                          size: 30,
+                          color: Colors.white,
+                        ),
                       )),
                 ),
               ),
@@ -226,6 +211,7 @@ class WaterAndElectricityView extends ConsumerWidget {
     );
   }
 }
+
 
 class FormFieldWidget extends StatelessWidget {
   const FormFieldWidget({

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:lesedi/utils/app_color.dart';
+import 'package:lesedi/widgets/common_widgets/coordinate_widget.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 
 class PersonalInformationA1 extends ConsumerStatefulWidget {
@@ -109,9 +110,8 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                   verticalPadding: 10,
                   controller: notifier.accountNumberController,
                   label: 'Account Number',
+                  textInputFormatter: [FilteringTextInputFormatter.digitsOnly],
                 ),
-
-
                 InputFieldWidget(
                   horizontalPadding: 20,
                   verticalPadding: 10,
@@ -281,46 +281,11 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 20.0, right: 20, bottom: 20, top: 0),
-                  child: Container(
-                    height: 55,
-                    color: Colors.black.withOpacity(0.2),
-                    child: new TextFormField(
-                      readOnly: true,
-                      enabled: false,
-                      obscureText: false,
-                      decoration: new InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: const Color(0xff626a76), width: 1.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.PRIMARY_COLOR, width: 1.0),
-                          ),
-                          labelText: 'lat:' +
-                              notifier.lat +
-                              ',' +
-                              ' lng:' +
-                              notifier.lng,
-                          labelStyle: new TextStyle(
-                              color: const Color(0xff626a76),
-                              fontFamily: 'opensans'),
-                          focusColor: AppColors.PRIMARY_COLOR,
-                          alignLabelWithHint: true,
-                          fillColor: Colors.white,
-                          border: new OutlineInputBorder(
-                              borderRadius: new BorderRadius.circular(4.0),
-                              borderSide:
-                                  new BorderSide(color: Colors.blue.shade700)),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto),
-
-                      keyboardType: TextInputType.text,
-                      style: new TextStyle(
-                          fontFamily: 'opensans',
-                          color: AppColors.PRIMARY_COLOR,
-                          fontSize: 13.0),
-                    ),
-                  ),
+                  child:
+                    CoordinateWidget(
+                      lat: notifier.lat,
+                      lng: notifier.lng,
+                    )
                 ),
               ],
             ),
@@ -422,26 +387,3 @@ showAlertDialog(BuildContext context, userRole, id) {
   );
 }
 
-// Future<bool> _onWillPop() async {
-//   return (await showDialog(
-//         context: context,
-//         builder: (context) => new AlertDialog(
-//           title: new Text('Are you sure?'),
-//           content: new Text('Do you want to exit an App'),
-//           actions: <Widget>[
-//             new TextButton (
-//               onPressed: () => Navigator.of(context).pop(false),
-//               child: new Text('No'),
-//             ),
-//             new TextButton (
-//               onPressed: () {
-//                 Navigator.of(context).pop(true);
-//                 exit(0);
-//               },
-//               child: new Text('Yes'),
-//             ),
-//           ],
-//         ),
-//       )) ??
-//       false;
-// }

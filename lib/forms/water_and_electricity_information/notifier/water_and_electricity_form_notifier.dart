@@ -11,6 +11,7 @@ import 'package:lesedi/forms/declaration/view/declaration_view.dart';
 import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/common_services/services_request.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WaterAndElectricityFormNotifier extends ChangeNotifier {
@@ -26,16 +27,27 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
   List<String> propertyAttachmentsList = [];
 
   ServicesRequest request = ServicesRequest();
+  Location location = new Location();
 
   bool isWaterAttachments = false;
   bool isElectricityAttachments = false;
   bool isPropertyAttachments = false;
   bool isFormLoading = false;
+  bool? _coordinatesLoading = false;
+  var lat = '';
+  var lng = '';
+  LocationData? _locationData;
+
+  WaterAndElectricityFormNotifier() {
+    init();
+  }
 
   waterAttachmentsLoading(bool val) {
     isWaterAttachments = val;
     notifyListeners();
   }
+
+
 
   electricityAttachmentsLoading(bool val) {
     isElectricityAttachments = val;
@@ -50,6 +62,36 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
   formLoading(bool val) {
     isFormLoading = val;
     notifyListeners();
+  }
+
+  getLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    lat = _locationData?.latitude.toString() ?? "";
+    lng = _locationData?.longitude.toString() ?? "";
+    notifyListeners();
+
+    print('coordinates loading: ${_coordinatesLoading}');
+    print('location holdeer');
+    print(_locationData?.latitude);
   }
 
   Future<void> getWaterAttachments({
@@ -377,6 +419,8 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
       'water_meter_reading': waterMeterReadingController.text,
       'electricity_meter_number': electricityMeterNumberController.text,
       'electricity_meter_reading': electricityMeterReadingsController.text,
+      'latitude': lat,
+      'longitude': lng
     };
 
     LocalStorage.localStorage.saveFormData(data);
@@ -473,101 +517,7 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
               applicantId!, previousFormSubmitted)));
     }
   }
-
-
-//   Future submitForm({
-//     required BuildContext context,
-//     int? applicantId,
-//     required bool previousFormSubmitted,
-//   }) async {
-//     if (
-//     waterMeterNumberController.text.isEmpty ||
-//     waterMeterReadingController.text.isEmpty ||
-//     electricityMeterNumberController.text.isEmpty ||
-//     electricityMeterNumberController.text.isEmpty  ){
-//
-//       showToastMessage("Please fill all fields");
-//       return;
-//     }
-//     formLoading(true);
-//
-//
-//     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//     var userID = sharedPreferences.getString('userID');
-//     var authToken = sharedPreferences.getString('auth-token');
-//     // checkInternetAvailability();
-//     await request.ifInternetAvailable();
-//     print('okay');
-//     print(userID);
-//     print('okay');
-//     Map<String, dynamic> data = {
-//       "application_id": applicantId,
-//       'water_meter_number': waterMeterNumberController.text,
-//       'water_meter_reading': waterMeterReadingController.text,
-//       'electricity_meter_number': electricityMeterNumberController.text,
-//       'electricity_meter_reading': electricityMeterReadingsController.text,
-//     };
-//
-//     if (MyConstants.myConst.internet ?? false) {
-//
-//       try{
-//         var jsonResponse;
-//         http.Response response = await http.post(
-//           Uri.parse(
-//               "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'uuid': userID ?? "",
-//             'Authentication': authToken ?? ""
-//           },
-//
-//             body: jsonEncode(data)
-//         );
-//
-//         print(response.headers);
-//
-//         print(response.body);
-//         // print(data);
-//         if (response.statusCode == 200) {
-//           jsonResponse = jsonDecode(response.body);
-//           // sharedPreferences.setInt('applicant_id', data['application_id']);
-//           // LocalStorage.localStorage.clearCurrentApplication();
-//
-//           previousFormSubmitted = true;
-//           LocalStorage.localStorage.saveFormData(data);
-//
-//           showToastMessage('Form Submitted');
-//
-//           Navigator.of(context).push(PageRouteBuilder(
-//               pageBuilder: (_, __, ___) => Declaration(
-//                   applicantId!, previousFormSubmitted)));
-//           formLoading(false);
-//         } else {
-//           formLoading(false);
-//           jsonResponse = json.decode(response.body);
-//           print('data');
-// //        print(jsonResponse);
-//           showToastMessage(jsonResponse['message']);
-//
-//         }
-//       }
-//       on SocketException catch (e) {
-//         Fluttertoast.showToast(msg: "Internet not available");
-//         formLoading(false);
-//         print('dsa');
-//         print(e);
-//       } on FormatException catch (e) {
-//         Fluttertoast.showToast(msg: "Bad Request");
-//         formLoading(false);
-//         print('dsa');
-//         print(e);
-//       } catch (e) {
-//         Fluttertoast.showToast(msg: "Something went wrong");
-//         formLoading(false);
-//         print('dsa');
-//         print(e);
-//       }
-//
-//     }
-//   }
+  void init() {
+    getLocation();
+  }
 }

@@ -15,6 +15,7 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+
 class PersonalInformationNotifier extends ChangeNotifier {
   Location location = new Location();
   bool _coordinatesLoading = false;
@@ -85,7 +86,7 @@ class PersonalInformationNotifier extends ChangeNotifier {
     lng = _locationData?.longitude.toString() ?? "";
     notifyListeners();
 
-    print(_coordinatesLoading);
+    print('coordinates loading: ${_coordinatesLoading}');
     print('location holdeer');
     print(_locationData?.latitude);
   }
@@ -479,18 +480,6 @@ class PersonalInformationNotifier extends ChangeNotifier {
       completer.complete(temp);
 notifyListeners();
         });
-    /*else
-      DatePicker.showDatePicker(
-        context,
-        dateFormat: 'yyyy-mmm-dd',
-//        locale: 'en',
-        onConfirm: (temp, selectedIndex) {
-          if (temp == null) return null;
-          completer.complete(temp);
-
-          setState(() {});
-        },
-      );*/
     return completer.future;
   }
   void init() {

@@ -6,6 +6,7 @@ import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/common_services/services_request.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/global.dart';
+import 'package:location/location.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -13,8 +14,10 @@ import 'package:lesedi/forms/application_status/view/application_status.dart';
 
 class PersonalInformationB2Notifier extends ChangeNotifier {
   ServicesRequest request = ServicesRequest();
+  Location location = new Location();
 
   bool checkboxValueCity = false;
+  bool _coordinatesLoading = false;
   List<String> allCities = ['Water', 'Electricity', 'Refuse Removal', 'None'];
   List<String> selectedCities=[];
 
@@ -39,6 +42,9 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
   var wardNumberStorage;
   var municipalAccountNumber;
   var standNumber;
+  var lat = '';
+  var lng = '';
+  LocationData? _locationData;
   List<String> serviceLinkedHolder = [
     'Water',
     'Electricity',
@@ -61,6 +67,36 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
   checkInternetAvailability() async {
     await request.ifInternetAvailable();
     notifyListeners();
+  }
+
+  getLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    lat = _locationData?.latitude.toString() ?? "";
+    lng = _locationData?.longitude.toString() ?? "";
+    notifyListeners();
+
+    print('coordinates loading: ${_coordinatesLoading}');
+    print('location holdeer');
+    print(_locationData?.latitude);
   }
 
   getRole() async {
@@ -223,7 +259,9 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
       'eskom_account_number': eskonAccountNumber,
       'cellphone_number': contactNumber,
       'telephone_number': telephone_number,
-      'financial_year': financial_year
+      'financial_year': financial_year,
+      'latitude': lat,
+      'longitude': lng,
     };
     // checkInternetAvailability();
     LocalStorage.localStorage.saveFormData(data);
@@ -385,6 +423,7 @@ class PersonalInformationB2Notifier extends ChangeNotifier {
   init() {
 
     getRole();
+    getLocation();
     checkInternetAvailability();
     // maskFormatter = new MaskTextInputFormatter(
     //     mask: '### ### ######## ##### #### ####',
