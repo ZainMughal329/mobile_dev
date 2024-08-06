@@ -46,4 +46,13 @@ class AppFlavoursConfigurations {
     "app_icon": "......",
     "env": "johannesburg"
   };
+  static const configRustenburgPro = {
+    "app_name": "Rustenburg",
+    // "base_url": "https://f320-182-178-225-101.ngrok-free.app/",
+    "base_url": "https://3559-39-49-100-190.ngrok-free.app/",
+    // "base_url": "http://185.193.67.250/",  old base url
+    "app_logo": "assets/images/logos_and_icons/rustenburg_app_icon.jpg",
+    "app_icon": "...........",
+    "env": "rustenburg"
+  };
 }

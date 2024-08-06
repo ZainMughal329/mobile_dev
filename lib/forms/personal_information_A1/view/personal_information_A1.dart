@@ -110,7 +110,12 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                   verticalPadding: 10,
                   controller: notifier.accountNumberController,
                   label: 'Account Number',
-                  textInputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                 // textInputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                  onChange: (value) {
+                    if (value.isNotEmpty) {
+                      notifier.fetchUserDetails(value);
+                    }
+                  },
                 ),
                 InputFieldWidget(
                   horizontalPadding: 20,
@@ -267,6 +272,18 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       final result = await notifier.scan(3);
                       notifier.DataResult = result.join('.join');
                     },
+                  ),
+                ),
+
+                //Button to add more than one occupants
+                ElevatedButton(
+                  onPressed: notifier.addOccupant,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add),
+                      Text('Add Occupant'),
+                    ],
                   ),
                 ),
 

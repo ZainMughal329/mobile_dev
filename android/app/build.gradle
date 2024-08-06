@@ -96,6 +96,12 @@ android {
             resValue "string", "app_name", "Johannesburg"
             versionNameSuffix ".johannesburg"
         }
+        rustenburg {
+            dimension "app"
+            applicationIdSuffix ".rustenburg"
+            resValue "string", "app_name", "Rustenburg"
+            versionNameSuffix ".rustenburg"
+        }
     }
 //
 //    signingConfigs {

@@ -14,6 +14,7 @@ import 'package:lesedi/utils/global.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../../../model/personal_information_A1_model.dart';
 
 
 class PersonalInformationNotifier extends ChangeNotifier {
@@ -60,6 +61,65 @@ class PersonalInformationNotifier extends ChangeNotifier {
     notifyListeners();
     return applicant_id = value;
   }
+
+  void addOccupant(){
+
+  }
+
+
+  //To populate the firstName, surName, address & applicationId automatically on the basis of accountNumber
+  Future<void> fetchUserDetails(String accountNumber) async {
+    setLoading(true);
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var userID = sharedPreferences.getString('userID');
+    var authToken = sharedPreferences.getString('auth-token');
+
+    try {
+      final response = await http.get(
+        Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/fetch_user_details?account_number=$accountNumber"),
+        headers: {
+          'Content-Type': 'application/json',
+          'uuid': userID ?? "",
+          'Authentication': authToken ?? "",
+        },
+      );
+
+      print("${MyConstants.myConst.baseUrl}api/v1/users/fetch_user_details");
+      print('authToken: ${authToken}');
+      print('userId: ${userID}');
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+
+        // Parse the response into PersonalInformationA1Model
+        PersonalInformationA1Model personalInfo = PersonalInformationA1Model.fromJson(data);
+
+        // Populate fields with fetched data
+        surNameController.text = personalInfo.surname ?? "";
+        firstNameController.text = personalInfo.firstName ?? "";
+        applicantIDController.text = personalInfo.idNumber ?? "";
+        addressController.text = "${personalInfo.postalAddress1 ?? ""} ${personalInfo.postalAddress2 ?? ""} ${personalInfo.postalCode ?? ""}";
+
+        print('Personal Info: ${personalInfo.toJson()}');
+        print('Successful Response: ${response.body}');
+      } else {
+        print('Unexpected response: ${response.statusCode}');
+        print(response.body);
+      }
+    } on FormatException catch (e) {
+      print('FormatException: $e');
+    } on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('SocketException: $e');
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('Exception: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   getLocation() async {
     bool _serviceEnabled;
