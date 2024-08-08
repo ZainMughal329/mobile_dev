@@ -189,12 +189,6 @@ class ApplicantInfo {
         occupantIds?.add(new OccupantIds.fromJson(v));
       });
     }
-    // if (json['marriage_certificate'] != null) {
-    //   marriageCertificate = <MarriageCertificate>[];
-    //   json['marriage_certificate'].forEach((v) {
-    //     marriageCertificate.add(new MarriageCertificate.fromJson(v));
-    //   });
-    // }
     if (json['additional_file'] != null) {
       additionalFile = <AdditionalFile>[];
       json['additional_file'].forEach((v) {
@@ -207,26 +201,6 @@ class ApplicantInfo {
         spouseCreditReport?.add(new SpouseCreditReport.fromJson(v));
       });
     }
-    // if (json['death_certificate'] != null) {
-    //   deathCertificate = <DeathCertificate>[];
-    //   json['death_certificate'].forEach((v) {
-    //     deathCertificate.add(new DeathCertificate.fromJson(v));
-    //   });
-    // }
-    // marriageCertificate = json['marriage_certificate'];
-    // decreeDivorce = json['decree_divorce'];
-    // if (json['affidavits'] != null) {
-    //   affidavits = <Null>[];
-    //   json['affidavits'].forEach((v) {
-    //     affidavits.add(new Null.fromJson(v));
-    //   });
-    // }
-    // if (json['additional_file'] != null) {
-    //   additionalFile = <Null>[];
-    //   json['additional_file'].forEach((v) {
-    //     additionalFile.add(new Null.fromJson(v));
-    //   });
-    // }
     signature = json['signature'];
     if (json['remarks'] != null) {
       remarks = <Remarks>[];
@@ -274,10 +248,6 @@ class ApplicantInfo {
       data['proof_of_incomes'] =
           this.proofOfIncomes?.map((v) => v.toJson()).toList();
     }
-    // if (this.marriageCertificate != null) {
-    //   data['marriage_certificate'] =
-    //       this.marriageCertificate.map((v) => v.toJson()).toList();
-    // }
     if (this.additionalFile != null) {
       data['additional_file'] =
           this.additionalFile?.map((v) => v.toJson()).toList();
@@ -294,22 +264,6 @@ class ApplicantInfo {
     if (this.occupantIds != null) {
       data['occupant_ids'] = this.occupantIds?.map((v) => v.toJson()).toList();
     }
-    // if (this.household != null) {
-    //   data['household'] = this.household.map((v) => v.toJson()).toList();
-    // }
-    // if (this.deathCertificate != null) {
-    //   data['death_certificate'] =
-    //       this.deathCertificate.map((v) => v.toJson()).toList();
-    // }
-    // data['marriage_certificate'] = this.marriageCertificate;
-    // data['decree_divorce'] = this.decreeDivorce;
-    // if (this.affidavits != null) {
-    //   data['affidavits'] = this.affidavits.map((v) => v.toJson()).toList();
-    // }
-    // if (this.additionalFile != null) {
-    //   data['additional_file'] =
-    //       this.additionalFile.map((v) => v.toJson()).toList();
-    // }
     data['signature'] = this.signature;
     if (this.remarks != null) {
       data['remarks'] = this.remarks?.map((v) => v.toJson()).toList();

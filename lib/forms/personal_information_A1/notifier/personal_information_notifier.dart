@@ -16,8 +16,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../model/personal_information_A1_model.dart';
 
-
 class PersonalInformationNotifier extends ChangeNotifier {
+  static final PersonalInformationNotifier _instance =
+      PersonalInformationNotifier._internal();
+
+  PersonalInformationNotifier._internal();
+
+  factory PersonalInformationNotifier() {
+    return _instance;
+  }
+
   Location location = new Location();
   bool _coordinatesLoading = false;
   bool isLoading = false;
@@ -62,13 +70,34 @@ class PersonalInformationNotifier extends ChangeNotifier {
     return applicant_id = value;
   }
 
-  void addOccupant(){
+  List<String> occupantIds = [];
 
+  // void addOccupant() {
+  //
+  //   final occupantId = dependentIDController.text.trim();
+  //   if (occupantId.isNotEmpty && !occupantIds.contains(occupantId)) {
+  //     occupantIds.add(occupantId);
+  //     dependentIDController.clear();
+  //     notifyListeners();
+  //   }
+  // }
+
+  void addOccupant(String occupantId) {
+    occupantId = occupantId.trim();
+    if (occupantId.isNotEmpty && !occupantIds.contains(occupantId)) {
+      occupantIds.add(occupantId);
+      dependentIDController.clear();
+      notifyListeners();
+    }
   }
 
+  void removeOccupant(String occupantId) {
+    occupantIds.remove(occupantId);
+    notifyListeners();
+  }
 
   //To populate the firstName, surName, address & applicationId automatically on the basis of accountNumber
-  Future<void> fetchUserDetails(String accountNumber) async {
+  Future<void> fetchUserDetailsWithAccountNumber(String accountNumber) async {
     setLoading(true);
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -77,7 +106,8 @@ class PersonalInformationNotifier extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse("${MyConstants.myConst.baseUrl}api/v1/users/fetch_user_details?account_number=$accountNumber"),
+        Uri.parse(
+            "${MyConstants.myConst.baseUrl}api/v1/users/fetch_user_details?account_number=$accountNumber"),
         headers: {
           'Content-Type': 'application/json',
           'uuid': userID ?? "",
@@ -93,13 +123,14 @@ class PersonalInformationNotifier extends ChangeNotifier {
         var data = jsonDecode(response.body);
 
         // Parse the response into PersonalInformationA1Model
-        PersonalInformationA1Model personalInfo = PersonalInformationA1Model.fromJson(data);
+        PersonalInformationA1Model personalInfo =
+            PersonalInformationA1Model.fromJson(data);
 
         // Populate fields with fetched data
         surNameController.text = personalInfo.surname ?? "";
         firstNameController.text = personalInfo.firstName ?? "";
         applicantIDController.text = personalInfo.idNumber ?? "";
-        addressController.text = "${personalInfo.postalAddress1 ?? ""} ${personalInfo.postalAddress2 ?? ""} ${personalInfo.postalCode ?? ""}";
+        addressController.text = "${personalInfo.postalAddress ?? ""}";
 
         print('Personal Info: ${personalInfo.toJson()}');
         print('Successful Response: ${response.body}');
@@ -120,6 +151,59 @@ class PersonalInformationNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchUserDetailsWithIdNumber(String idNumber) async {
+    setLoading(true);
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var userID = sharedPreferences.getString('userID');
+    var authToken = sharedPreferences.getString('auth-token');
+
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${MyConstants.myConst.baseUrl}api/v1/users/fetch_user_details?id_number=$idNumber"),
+        headers: {
+          'Content-Type': 'application/json',
+          'uuid': userID ?? "",
+          'Authentication': authToken ?? "",
+        },
+      );
+
+      print("${MyConstants.myConst.baseUrl}api/v1/users/fetch_user_details");
+      print('authToken: ${authToken}');
+      print('userId: ${userID}');
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+
+        // Parse the response into PersonalInformationA1Model
+        PersonalInformationA1Model personalInfo =
+            PersonalInformationA1Model.fromJson(data);
+
+        // Populate fields with fetched data
+        surNameController.text = personalInfo.surname ?? "";
+        firstNameController.text = personalInfo.firstName ?? "";
+        accountNumberController.text = personalInfo.accountNumber ?? "";
+        addressController.text = "${personalInfo.postalAddress ?? ""}";
+
+        print('Personal Info: ${personalInfo.toJson()}');
+        print('Successful Response: ${response.body}');
+      } else {
+        print('Unexpected response: ${response.statusCode}');
+        print(response.body);
+      }
+    } on FormatException catch (e) {
+      print('FormatException: $e');
+    } on SocketException catch (e) {
+      Fluttertoast.showToast(msg: "Internet not available");
+      print('SocketException: $e');
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong");
+      print('Exception: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   getLocation() async {
     bool _serviceEnabled;
@@ -151,27 +235,29 @@ class PersonalInformationNotifier extends ChangeNotifier {
     print(_locationData?.latitude);
   }
 
-  Future selectDate(BuildContext context,) async {
+  Future selectDate(
+    BuildContext context,
+  ) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
 
-    if (picked != null && picked != selectedDate)
-      selectedDate = picked;
-        var date = DateTime.parse(selectedDate.toString());
-        var formattedDate = "${date.day}-${date.month}-${date.year}";
-        print(formattedDate);
-        dateOfApplicationController.value =
-            TextEditingValue(text: formattedDate.toString());
-      notifyListeners();
+    if (picked != null && picked != selectedDate) selectedDate = picked;
+    var date = DateTime.parse(selectedDate.toString());
+    var formattedDate = "${date.day}-${date.month}-${date.year}";
+    print(formattedDate);
+    dateOfApplicationController.value =
+        TextEditingValue(text: formattedDate.toString());
+    notifyListeners();
   }
+
   void formClicked({required BuildContext context}) async {
-    // Pattern pattern =
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
+
     if (dateOfApplicationController.text.isNotEmpty) {
       if (surNameController.text.isNotEmpty) {
         if (firstNameController.text.isNotEmpty) {
@@ -179,7 +265,8 @@ class PersonalInformationNotifier extends ChangeNotifier {
             if (spouseIDController.text.isNotEmpty) {
               if (birthDate != null) {
                 if (addressController.text.isNotEmpty) {
-                  if (dependentIDController.text.isNotEmpty) {
+                  if (occupantIds.isNotEmpty) {
+                    // Check if occupantIds list is not empty
                     if (!isLoading) {
                       submitForm(
                         dateOfApplicationController.text,
@@ -190,13 +277,14 @@ class PersonalInformationNotifier extends ChangeNotifier {
                         spouseIDController.text,
                         ageController.text,
                         addressController.text,
-                        dependentIDController.text,
+                        occupantIds.join(','),
+                        // Pass occupant IDs as a comma-separated string
                         context,
                       );
                     }
                   } else {
                     setLoading(false);
-                    showToastMessage("Please enter Occupant ID ");
+                    showToastMessage("Please enter at least one Occupant ID ");
                   }
                 } else {
                   setLoading(false);
@@ -208,12 +296,10 @@ class PersonalInformationNotifier extends ChangeNotifier {
               }
             } else {
               setLoading(false);
-
               showToastMessage("Please enter spouse ID");
             }
           } else {
             setLoading(false);
-
             showToastMessage("Please enter application ID");
           }
         } else {
@@ -225,7 +311,6 @@ class PersonalInformationNotifier extends ChangeNotifier {
       }
     } else {
       setLoading(false);
-
       showToastMessage("Please enter date of application");
     }
   }
@@ -406,7 +491,6 @@ class PersonalInformationNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-
   calculateAge(DateTime birthDate) {
     DateTime currentDate = DateTime.now();
     int age = currentDate.year - birthDate.year;
@@ -424,6 +508,7 @@ class PersonalInformationNotifier extends ChangeNotifier {
     notifyListeners();
     return age;
   }
+
   Future scan(int callType) async {
     ScanResult scanResult;
     int type = callType;
@@ -467,21 +552,21 @@ class PersonalInformationNotifier extends ChangeNotifier {
 
         print('length');
         print(array.length);
-          if (type == 3) {
-            if (array.length >= 4) {
-              updateList = array.elementAt(4);
-            } else if (array.length == 1) {
-              updateList = array.elementAt(0);
-            }
-            scannerList.add(updateList);
+        if (type == 3) {
+          if (array.length >= 4) {
+            updateList = array.elementAt(4);
+          } else if (array.length == 1) {
+            updateList = array.elementAt(0);
           }
-          print('list');
-          // print(widget.scannerList);
-          // DataResult = widget.scannerList.join('.');
-          print('lini1 ${DataResult}');
-          concatenate = StringBuffer();
-          notifyListeners();
-          return scannerList;
+          scannerList.add(updateList);
+        }
+        print('list');
+        // print(widget.scannerList);
+        // DataResult = widget.scannerList.join('.');
+        print('lini1 ${DataResult}');
+        concatenate = StringBuffer();
+        notifyListeners();
+        return scannerList;
       }
 
       if (result != null && result.rawContent != null) {
@@ -493,7 +578,7 @@ class PersonalInformationNotifier extends ChangeNotifier {
         }
       }
 
-    scanResult = result;
+      scanResult = result;
       notifyListeners();
     } on PlatformException catch (e) {
       ScanResult result = ScanResult(
@@ -502,15 +587,15 @@ class PersonalInformationNotifier extends ChangeNotifier {
       );
 
       if (e.code == BarcodeScanner.cameraAccessDenied) {
-      notifyListeners();
+        notifyListeners();
       } else {
         // result.rawContent = 'Unknown error: $e';
       }
 
-        scanResult = result;
-        print('result');
-        print(scanResult);
-        notifyListeners();
+      scanResult = result;
+      print('result');
+      print(scanResult);
+      notifyListeners();
     }
   }
 
@@ -523,6 +608,7 @@ class PersonalInformationNotifier extends ChangeNotifier {
       dependentIDController.text = DataResult.toString();
     }
   }
+
   selectDatePicker(BuildContext context, DateTime initialDateTime,
       {DateTime? lastDate}) async {
     Completer completer = Completer();
@@ -538,10 +624,11 @@ class PersonalInformationNotifier extends ChangeNotifier {
         .then((temp) {
       if (temp == null) return null;
       completer.complete(temp);
-notifyListeners();
-        });
+      notifyListeners();
+    });
     return completer.future;
   }
+
   void init() {
     ageController.text = '22';
     getRole();
@@ -550,4 +637,3 @@ notifyListeners();
     checkInternetAvailability();
   }
 }
-

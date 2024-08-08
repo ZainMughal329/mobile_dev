@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,7 +17,9 @@ import '../utils/global.dart';
 class FileHolderSpouseID extends StatefulWidget {
   int applicant_id;
   String image_name;
+
   FileHolderSpouseID(this.applicant_id, this.image_name);
+
   @override
   _FileHolderSpouseIDState createState() => _FileHolderSpouseIDState();
 }
@@ -55,6 +56,7 @@ class _FileHolderSpouseIDState extends State<FileHolderSpouseID> {
   final picker = ImagePicker();
 
   var spouse_id_storage;
+
   checkInternetAvailability() async {
     await request.ifInternetAvailable();
     setState(() {});
@@ -75,210 +77,111 @@ class _FileHolderSpouseIDState extends State<FileHolderSpouseID> {
     print('hi');
     // File file = await FilePicker.getFile();
     // File file = await FilePicker.getFile(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowedExtensions: ['jpg','png'],  type: FileType.custom,);
-        // List<File> files = await FilePicker.getMultiFile(type: FileType.custom, allowedExtensions: ['jpg']);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['jpg', 'png'],
+      type: FileType.custom,
+    );
+    // List<File> files = await FilePicker.getMultiFile(type: FileType.custom, allowedExtensions: ['jpg']);
     setState(() {
       Navigator.pop(context, true);
     });
-    if(result!=null)
-      {
-        List<File> files = result.paths.map((path) => File(path!)).toList();
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
 
-        setState(() {
-          _isLoadingSecondary = true;
-
-        });
-        for(var file in files)
-          {
-            try {
-              if (_isLoadingSecondary == true) {
+      setState(() {
+        _isLoadingSecondary = true;
+      });
+      for (var file in files) {
+        try {
+          if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
-                print(widget.applicant_id);
-              }
-              FormData formData = new FormData.fromMap({
-                "application_id": widget.applicant_id,
+            print(widget.applicant_id);
+          }
+          FormData formData = new FormData.fromMap({
+            "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-                widget.image_name: await MultipartFile.fromFile(
-                    file.path,
-                    filename: "SpouseID.jpg")
-              });
-              spouse_id_list.add(file.path);
+            widget.image_name: await MultipartFile.fromFile(file.path,
+                filename: "SpouseID.jpg")
+          });
+          spouse_id_list.add(file.path);
 
-              Map<String, dynamic> map = {
-                "application_id": widget.applicant_id,
-                widget.image_name: file.path
-              };
-              LocalStorage.localStorage.saveFormData(map);
+          Map<String, dynamic> map = {
+            "application_id": widget.applicant_id,
+            widget.image_name: file.path
+          };
+          LocalStorage.localStorage.saveFormData(map);
 
-              print(formData.toString());
+          print(formData.toString());
 
-              if (MyConstants.myConst.internet??false) {
-                showToastMessage('File Uploading Please wait');
-                var dio = Dio(BaseOptions(
-                    receiveDataWhenStatusError: true,
-                    connectTimeout: Duration(minutes: 3), // 3 minutes
-                    receiveTimeout: Duration(minutes: 3) // 3 minuntes
+          if (MyConstants.myConst.internet ?? false) {
+            showToastMessage('File Uploading Please wait');
+            var dio = Dio(BaseOptions(
+                receiveDataWhenStatusError: true,
+                connectTimeout: Duration(minutes: 3), // 3 minutes
+                receiveTimeout: Duration(minutes: 3) // 3 minuntes
                 ));
-                dio.interceptors.add(LogInterceptor(responseBody: true));
-                SharedPreferences sharedPreferences =
+            dio.interceptors.add(LogInterceptor(responseBody: true));
+            SharedPreferences sharedPreferences =
                 await SharedPreferences.getInstance();
-                var userID = sharedPreferences.getString('userID');
-                var authToken = sharedPreferences.getString('auth-token');
-                var jsonResponse;
-                Response response = await dio.post(
-                  '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-                  data: formData, // Post with Stream<List<int>>
-                  options: Options(
-                      headers: {'uuid': userID, 'Authentication': authToken},
-                      contentType: "*/*",
-                      responseType: ResponseType.json),
-                  // ),
-                );
-                if (response.statusCode == 200) {
-                  // jsonResponse = json.decode(response.data);
-                  var jsonResponse = response.data;
-                  print('data');
-                  print(jsonResponse['data']['spouse_id']);
+            var userID = sharedPreferences.getString('userID');
+            var authToken = sharedPreferences.getString('auth-token');
+            var jsonResponse;
+            Response response = await dio.post(
+              '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+              data: formData, // Post with Stream<List<int>>
+              options: Options(
+                  headers: {'uuid': userID, 'Authentication': authToken},
+                  contentType: "*/*",
+                  responseType: ResponseType.json),
+              // ),
+            );
+            if (response.statusCode == 200) {
+              // jsonResponse = json.decode(response.data);
+              var jsonResponse = response.data;
+              print('data');
+              print(jsonResponse['data']['spouse_id']);
 
-                  showToastMessage(jsonResponse['message']);
+              showToastMessage(jsonResponse['message']);
 //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
-                  setState(() {
-                    _isLoadingSecondary = false;
+              setState(() {
+                _isLoadingSecondary = false;
 //            Navigator.pop(context, true);
 
-                    spouse_id = jsonResponse['data']['spouse_id'];
-                    String fileName = spouse_id.split('/').last;
-                    print('filename');
+                spouse_id = jsonResponse['data']['spouse_id'];
+                String fileName = spouse_id.split('/').last;
+                print('filename');
 
-                    if (fileName.contains('.png') ||
-                        fileName.contains('.jpg') ||
-                        fileName.contains('.jpeg') ||
-                        fileName.contains('.gif')) {
-                      print('wiii');
-                      spouse_id = jsonResponse['data']['spouse_id'];
-                    } else {
-                      spouse_id =
+                if (fileName.contains('.png') ||
+                    fileName.contains('.jpg') ||
+                    fileName.contains('.jpeg') ||
+                    fileName.contains('.gif')) {
+                  print('wiii');
+                  spouse_id = jsonResponse['data']['spouse_id'];
+                } else {
+                  spouse_id =
                       'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-                    }
-                    sharedPreferences.setString("spouse_id", spouse_id);
-
-                    getAttachment();
-                  });
-
-                  showToastMessage('File Uploaded');
                 }
-              } else {
-                setState(() {});
-              }
-            } catch (e) {
-              Fluttertoast.showToast(msg: "Something went wrong");
-              setState(() {
-                _isLoading = false;
-                _isLoadingSecondary = false;
+                sharedPreferences.setString("spouse_id", spouse_id);
+
+                getAttachment();
               });
-              print('dsa');
-              print(e);
+
+              showToastMessage('File Uploaded');
             }
+          } else {
+            setState(() {});
           }
-
-
+        } catch (e) {
+          Fluttertoast.showToast(msg: "Something went wrong");
+          setState(() {
+            _isLoading = false;
+            _isLoadingSecondary = false;
+          });
+          print('dsa');
+          print(e);
+        }
       }
-    // if (file != null) {
-    //   setState(() {
-    //     _isLoadingSecondary = true;
-    //
-    //   });
-
-//       try {
-//         if (_isLoadingSecondary == true) {
-// //          showToastMessage('Image Uploading Please wait');
-//           print(widget.applicant_id);
-//         }
-//         FormData formData = new FormData.fromMap({
-//           "application_id": widget.applicant_id,
-// //          "signature_date": selectedDate,
-//           widget.image_name: await MultipartFile.fromFile(
-//               file.path,
-//               filename: "SpouseID.jpg")
-//         });
-//         spouse_id_list.add(file.path);
-//
-//         Map<String, dynamic> map = {
-//           "application_id": widget.applicant_id,
-//           widget.image_name: file.path
-//         };
-//         LocalStorage.localStorage.saveFormData(map);
-//
-//         print(formData.toString());
-//
-//         if (MyConstants.myConst.internet??false) {
-//           showToastMessage('File Uploading Please wait');
-//           var dio = Dio(BaseOptions(
-//               receiveDataWhenStatusError: true,
-//               connectTimeout: Duration(minutes: 3), // 3 minutes
-//               receiveTimeout: Duration(minutes: 3) // 3 minuntes
-//               ));
-//           dio.interceptors.add(LogInterceptor(responseBody: true));
-//           SharedPreferences sharedPreferences =
-//               await SharedPreferences.getInstance();
-//           var userID = sharedPreferences.getString('userID');
-//           var authToken = sharedPreferences.getString('auth-token');
-//           var jsonResponse;
-//           Response response = await dio.post(
-//             '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-//             data: formData, // Post with Stream<List<int>>
-//             options: Options(
-//                 headers: {'uuid': userID, 'Authentication': authToken},
-//                 contentType: "*/*",
-//                 responseType: ResponseType.json),
-//             // ),
-//           );
-//           if (response.statusCode == 200) {
-//             // jsonResponse = json.decode(response.data);
-//             var jsonResponse = response.data;
-//             print('data');
-//             print(jsonResponse['data']['spouse_id']);
-//
-//             showToastMessage(jsonResponse['message']);
-// //          Navigator.of(context).pushReplacement(PageRouteBuilder(pageBuilder: (_,__,___)=> D()));
-//             setState(() {
-//               _isLoadingSecondary = false;
-// //            Navigator.pop(context, true);
-//
-//               spouse_id = jsonResponse['data']['spouse_id'];
-//               String fileName = spouse_id.split('/').last;
-//               print('filename');
-//
-//               if (fileName.contains('.png') ||
-//                   fileName.contains('.jpg') ||
-//                   fileName.contains('.jpeg') ||
-//                   fileName.contains('.gif')) {
-//                 print('wiii');
-//                 spouse_id = jsonResponse['data']['spouse_id'];
-//               } else {
-//                 spouse_id =
-//                     'https://pngimage.net/wp-content/uploads/2018/06/files-icon-png-2.png';
-//               }
-//               sharedPreferences.setString("spouse_id", spouse_id);
-//
-//               getAttachment();
-//             });
-//
-//             showToastMessage('File Uploaded');
-//           }
-//         } else {
-//           setState(() {});
-//         }
-//       } catch (e) {
-//         Fluttertoast.showToast(msg: "Something went wrong");
-//         setState(() {
-//           _isLoading = false;
-//           _isLoadingSecondary = false;
-//         });
-//         print('dsa');
-//         print(e);
-//       }
-//     }
+    }
   }
 
   void updateProfileWithResume() async {
@@ -287,10 +190,6 @@ class _FileHolderSpouseIDState extends State<FileHolderSpouseID> {
   }
 
   void uploadImage() async {
-//    setState(() {
-//      _isLoadingSecondary = true;
-//
-//    });
     spouse_id_list = <String>[];
 
     Navigator.pop(context, true);
@@ -319,31 +218,31 @@ class _FileHolderSpouseIDState extends State<FileHolderSpouseID> {
 
       try {
         setState(() {
-          _image = File(file?.path??"");
+          _image = File(file?.path ?? "");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
           print(widget.applicant_id);
         }
         await request.ifInternetAvailable();
-        var filePath = file?.path??"";
+        var filePath = file?.path ?? "";
         FormData formData = new FormData.fromMap({
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          widget.image_name: await MultipartFile.fromFile(_image?.path??"",
+          widget.image_name: await MultipartFile.fromFile(_image?.path ?? "",
               filename: "SpouseID.jpg")
         });
-        spouse_id_list.add(_image?.path??"");
+        spouse_id_list.add(_image?.path ?? "");
 
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
-          widget.image_name: _image?.path??""
+          widget.image_name: _image?.path ?? ""
         };
         LocalStorage.localStorage.saveFormData(map);
 
         print(formData.toString());
 
-        if (MyConstants.myConst.internet??false) {
+        if (MyConstants.myConst.internet ?? false) {
           showToastMessage('File Uploading Please wait');
           var dio = Dio(BaseOptions(
               receiveDataWhenStatusError: true,
@@ -582,7 +481,9 @@ class _FileHolderSpouseIDState extends State<FileHolderSpouseID> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ?? false ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,
@@ -616,7 +517,7 @@ class _FileHolderSpouseIDState extends State<FileHolderSpouseID> {
                 )
               : spouse_id_list.isNotEmpty
                   ? Container(
-                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
                       alignment: Alignment.center,
                       height: 150,
                       child: ListView(

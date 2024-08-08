@@ -22,7 +22,9 @@ import 'package:lesedi/utils/globals.dart' as global;
 class OccupantID extends StatefulWidget {
   int applicant_id;
   String image_name;
+
   OccupantID(this.applicant_id, this.image_name);
+
   @override
   _OccupantIDState createState() => _OccupantIDState();
 }
@@ -33,10 +35,12 @@ class _OccupantIDState extends State<OccupantID> {
   TextEditingController _controller = new TextEditingController();
   bool _isLoadingSecondary = false;
   bool _isLoading = false;
+
   // List<String> dependent_idss = List<String>();
   List<String> dependent_idss = [];
   ServicesRequest request = ServicesRequest();
   List<String> occupant_ids_list = <String>[];
+
 //var
   @override
   void initState() {
@@ -52,6 +56,7 @@ class _OccupantIDState extends State<OccupantID> {
   }
 
   var dependant_id_storage;
+
   getAttachment() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 //    role = sharedPreferences.getString('role');
@@ -71,7 +76,8 @@ class _OccupantIDState extends State<OccupantID> {
     // List<File> listFiles = await FilePicker.getMultiFile(
     //     type: FileType.custom, allowedExtensions: ['jpg','png']);
     FilePickerResult? listFiles = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['jpg','png'],
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
       allowMultiple: true,
     );
     Navigator.pop(context, true);
@@ -143,7 +149,7 @@ class _OccupantIDState extends State<OccupantID> {
             setState(() {
               _isLoadingSecondary = false;
               var newEntry;
-               dependent_idss =[];
+              dependent_idss = [];
               sharedPreferences.setStringList("dependent_idss", dependent_idss);
               var occupant_List = jsonResponse['data']['occupant_ids'];
               print(occupant_List);
@@ -153,9 +159,7 @@ class _OccupantIDState extends State<OccupantID> {
                   dependent_idss.add(occupant_List[p]);
                 });
 
-
 //              global.occupantImages = dependent_idss;
-
               }
               print(jsonResponse['data']['content_type'][0].toString());
               if (jsonResponse['data']['content_type'][0].toString() ==
@@ -180,7 +184,7 @@ class _OccupantIDState extends State<OccupantID> {
             });
 
             showToastMessage('File Uploaded');
-            print("Check Occupant ID Files"+occupant_ids_list.toString());
+            print("Check Occupant ID Files" + occupant_ids_list.toString());
           }
         } else {
           setState(() {});
@@ -203,6 +207,7 @@ class _OccupantIDState extends State<OccupantID> {
 
   File? _image;
   final picker = ImagePicker();
+
   void uploadImage() async {
     await request.ifInternetAvailable();
     occupant_ids_list = <String>[];
@@ -225,38 +230,31 @@ class _OccupantIDState extends State<OccupantID> {
                   enableZoom: true,
                   resolutionPreset: ResolutionPreset.medium,
                   cameraSide: CameraSide.all,
-                )
-            // Camera(
-            //       mode: CameraMode.normal,
-            //       imageMask: CameraFocus.rectangle(
-            //         color: Colors.black.withOpacity(0.5),
-            //       ),
-            //     )
-            ));
-    print(file?.path??"");
+                )));
+    print(file?.path ?? "");
     print(file);
 
     if (file != null) {
       try {
         setState(() {
-          _image = File(file?.path??"");
+          _image = File(file?.path ?? "");
         });
         if (_isLoadingSecondary == true) {
 //          showToastMessage('Image Uploading Please wait');
           print(widget.applicant_id);
         }
 
-        occupant_ids_list.add(file?.path??"");
+        occupant_ids_list.add(file?.path ?? "");
         Map<String, dynamic> data = {
           "application_id": widget.applicant_id,
 //          "signature_date": selectedDate,
-          'occupant_ids[]': await MultipartFile.fromFile(file?.path??"",
+          'occupant_ids[]': await MultipartFile.fromFile(file?.path ?? "",
               filename: 'occupantID.jpg')
         };
 
         FormData formData = new FormData.fromMap(data);
 
-        img_paths.add(_image?.path??"");
+        img_paths.add(_image?.path ?? "");
         Map<String, dynamic> map = {
           "application_id": widget.applicant_id,
           'occupant_ids[]': jsonEncode(img_paths)
@@ -508,7 +506,9 @@ class _OccupantIDState extends State<OccupantID> {
                               fontWeight: FontWeight.w800),
                         )
                       : Text(
-                          MyConstants.myConst.internet ?? false ? 'Uploading' : "Saved",
+                          MyConstants.myConst.internet ?? false
+                              ? 'Uploading'
+                              : "Saved",
                           style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.2,

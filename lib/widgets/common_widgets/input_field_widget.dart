@@ -11,6 +11,8 @@ class InputFieldWidget extends StatelessWidget {
     this.enable = true,
     this.isObscure = false,
     this.suffixIcon,
+    this.onFieldSubmitted,
+    this.onEditingComplete,
     this.validator,
     this.horizontalPadding = 50,
     this.verticalPadding = 20,
@@ -19,6 +21,8 @@ class InputFieldWidget extends StatelessWidget {
     this.textInputFormatter,
   });
 
+  final Function(String)? onFieldSubmitted;
+  final Function()? onEditingComplete;
   final TextEditingController controller;
   final String label;
   final bool hasSuffix;
@@ -72,6 +76,8 @@ class InputFieldWidget extends StatelessWidget {
                 borderSide: new BorderSide(color: Colors.blue.shade700)),
             floatingLabelBehavior: FloatingLabelBehavior.auto),
         keyboardType: textInputType,
+        onFieldSubmitted: onFieldSubmitted,
+        onEditingComplete: onEditingComplete,
         style: new TextStyle(
             fontFamily: 'opensans',
             color: AppColors.PRIMARY_COLOR,
