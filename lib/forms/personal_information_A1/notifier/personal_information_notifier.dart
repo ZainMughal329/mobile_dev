@@ -72,6 +72,23 @@ class PersonalInformationNotifier extends ChangeNotifier {
 
   List<String> occupantIds = [];
 
+  List<String> spouseIds = [];
+
+  void addSpouse(String spouseId) {
+    spouseId = spouseId.trim();
+    if (spouseId.isNotEmpty && !spouseIds.contains(spouseId)) {
+      spouseIds.add(spouseId);
+      spouseIDController.clear();
+      notifyListeners();
+    }
+  }
+
+  void removeSpouse(String spouseId) {
+    spouseIds.remove(spouseId);
+    notifyListeners();
+  }
+
+
   // void addOccupant() {
   //
   //   final occupantId = dependentIDController.text.trim();
@@ -262,11 +279,10 @@ class PersonalInformationNotifier extends ChangeNotifier {
       if (surNameController.text.isNotEmpty) {
         if (firstNameController.text.isNotEmpty) {
           if (applicantIDController.text.isNotEmpty) {
-            if (spouseIDController.text.isNotEmpty) {
-              if (birthDate != null) {
-                if (addressController.text.isNotEmpty) {
-                  if (occupantIds.isNotEmpty) {
-                    // Check if occupantIds list is not empty
+            if (birthDate != null) {
+              if (addressController.text.isNotEmpty) {
+                if (occupantIds.isNotEmpty) {
+                  if (spouseIds.isNotEmpty) {
                     if (!isLoading) {
                       submitForm(
                         dateOfApplicationController.text,
@@ -274,29 +290,28 @@ class PersonalInformationNotifier extends ChangeNotifier {
                         firstNameController.text,
                         accountNumberController.text,
                         applicantIDController.text,
-                        spouseIDController.text,
+                        spouseIds.join(','),
                         ageController.text,
                         addressController.text,
                         occupantIds.join(','),
-                        // Pass occupant IDs as a comma-separated string
                         context,
                       );
                     }
                   } else {
                     setLoading(false);
-                    showToastMessage("Please enter at least one Occupant ID ");
+                    showToastMessage("Please enter at least one Spouse ID ");
                   }
                 } else {
                   setLoading(false);
-                  showToastMessage("Please enter address ");
+                  showToastMessage("Please enter at least one Occupant ID ");
                 }
               } else {
                 setLoading(false);
-                showToastMessage("Please enter age ");
+                showToastMessage("Please enter address ");
               }
             } else {
               setLoading(false);
-              showToastMessage("Please enter spouse ID");
+              showToastMessage("Please enter age ");
             }
           } else {
             setLoading(false);
@@ -315,6 +330,7 @@ class PersonalInformationNotifier extends ChangeNotifier {
     }
   }
 
+
   getRole() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     role = sharedPreferences.getString('role');
@@ -322,26 +338,24 @@ class PersonalInformationNotifier extends ChangeNotifier {
   }
 
   Future submitForm(
-    String dateOfApplication,
-    surname,
-    firstname,
-    municipalAccountNumber,
-    applicantID,
-    spouseID,
-    age,
-    address,
-    dependantID,
-    context,
-  ) async {
+      String dateOfApplication,
+      surname,
+      firstname,
+      municipalAccountNumber,
+      applicantID,
+      spouseID,
+      age,
+      address,
+      dependantID,
+      context,
+      ) async {
     setLoading(true);
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var userID = sharedPreferences.getString('userID');
     var authToken = sharedPreferences.getString('auth-token');
     await request.ifInternetAvailable();
-    print('okay');
-    print(userID);
-    print('okay');
+
     Map<String, dynamic> data = {
       'application_id': applicant_id,
       'date_of_application': dateOfApplication,
@@ -357,14 +371,11 @@ class PersonalInformationNotifier extends ChangeNotifier {
       'id_number': applicantID,
     };
 
-    print('id');
-
     LocalStorage.localStorage.saveFormData(data);
     if (MyConstants.myConst.internet ?? false) {
       try {
         var jsonResponse;
         if (applicant_id == null) {
-          print('yuppp');
           http.Response response = await http.post(
               Uri.parse(
                   "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
@@ -375,41 +386,24 @@ class PersonalInformationNotifier extends ChangeNotifier {
               },
               body: jsonEncode(data));
 
-          print(response.headers);
-
-          print(response.body);
-          print(data);
           if (response.statusCode == 200) {
-            print('sss');
             jsonResponse = jsonDecode(response.body);
             LocalStorage.localStorage.clearCurrentApplication();
-
-            print(jsonResponse);
-            print("applicant id is ${jsonResponse['application_id']}");
             sharedPreferences.setInt(
                 'applicant_id', jsonResponse['application_id']);
             applicant_id = sharedPreferences.getInt('applicant_id');
-            print('id');
-            print(applicant_id);
-            print('done');
             showToastMessage('Form Submitted');
             previousFormSubmitted = true;
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => new
-                    // Attachments(applicant_id, "30", previousFormSubmitted)
-                    PersonalInformationB1(
-                        applicant_id, function, previousFormSubmitted)));
+                builder: (BuildContext context) => PersonalInformationB1(
+                    applicant_id, function, previousFormSubmitted)));
           } else {
             setLoading(false);
-
             jsonResponse = json.decode(response.body);
-            print('data');
             showToastMessage(
                 jsonResponse.toString().replaceAll("[\\[\\](){}]", ""));
           }
         } else if (applicant_id != null) {
-          print('weeeee');
-
           Map data = {
             'application_id': applicant_id,
             'date_of_application': dateOfApplication,
@@ -433,63 +427,41 @@ class PersonalInformationNotifier extends ChangeNotifier {
               },
               body: jsonEncode(data));
 
-          print(response.headers);
-
-          print(response.body);
-          print(data);
           if (response.statusCode == 200) {
-            print('sss');
             jsonResponse = jsonDecode(response.body);
             sharedPreferences.setInt('applicant_id', data['application_id']);
             LocalStorage.localStorage.clearCurrentApplication();
             setLoading(false);
-
             showToastMessage('Form Submitted');
             previousFormSubmitted = true;
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => new
-                    // Attachments(applicant_id, "30", previousFormSubmitted)
-                    PersonalInformationB1(
-                        applicant_id, function, previousFormSubmitted)));
+                builder: (BuildContext context) => PersonalInformationB1(
+                    applicant_id, function, previousFormSubmitted)));
           } else {
             setLoading(false);
-
             jsonResponse = json.decode(response.body);
-            print('data');
-//        print(jsonResponse);
             showToastMessage(jsonResponse['message']);
           }
         }
       } on SocketException catch (e) {
         Fluttertoast.showToast(msg: "Internet not available");
         setLoading(false);
-
-        print('dsa');
-        print(e);
       } on FormatException catch (e) {
         Fluttertoast.showToast(msg: "Bad Request");
         setLoading(false);
-
-        print(e);
       } catch (e) {
         Fluttertoast.showToast(msg: "Something went wrong");
         setLoading(false);
-
-        print(e);
       }
     } else {
       setLoading(false);
-
-      print("A1 Navigated from Else");
-      print("A1 form submission status :::: $previousFormSubmitted");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => new
-              // Attachments(applicant_id, "30", previousFormSubmitted)
-              PersonalInformationB1(
-                  applicant_id ?? "", function, previousFormSubmitted)));
+          builder: (BuildContext context) => PersonalInformationB1(
+              applicant_id ?? "", function, previousFormSubmitted)));
     }
     notifyListeners();
   }
+
 
   calculateAge(DateTime birthDate) {
     DateTime currentDate = DateTime.now();
@@ -603,7 +575,7 @@ class PersonalInformationNotifier extends ChangeNotifier {
     if (type == 1) {
       applicantIDController.value = TextEditingValue(text: number);
     } else if (type == 2) {
-      spouseIDController.value = TextEditingValue(text: number);
+      spouseIDController.text = DataResult.toString();
     } else if (type == 3) {
       dependentIDController.text = DataResult.toString();
     }

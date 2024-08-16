@@ -49,7 +49,7 @@ class AppFlavoursConfigurations {
   static const configRustenburgPro = {
     "app_name": "Rustenburg",
     //"base_url": "https://d317-182-181-179-43.ngrok-free.app/",
-    "base_url": "http://213.136.94.46/",
+    "base_url": "https://e681-182-181-250-143.ngrok-free.app/",
     "app_logo": "assets/images/logos_and_icons/rustenburg_app_icon.jpg",
     "app_icon": "...........",
     "env": "rustenburg"

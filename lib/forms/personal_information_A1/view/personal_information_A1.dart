@@ -250,21 +250,68 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                     ],
                   ),
 
-                  InputFieldWidget(
-                    horizontalPadding: 20,
-                    verticalPadding: 10,
-                    controller: notifier.spouseIDController,
-                    label: 'Spouse ID',
-                    hasSuffix: true,
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.scanner),
-                      color: AppColors.PRIMARY_COLOR,
-                      onPressed: () async {
-                        final result = await notifier.scan(2);
-                        notifier.DataResult = result.join('.join');
+          InputFieldWidget(
+            horizontalPadding: 20,
+            verticalPadding: 10,
+            controller: notifier.spouseIDController,
+            label: 'Spouse ID',
+            hasSuffix: true,
+            suffixIcon: IconButton(
+              icon: Icon(Icons.scanner),
+              color: AppColors.PRIMARY_COLOR,
+              onPressed: () async {
+                final result = await notifier.scan(2);
+                notifier.DataResult = result.join('.join');
+              },
+            ),
+            onFieldSubmitted: (value) {
+              notifier.addSpouse(value);
+              notifier.spouseIDController.text = value;
+            },
+          ),
+          IconButton(
+            onPressed: () {
+              // Call addOccupant with the current value from the text field
+              final spouseId =
+              notifier.spouseIDController.text.trim();
+              notifier.addSpouse(spouseId);
+              notifier.spouseIDController.clear();
+            },
+            icon: Icon(Icons.add),
+            color: AppColors.PRIMARY_COLOR,
+          ),
+
+          Wrap(
+            spacing: 4.0,
+            children: notifier.spouseIds.map((spouseId) {
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 5.0),
+                padding: EdgeInsets.symmetric(
+                    horizontal: 8.0, vertical: 4.0), // Reduced padding
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      spouseId,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    SizedBox(width: 8.0),
+                    IconButton(
+                      icon: Icon(Icons.close,
+                          color: Colors.red, size: 16),
+                      onPressed: () {
+                        notifier.removeSpouse(spouseId);
                       },
                     ),
-                  ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
 
                   InputFieldWidget(
                     horizontalPadding: 20,

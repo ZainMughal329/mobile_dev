@@ -80,6 +80,7 @@ class LoginNotifier extends ChangeNotifier {
         print('sss');
         jsonResponse = json.decode(response.body);
         sharedPreferences.setString("userID", jsonResponse['uuid']);
+        print('user ID: ${jsonResponse['uuid']}');
         sharedPreferences.setString('auth-token', jsonResponse['Authentication']);
         sharedPreferences.setString('email', jsonResponse['email']);
         sharedPreferences.setString('role', jsonResponse['role']);
