@@ -55,44 +55,47 @@ class SpouseViewModel extends ChangeNotifier {
   Future<void> postSpouse(String applicationId) async {
     try {
       SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+      await SharedPreferences.getInstance();
       var userID = sharedPreferences.getString('userID');
       var authToken = sharedPreferences.getString('auth-token');
-
-      // Prepare the spouse data list
-      List<Map<String, dynamic>> spouseDataDummy =
-      spouseData.map((spouse) => spouse.toJsonName()).toList();
-
-
-
-      // Create the body with the application ID and spouse data
-      Map<String, dynamic> body = {
-        "application_id": applicationId,
-        'occupant_ids_with_images': jsonEncode(spouseDataDummy),
-      };
-
-      // Prepare the files for the multipart request
-      List<MapEntry<String, List<File>>> files = [];
       for (var spouse in spouseData) {
+
+        spouse.isUploading = true;
+        notifyListeners();
+
+        Map<String, dynamic> body = {
+          "application_id": applicationId,
+          "spouse_id": spouse.id
+        };
+
         List<File> allFiles = [];
         for (var image in spouse.selectedImages) {
           allFiles.add(image);
         }
-        files.add(MapEntry('${spouse.id}', allFiles));
-      }
 
-      // Post request with NetworkApi
-      await NetworkApi.instance.post(
-        url: '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
-        body: body,
-        files: files,
-        customHeader: {
-          'uuid': userID,
-          'Authentication': authToken,
-        },
-      );
+        MapEntry<String, List<File>> files = MapEntry('files[]', allFiles);
+
+        // Post request with NetworkApi
+        await NetworkApi.instance.post(
+          url: '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
+          body: body,
+          files: files,
+          customHeader: {
+            'uuid': userID,
+            'Authentication': authToken,
+          },
+        );
+
+        spouse.isUploading = false;
+        spouse.isUploaded = true;
+        notifyListeners();
+      }
     } catch (error) {
       Fluttertoast.showToast(msg: '${error.toString()}');
+      for (var spouse in spouseData) {
+        spouse.isUploading = false;
+        notifyListeners();
+      }
     }
   }
 }

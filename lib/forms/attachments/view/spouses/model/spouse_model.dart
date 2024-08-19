@@ -3,6 +3,8 @@ import 'dart:io';
 class SpouseModel {
   String id;
   List<File> selectedImages;
+  bool isUploading = false;
+  bool isUploaded = false;
 
   SpouseModel({required this.selectedImages, required this.id});
 

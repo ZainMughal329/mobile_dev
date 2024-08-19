@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lesedi/forms/attachments/view/occupants/model/occupaton_model.dart';
 import 'package:lesedi/network/api_data_source.dart';
-import 'package:lesedi/network/app_exceptions.dart';
 import 'package:lesedi/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,20 +14,16 @@ class OccupantViewModel extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-  List<Map<String, dynamic>>? _occupantImagesData;
-
-  List<Map<String, dynamic>>? get occupantImagesData => _occupantImagesData;
-
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  List<OccupationModel> occupantData = [];
+  List<OccupantModel> occupantData = [];
 
   void initMethod(List<String> loadOccupantIds) {
     for (var id in loadOccupantIds) {
-      occupantData.add(OccupationModel(id: id, selectedImages: []));
+      occupantData.add(OccupantModel(id: id, selectedImages: []));
     }
     print(occupantData.length);
   }
@@ -54,49 +50,51 @@ class OccupantViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> postOccupation(String applicationId) async {
+  Future<void> postOccupant(String applicationId) async {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       var userID = sharedPreferences.getString('userID');
       var authToken = sharedPreferences.getString('auth-token');
-      // Convert the occupationList to a JSON-compatible list of maps
-      List<Map<String, dynamic>> occupationData =
-          occupantData.map((occupation) => occupation.toJson()).toList();
+      for (var occupant in occupantData) {
+        // if (occupant.isUploaded) continue;
 
-      // Create the body with the key 'occupation_data'
-      Map<String, dynamic> body = {
-        'occupant_ids_with_images': jsonEncode(occupationData),
-        "application_id": applicationId,
-      };
-      print('body: ${body}');
+        occupant.isUploading = true;
+        notifyListeners();
 
-      // Prepare the files for the multipart request
-      List<MapEntry<String, File>> files = [];
-      for (var occupation in occupantData) {
-        for (var image in occupation.selectedImages) {
-          files.add(MapEntry('occupation_${occupation.id}[]', image));
+        Map<String, dynamic> body = {
+          "application_id": applicationId,
+          "occupant_id": occupant.id
+        };
+
+        List<File> allFiles = [];
+        for (var image in occupant.selectedImages) {
+          allFiles.add(image);
         }
-      }
 
-      await NetworkApi.instance.post(
+        MapEntry<String, List<File>> files = MapEntry('files[]', allFiles);
+
+        // Post request with NetworkApi
+        await NetworkApi.instance.post(
           url: '${MyConstants.myConst.baseUrl}api/v1/users/update_application',
           body: body,
-          // files: files,
-          customHeader: {'uuid': userID, 'Authentication': authToken});
-    } on DioExceptionError catch(e) {
-      Fluttertoast.showToast(msg: "Network Error: ${e.toString()}");
-    }
-    on BadRequestException catch (e) {
-      Fluttertoast.showToast(msg: "Bad Request: ${e.toString()}");
-    } on InternalServerError catch (e) {
-      Fluttertoast.showToast(msg: "Server Error: ${e.toString()}");
-    }
-    catch (error) {
+          files: files,
+          customHeader: {
+            'uuid': userID,
+            'Authentication': authToken,
+          },
+        );
+
+        occupant.isUploading = false;
+        occupant.isUploaded = true;
+        notifyListeners();
+      }
+    } catch (error) {
       Fluttertoast.showToast(msg: '${error.toString()}');
-    } finally {
-      setLoading(false);
-      print('postOccupation completed');
+      for (var occupant in occupantData) {
+        occupant.isUploading = false;
+        notifyListeners();
+      }
     }
   }
 }

@@ -43,7 +43,7 @@ class NetworkApi {
     required String url,
     required Map<String, dynamic> body,
     required Map<String, dynamic> customHeader,
-    List<MapEntry<String, List<File>>>? files,
+    MapEntry<String, List<File>>? files,
   }) async {
     printFunc(
         methodType: "POST", url: url, apiHeader: customHeader, body: body);
@@ -51,24 +51,21 @@ class NetworkApi {
 
     try {
       dynamic data;
-      if (files != null && files.isNotEmpty) {
+      if (files != null) {
         FormData formData = FormData();
         body.forEach((key, value) {
           formData.fields.add(MapEntry(key, value.toString()));
         });
 
-        for (var fileMap in files) {
-          for (var fileEntry in fileMap.value) {
-            String fileName = fileEntry.path.split('/').last;
+        for (var fileEntry in files.value) {
+          String fileName = fileEntry.path.split('/').last;
 
-            formData.files.add(
-              MapEntry(
-                "file[]",
-                await MultipartFile.fromFile(fileEntry.path,
-                    filename: fileName),
-              ),
-            );
-          }
+          formData.files.add(
+            MapEntry(
+              files.key,
+              await MultipartFile.fromFile(fileEntry.path, filename: fileName),
+            ),
+          );
         }
         data = formData;
         print("form data =${formData.files}");
