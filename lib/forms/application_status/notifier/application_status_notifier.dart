@@ -29,6 +29,7 @@ class ApplicationStatusNotifier extends ChangeNotifier {
   bool? _coordinatesLoading = false;
   var lat = '';
   var lng = '';
+  var role;
   LocationData? _locationData;
 
   bool? checkedGMI = false;
@@ -46,6 +47,12 @@ class ApplicationStatusNotifier extends ChangeNotifier {
     await request.ifInternetAvailable();
    notifyListeners();
 
+  }
+
+  getRole() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    role = sharedPreferences.getString('role');
+    print(role);
   }
 
   getLocation() async {
@@ -145,9 +152,9 @@ class ApplicationStatusNotifier extends ChangeNotifier {
       'employment_status': checkBoxValue,
       'gross_monthly_income': grossMonthlyController.text,
       'remarks': remarksController.text,
+      'user_type': role.toString(),
       'latitude': lat,
       'longitude': lng,
-//      'role': _selectedType
     };
 
     LocalStorage.localStorage.saveFormData(data);
@@ -156,8 +163,9 @@ class ApplicationStatusNotifier extends ChangeNotifier {
     if (MyConstants.myConst.internet ?? false) {
       if (previousFormSubmitted) {
         response = await http.post(
+            body: jsonEncode(data),
             Uri.parse(
-                "${MyConstants.myConst.baseUrl}api/v1/users/update_application?application_id=${applicant_id}&employment_status=$checkBoxValue&gross_monthly_income=${grossMonthlyController.text}"),
+                "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
             headers: {
               'Content-Type': 'application/json',
               'uuid': userID??"",
@@ -241,6 +249,7 @@ class ApplicationStatusNotifier extends ChangeNotifier {
 
   init(){
     print('daya');
+    getRole();
     getLocation();
     getCheckValues();
     checkInternetAvailability();
