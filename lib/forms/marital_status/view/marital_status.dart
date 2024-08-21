@@ -3,6 +3,7 @@ import 'package:lesedi/forms/marital_status/notifier/marital_status_notifier.dar
 import 'package:flutter/material.dart';
 import 'package:lesedi/utils/app_color.dart';
 
+import '../../../utils/constants.dart';
 import '../../../widgets/common_widgets/coordinate_widget.dart';
 
 class MaritalStatus extends ConsumerStatefulWidget {
@@ -39,6 +40,14 @@ class _MaritalStatusState extends ConsumerState<MaritalStatus> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              MyConstants.myConst.appLogo,
+            ),
+          )
+        ],
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -286,8 +295,7 @@ class _MaritalStatusState extends ConsumerState<MaritalStatus> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 30, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             child: CoordinateWidget(
               lat: notifier.lat,
               lng: notifier.lng,

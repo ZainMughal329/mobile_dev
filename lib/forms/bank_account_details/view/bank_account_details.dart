@@ -19,7 +19,6 @@ class BankAccountDetails extends StatefulWidget {
   String gross_monthly_income;
   bool previousFormSubmitted;
 
-
   BankAccountDetails(
       this.applicant_id, this.gross_monthly_income, this.previousFormSubmitted);
 
@@ -77,8 +76,7 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
     _locationData = await location.getLocation();
     lat = _locationData?.latitude.toString() ?? "";
     lng = _locationData?.longitude.toString() ?? "";
-    setState(() {
-    });
+    setState(() {});
 
     print('Latitude: $lat, Longitude: $lng');
   }
@@ -197,6 +195,14 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
       appBar: AppBar(
 //        elevation: .5,
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              MyConstants.myConst.appLogo,
+            ),
+          )
+        ],
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -381,7 +387,6 @@ class _BankAccountDetailsState extends State<BankAccountDetails> {
                             ),
                           ),
                         ),
-
                         Padding(
                           padding: const EdgeInsets.only(
                               left: 20.0, right: 20, bottom: 20, top: 0),

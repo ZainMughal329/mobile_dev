@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:lesedi/utils/app_color.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/widgets/common_widgets/coordinate_widget.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 
@@ -48,6 +49,14 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              MyConstants.myConst.appLogo,
+            ),
+          )
+        ],
         centerTitle: true,
         leading: IconButton(
           icon: Icon(
@@ -276,7 +285,8 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       IconButton(
                         onPressed: () {
                           // Call addOccupant with the current value from the text field
-                          final spouseId = notifier.spouseIDController.text.trim();
+                          final spouseId =
+                              notifier.spouseIDController.text.trim();
                           notifier.addSpouse(spouseId);
                           notifier.spouseIDController.clear();
                         },
@@ -285,13 +295,15 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10), // Add spacing between the input field and the chips
+                  SizedBox(height: 10),
+                  // Add spacing between the input field and the chips
                   Wrap(
                     spacing: 4.0,
                     children: notifier.spouseIds.map((spouseId) {
                       return Container(
                         margin: EdgeInsets.symmetric(vertical: 5.0),
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0), // Reduced padding
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0), // Reduced padding
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(5.0),
@@ -305,7 +317,8 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                             ),
                             SizedBox(width: 8.0),
                             IconButton(
-                              icon: Icon(Icons.close, color: Colors.red, size: 16),
+                              icon: Icon(Icons.close,
+                                  color: Colors.red, size: 16),
                               onPressed: () {
                                 notifier.removeSpouse(spouseId);
                               },
@@ -315,7 +328,6 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       );
                     }).toList(),
                   ),
-
 
                   Row(
                     children: [
@@ -343,7 +355,8 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       IconButton(
                         onPressed: () {
                           // Call addOccupant with the current value from the text field
-                          final occupantId = notifier.dependentIDController.text.trim();
+                          final occupantId =
+                              notifier.dependentIDController.text.trim();
                           notifier.addOccupant(occupantId);
                           notifier.dependentIDController.clear();
                         },
@@ -352,13 +365,15 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10), // Add spacing between the input field and the chips
+                  SizedBox(height: 10),
+                  // Add spacing between the input field and the chips
                   Wrap(
                     spacing: 4.0,
                     children: notifier.occupantIds.map((occupantId) {
                       return Container(
                         margin: EdgeInsets.symmetric(vertical: 5.0),
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0), // Reduced padding
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0), // Reduced padding
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(5.0),
@@ -372,7 +387,8 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                             ),
                             SizedBox(width: 8.0),
                             IconButton(
-                              icon: Icon(Icons.close, color: Colors.red, size: 16),
+                              icon: Icon(Icons.close,
+                                  color: Colors.red, size: 16),
                               onPressed: () {
                                 notifier.removeOccupant(occupantId);
                               },
@@ -382,7 +398,6 @@ class _PersonalInformationA1State extends ConsumerState<PersonalInformationA1> {
                       );
                     }).toList(),
                   ),
-
 
                   InputFieldWidget(
                     horizontalPadding: 20,

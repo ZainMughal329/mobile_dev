@@ -53,6 +53,12 @@ class _DeclarationState extends ConsumerState<Declaration> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(MyConstants.myConst.appLogo),
+            )
+          ],
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
@@ -183,17 +189,17 @@ class _DeclarationState extends ConsumerState<Declaration> {
 //                    child: _img.buffer.lengthInBytes == 0 ? Container() : LimitedBox(maxHeight: 120.0, child: Image.memory(_img.buffer.asUint8List())),
                   ),
                   getSubmitButton(
-                      img:notifier.img,
-                     storeSignature:  notifier.storeSignature,
-                    isLoadingSecondary:   notifier.isLoadingSecondary,
-                    onSubmitFunc: (){
-                          notifier.onSubmit(
+                      img: notifier.img,
+                      storeSignature: notifier.storeSignature,
+                      isLoadingSecondary: notifier.isLoadingSecondary,
+                      onSubmitFunc: () {
+                        notifier.onSubmit(
                           widget.applicant_id,
                           widget.previousFormSubmitted,
                           context,
                         );
-                          return null;
-                    }),
+                        return null;
+                      }),
                 ],
               )
             ],

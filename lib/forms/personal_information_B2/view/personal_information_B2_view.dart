@@ -7,6 +7,7 @@ import 'package:lesedi/forms/personal_information_B2/notifier/widgets/my_dialog.
 import 'package:lesedi/utils/app_color.dart';
 import 'package:lesedi/widgets/common_widgets/input_field_widget.dart';
 
+import '../../../utils/constants.dart';
 import '../../../widgets/common_widgets/coordinate_widget.dart';
 
 class PersonalInformationB1 extends ConsumerStatefulWidget {
@@ -44,6 +45,14 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              MyConstants.myConst.appLogo,
+            ),
+          )
+        ],
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -262,12 +271,12 @@ class _PersonalInformationB1State extends ConsumerState<PersonalInformationB1> {
                       label: 'Financial Year',
                     ))),
                 Padding(
-                    padding: const EdgeInsets.only(
-                        left: 20.0, right: 20, bottom: 20, top: 0),
-                    child: CoordinateWidget(
-                      lat: notifier.lat,
-                      lng: notifier.lng,
-                    ),
+                  padding: const EdgeInsets.only(
+                      left: 20.0, right: 20, bottom: 20, top: 0),
+                  child: CoordinateWidget(
+                    lat: notifier.lat,
+                    lng: notifier.lng,
+                  ),
                 ),
               ],
             ),

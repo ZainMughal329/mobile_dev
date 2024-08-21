@@ -11,11 +11,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lesedi/utils/app_color.dart';
 import '../../auth/login/view/login_view.dart';
 import '../../common_services/local_storage.dart';
+import '../../utils/constants.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   final String userRole;
   final int applicant_id;
-  const Dashboard({required this.applicant_id,required this.userRole,super.key});
+
+  const Dashboard(
+      {required this.applicant_id, required this.userRole, super.key});
 
   @override
   ConsumerState<Dashboard> createState() => _DashboardState();
@@ -25,21 +28,24 @@ class _DashboardState extends ConsumerState<Dashboard> {
   final dashBoardProvider = ChangeNotifierProvider<DashboardNotifier>((ref) {
     return DashboardNotifier();
   });
+
   void initState() {
     /// TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await ref.read(dashBoardProvider).getRole();
-      print('role');
-      print(widget.userRole);
-      LocalStorage.localStorage.getApplicationsList();
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await ref.read(dashBoardProvider).getRole();
+        print('role');
+        print(widget.userRole);
+        LocalStorage.localStorage.getApplicationsList();
+      },
+    );
 
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-
       onWillPop: () async {
         if (Navigator.of(context).userGestureInProgress)
           return false;
@@ -60,6 +66,12 @@ class _DashboardState extends ConsumerState<Dashboard> {
               fontWeight: FontWeight.w600,
             ),
           ),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Image.asset(
+              MyConstants.myConst.appLogo,
+            ),
+          ),
         ),
         backgroundColor: const Color(0xffffffff),
         body: SingleChildScrollView(
@@ -68,7 +80,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               InkWell(
                 onTap: () async {
                   SharedPreferences sharedPreferences =
-                  await SharedPreferences.getInstance();
+                      await SharedPreferences.getInstance();
                   await sharedPreferences.remove('emailStorage');
                   await sharedPreferences.remove('wardNumberStorage');
                   await sharedPreferences.remove('municipalAccountNumber');
@@ -86,9 +98,12 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   await sharedPreferences.remove('saps_affidavit');
                   await sharedPreferences.remove('fileStorage');
 
-                  Navigator.of(context).push(PageRouteBuilder(
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
                       pageBuilder: (_, __, ___) => PersonalInformationA1(
-                          widget.userRole, widget.applicant_id)));
+                          widget.userRole, widget.applicant_id),
+                    ),
+                  );
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -120,8 +135,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                             width: 188,
                             alignment: Alignment.center,
                             height: 44,
-                            decoration: BoxDecoration(
-                                color: Colors.white),
+                            decoration: BoxDecoration(color: Colors.white),
                             child: new Text(
                               "CREATE NEW FORM",
                               style: TextStyle(
@@ -143,7 +157,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               InkWell(
                   onTap: () async {
                     SharedPreferences sharedPreferences =
-                    await SharedPreferences.getInstance();
+                        await SharedPreferences.getInstance();
                     var role = sharedPreferences.getString('role');
                     print("role ${role}");
                     print(role);
@@ -162,78 +176,78 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     }
                   },
                   child: Container(
-                    child: verification(context:context,userRole: widget.userRole),
+                    child: verification(
+                        context: context, userRole: widget.userRole),
                   )),
 
 //              getFieldWorkerApplication(context),
 
               widget.userRole == 'supervisor'
                   ? InkWell(
-                  onTap: () async {
-                    SharedPreferences sharedPreferences =
-                    await SharedPreferences.getInstance();
-                    var role = sharedPreferences.getString('role');
-                    print(role);
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) =>
-                            SuperVisorAllApplicants()));
-                  },
-                  child: Container(
+                      onTap: () async {
+                        SharedPreferences sharedPreferences =
+                            await SharedPreferences.getInstance();
+                        var role = sharedPreferences.getString('role');
+                        print(role);
+                        Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (_, __, ___) =>
+                                SuperVisorAllApplicants()));
+                      },
+                      child: Container(
 //            width: 393.0,
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(left: 30, top: 40, right: 30),
-                    height: 100.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5.0),
-                      color: const Color(0xffffffff),
-                      border: Border.all(
-                          color: const Color(0xfff5f5f5), width: 3),
-
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.only(top: 10, bottom: 10),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                              margin: EdgeInsets.only(
-                                  left: 0, right: 0, top: 35),
-                              child: MySeparator(
-                                color: AppColors.PRIMARY_COLOR,
-                              )),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              width: 275,
-                              alignment: Alignment.center,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                  color: Colors.white),
-                              child: new Text(
-                                "THIRD PARTY VERFICATION",
-                                style: TextStyle(
-                                  fontFamily: 'Open Sans',
-                                  fontSize: 17,
-                                  color: AppColors.PRIMARY_COLOR != null
-                                      ? AppColors.PRIMARY_COLOR
-                                      : Color(0xffDE626C),
-                                  letterSpacing: 0.6066000137329102,
-                                  fontWeight: FontWeight.w600,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(left: 30, top: 40, right: 30),
+                        height: 100.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: const Color(0xffffffff),
+                          border: Border.all(
+                              color: const Color(0xfff5f5f5), width: 3),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Stack(
+                            children: <Widget>[
+                              Container(
+                                  margin: EdgeInsets.only(
+                                      left: 0, right: 0, top: 35),
+                                  child: MySeparator(
+                                    color: AppColors.PRIMARY_COLOR,
+                                  )),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  width: 275,
+                                  alignment: Alignment.center,
+                                  height: 44,
+                                  decoration:
+                                      BoxDecoration(color: Colors.white),
+                                  child: new Text(
+                                    "THIRD PARTY VERFICATION",
+                                    style: TextStyle(
+                                      fontFamily: 'Open Sans',
+                                      fontSize: 17,
+                                      color: AppColors.PRIMARY_COLOR != null
+                                          ? AppColors.PRIMARY_COLOR
+                                          : Color(0xffDE626C),
+                                      letterSpacing: 0.6066000137329102,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ))
+                        ),
+                      ))
                   : Container(
-                child: Text(''),
-              ),
+                      child: Text(''),
+                    ),
 
               InkWell(
                 onTap: () async {
                   SharedPreferences sharedPreferences =
-                  await SharedPreferences.getInstance();
+                      await SharedPreferences.getInstance();
                   sharedPreferences.setBool('login', false);
                   Navigator.of(context).pushReplacement(
                       PageRouteBuilder(pageBuilder: (_, __, ___) => Login()));
@@ -247,7 +261,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     borderRadius: BorderRadius.circular(5.0),
                     color: const Color(0xffffffff),
                     border:
-                    Border.all(color: const Color(0xfff5f5f5), width: 3),
+                        Border.all(color: const Color(0xfff5f5f5), width: 3),
                   ),
                   child: Container(
                     padding: EdgeInsets.only(top: 10, bottom: 10),
