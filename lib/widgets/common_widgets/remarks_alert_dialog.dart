@@ -16,41 +16,29 @@ class RemarksAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(
+    final textStyle = TextStyle(
       fontFamily: 'Open Sans',
     );
 
     return AlertDialog(
-      title: const Text(
+      title: Text(
         'Add Remarks',
         style: textStyle,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextFormField(
+          _buildTextField(
             controller: remarksController,
-            decoration: InputDecoration(
-              labelText: 'Remarks',
-              labelStyle: textStyle.copyWith(
-                color: const Color(0xff626a76),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
+            label: 'Remarks',
+            textStyle: textStyle.copyWith(color: const Color(0xff626a76)),
           ),
           const SizedBox(height: 16.0),
-          TextFormField(
+          _buildTextField(
             initialValue: userRole,
+            label: 'User Role',
+            textStyle: textStyle,
             readOnly: true,
-            enabled: false,
-            decoration: InputDecoration(
-              labelText: 'User Role',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
           ),
         ],
       ),
@@ -62,23 +50,40 @@ class RemarksAlertDialog extends StatelessWidget {
               onPressed: onCancel,
               child: Text(
                 'Cancel',
-                style: textStyle.copyWith(
-                  color: Colors.red,
-                ),
+                style: textStyle.copyWith(color: Colors.red),
               ),
             ),
             TextButton(
               onPressed: onConfirm,
               child: Text(
                 'Confirm',
-                style: textStyle.copyWith(
-                  color: Colors.green,
-                ),
+                style: textStyle.copyWith(color: Colors.green),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  TextFormField _buildTextField({
+    required String label,
+    TextEditingController? controller,
+    String? initialValue,
+    bool readOnly = false,
+    TextStyle? textStyle,
+  }) {
+    return TextFormField(
+      controller: controller,
+      initialValue: initialValue,
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: textStyle,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
     );
   }
 }

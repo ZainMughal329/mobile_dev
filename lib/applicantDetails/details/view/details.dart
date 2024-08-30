@@ -141,20 +141,24 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       DetailWidget(
                           title: "Age",
                           subtitle: notifier.models?.age.toString() ?? ""),
-                    DetailWidget(
-                      title: "Spouse ID",
-                      subtitle: notifier.occupantAndSpouseModel?.spouseIdsWithImages
-                          ?.map((spouse) => spouse.id)
-                          .join(', ') ??
-                          "",
-                    ),
-                    DetailWidget(
-                      title: "Occupant ID",
-                      subtitle: notifier.occupantAndSpouseModel?.occupantIdsWithImages
-                          ?.map((spouse) => spouse.id)
-                          .join(', ') ??
-                          "",
-                    ),
+                      DetailWidget(
+                        title: "Spouse ID",
+                        subtitle: notifier
+                                .occupantAndSpouseModel?.spouseIdsWithImages
+                                ?.map((spouse) => spouse.id)
+                                .join('  |  ') ??
+                            "",
+                      ),
+                      DetailWidget(
+                        title: "Occupant ID",
+                        subtitle: notifier
+                                .occupantAndSpouseModel?.occupantIdsWithImages
+                                ?.map((occupant) => occupant.id)
+                                .join(
+                                  '  |  ',
+                                ) ??
+                            "",
+                      ),
                       DetailWidget(
                           title: "Stand/Erf Number",
                           subtitle: notifier.models?.standNumber ?? ""),
@@ -399,13 +403,14 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       ),
                       SpouseImageWidget(
                         title: "Spouse ID ",
-                        spouseIdsWithImages: notifier.occupantAndSpouseModel?.spouseIdsWithImages,
+                        spouseIdsWithImages: notifier
+                            .occupantAndSpouseModel?.spouseIdsWithImages,
                       ),
                       OccupantImageWidget(
                         title: "Occupant ID ",
-                        occupantIdsWithImages: notifier.occupantAndSpouseModel?.occupantIdsWithImages,
+                        occupantIdsWithImages: notifier
+                            .occupantAndSpouseModel?.occupantIdsWithImages,
                       ),
-
                       DetailImageWidget(
                         title: 'Municipal Statement of Account',
                         image: notifier.models?.accountStatement ?? "",
@@ -767,12 +772,11 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                             builder: (BuildContext context) {
                               final notifier = ref.watch(detailsProvider);
                               final userRole = notifier.role;
+
                               return RemarksAlertDialog(
                                 userRole: userRole,
                                 remarksController: remarksController,
-                                onCancel: () {
-                                  Navigator.of(context).pop();
-                                },
+                                onCancel: () => Navigator.of(context).pop(),
                                 onConfirm: () {
                                   notifier.updateApplication(
                                     applicationId: widget.id,
@@ -782,7 +786,7 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                                   notifier.reviewedApplicant(
                                       applicationId: widget.id);
                                   print(
-                                      'remarks by ${userRole}: ${remarksController.text}');
+                                      'Remarks by $userRole: ${remarksController.text}');
                                   Navigator.of(context).pop();
                                 },
                               );
@@ -926,8 +930,6 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
     );
   }
 }
-
-
 
 class SpouseImageWidget extends StatelessWidget {
   final String title;
