@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lesedi/applicantDetails/details/notifier/details_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lesedi/applicantDetails/details/notifier/details_notifier.dart';
 import 'package:lesedi/utils/app_color.dart';
+
+import '../../../model/occupant_and_spouse_model.dart';
+import '../../../widgets/common_widgets/remarks_alert_dialog.dart';
 
 //Check
 
@@ -24,7 +27,9 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
   void initState() {
     /// TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await ref.read(detailsProvider).getApplicantDetails(applicationId: widget.id);
+      await ref
+          .read(detailsProvider)
+          .getApplicantDetails(applicationId: widget.id);
       print(widget.id);
       ref.read(detailsProvider).getRole();
     });
@@ -35,6 +40,7 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
   @override
   Widget build(BuildContext context) {
     final notifier = ref.watch(detailsProvider);
+    final remarksController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
 //        elevation: .5,
@@ -135,12 +141,20 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       DetailWidget(
                           title: "Age",
                           subtitle: notifier.models?.age.toString() ?? ""),
-                      DetailWidget(
-                          title: "Spouse ID",
-                          subtitle: notifier.models?.spouseIdNumber ?? ""),
-                      DetailWidget(
-                          title: "Occupant ID",
-                          subtitle: notifier.models?.occupantId ?? ""),
+                    DetailWidget(
+                      title: "Spouse ID",
+                      subtitle: notifier.occupantAndSpouseModel?.spouseIdsWithImages
+                          ?.map((spouse) => spouse.id)
+                          .join(', ') ??
+                          "",
+                    ),
+                    DetailWidget(
+                      title: "Occupant ID",
+                      subtitle: notifier.occupantAndSpouseModel?.occupantIdsWithImages
+                          ?.map((spouse) => spouse.id)
+                          .join(', ') ??
+                          "",
+                    ),
                       DetailWidget(
                           title: "Stand/Erf Number",
                           subtitle: notifier.models?.standNumber ?? ""),
@@ -326,11 +340,11 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       DetailWidget(
                           title: "Electricity Meter Number",
                           subtitle:
-                          notifier.models?.electricity_meter_number ?? ""),
+                              notifier.models?.electricity_meter_number ?? ""),
                       DetailWidget(
                           title: "Electricity Meter Reading",
                           subtitle:
-                          notifier.models?.electricity_meter_reading ?? ""),
+                              notifier.models?.electricity_meter_reading ?? ""),
                       DetailWidget(
                           title: "Signature Date",
                           subtitle: notifier.models?.signatureDate != null
@@ -383,41 +397,15 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                         title: "Applicant ID ",
                         image: notifier.models?.applicantIdProof ?? "",
                       ),
-                      DetailImageWidget(
+                      SpouseImageWidget(
                         title: "Spouse ID ",
-                        image: notifier.models?.spouseId ?? "",
+                        spouseIdsWithImages: notifier.occupantAndSpouseModel?.spouseIdsWithImages,
                       ),
-                      Text(
-                        'Occupant ID',
-                        style: _style(),
+                      OccupantImageWidget(
+                        title: "Occupant ID ",
+                        occupantIdsWithImages: notifier.occupantAndSpouseModel?.occupantIdsWithImages,
                       ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      notifier.models?.occupantIds != null
-                          ? Container(
-                              height: 150,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: List.generate(
-                                  notifier.models?.occupantIds?.length ?? 0,
-                                  (index) => Image(
-                                    image: CachedNetworkImageProvider(notifier
-                                            .models?.occupantIds?[index].url ??
-                                        ""),
-                                    width: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Text(''),
-                      Divider(
-                        color: Color(0x29000000),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
+
                       DetailImageWidget(
                         title: 'Municipal Statement of Account',
                         image: notifier.models?.accountStatement ?? "",
@@ -650,27 +638,27 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       ),
                       notifier.models?.water_meter_attachments != null
                           ? Container(
-                        height: 150,
-                        margin: EdgeInsets.only(top: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          children: List.generate(
-                            notifier.models?.water_meter_attachments
-                                ?.length ??
-                                0,
-                                (index) => Image(
-                              image: CachedNetworkImageProvider(notifier
-                                  .models
-                                  ?.water_meter_attachments?[index]
-                                  .url ??
-                                  ""),
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      )
+                              height: 150,
+                              margin: EdgeInsets.only(top: 10),
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children: List.generate(
+                                  notifier.models?.water_meter_attachments
+                                          ?.length ??
+                                      0,
+                                  (index) => Image(
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.water_meter_attachments?[index]
+                                            .url ??
+                                        ""),
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
                           : Text(''),
                       SizedBox(
                         height: 4,
@@ -690,27 +678,28 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                       ),
                       notifier.models?.electricity_meter_attachments != null
                           ? Container(
-                        height: 150,
-                        margin: EdgeInsets.only(top: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          children: List.generate(
-                            notifier.models?.electricity_meter_attachments
-                                ?.length ??
-                                0,
-                                (index) => Image(
-                              image: CachedNetworkImageProvider(notifier
-                                  .models
-                                  ?.electricity_meter_attachments?[index]
-                                  .url ??
-                                  ""),
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      )
+                              height: 150,
+                              margin: EdgeInsets.only(top: 10),
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children: List.generate(
+                                  notifier.models?.electricity_meter_attachments
+                                          ?.length ??
+                                      0,
+                                  (index) => Image(
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.electricity_meter_attachments?[
+                                                index]
+                                            .url ??
+                                        ""),
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
                           : Text(''),
                       SizedBox(
                         height: 4,
@@ -725,33 +714,32 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                         "Property Attachments",
                         style: _style(),
                       ),
-
                       SizedBox(
                         height: 4,
                       ),
                       notifier.models?.property_meter_attachments != null
                           ? Container(
-                        height: 150,
-                        margin: EdgeInsets.only(top: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          children: List.generate(
-                            notifier.models?.property_meter_attachments
-                                ?.length ??
-                                0,
-                                (index) => Image(
-                              image: CachedNetworkImageProvider(notifier
-                                  .models
-                                  ?.property_meter_attachments?[index]
-                                  .url ??
-                                  ""),
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      )
+                              height: 150,
+                              margin: EdgeInsets.only(top: 10),
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children: List.generate(
+                                  notifier.models?.property_meter_attachments
+                                          ?.length ??
+                                      0,
+                                  (index) => Image(
+                                    image: CachedNetworkImageProvider(notifier
+                                            .models
+                                            ?.property_meter_attachments?[index]
+                                            .url ??
+                                        ""),
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
                           : Text(''),
                       Divider(
                         color: Color(0x29000000),
@@ -768,15 +756,38 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
               ],
             ),
           ),
-
           notifier.role == 'reviewer'
               ? Row(
                   children: <Widget>[
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          notifier.reviewedApplicant(
-                              applicationId: widget.id);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              final notifier = ref.watch(detailsProvider);
+                              final userRole = notifier.role;
+                              return RemarksAlertDialog(
+                                userRole: userRole,
+                                remarksController: remarksController,
+                                onCancel: () {
+                                  Navigator.of(context).pop();
+                                },
+                                onConfirm: () {
+                                  notifier.updateApplication(
+                                    applicationId: widget.id,
+                                    remarks: remarksController.text,
+                                    userRole: userRole,
+                                  );
+                                  notifier.reviewedApplicant(
+                                      applicationId: widget.id);
+                                  print(
+                                      'remarks by ${userRole}: ${remarksController.text}');
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -874,178 +885,6 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
                   ],
                 )
               : Text(''),
-
-//           /// bills updated work
-//
-//           SizedBox(
-//             height: 20,
-//           ),
-//           Text(
-//             "Bills",
-//             style: TextStyle(
-//                 letterSpacing: 0.0,
-//                 color: Color(0xff141414),
-//                 fontFamily: "Open Sans",
-//                 fontWeight: FontWeight.w700,
-//                 fontSize: 18.0),
-//           ),
-//           Container(
-//               alignment: Alignment.center,
-//               padding:
-//                   EdgeInsets.only(top: 20.0, bottom: 12, left: 20, right: 20),
-//               margin: EdgeInsets.only(left: 30, right: 30, top: 25, bottom: 40),
-// //          height: 665.0,
-//               decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(5.0),
-//                 color: const Color(0xffffffff),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: const Color(0x29000000),
-//                     offset: Offset(0, 3),
-//                     blurRadius: 6,
-//                   ),
-//                 ],
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   DetailWidget(
-//                       title: "Water Meter Number",
-//                       subtitle: notifier.models?.water_meter_number ?? ""),
-//                   DetailWidget(
-//                       title: "Water Meter Reading",
-//                       subtitle: notifier.models?.water_meter_reading ?? ""),
-//                   // DetailImageWidget(title: "Water Meter Attachment", image:water_meter_attachments??""),
-//
-//                   Text(
-//                     "Water Meter Attachments",
-//                     style: _style(),
-//                   ),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   notifier.models?.water_meter_attachments != null
-//                       ? Container(
-//                           height: 150,
-//                           margin: EdgeInsets.only(top: 10),
-//                           child: ListView(
-//                             scrollDirection: Axis.horizontal,
-//                             shrinkWrap: true,
-//                             children: List.generate(
-//                               notifier.models?.water_meter_attachments
-//                                       ?.length ??
-//                                   0,
-//                               (index) => Image(
-//                                 image: CachedNetworkImageProvider(notifier
-//                                         .models
-//                                         ?.water_meter_attachments?[index]
-//                                         .url ??
-//                                     ""),
-//                                 width: 100,
-//                                 fit: BoxFit.cover,
-//                               ),
-//                             ),
-//                           ),
-//                         )
-//                       : Text(''),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   Divider(
-//                     color: Color(0x29000000),
-//                   ),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   DetailWidget(
-//                       title: "Electricity Meter Number",
-//                       subtitle:
-//                           notifier.models?.electricity_meter_number ?? ""),
-//                   DetailWidget(
-//                       title: "Electricity Meter Reading",
-//                       subtitle:
-//                           notifier.models?.electricity_meter_reading ?? ""),
-//
-//                   Text(
-//                     "Electricity Meter Attachments",
-//                     style: _style(),
-//                   ),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   notifier.models?.electricity_meter_attachments != null
-//                       ? Container(
-//                           height: 150,
-//                           margin: EdgeInsets.only(top: 10),
-//                           child: ListView(
-//                             scrollDirection: Axis.horizontal,
-//                             shrinkWrap: true,
-//                             children: List.generate(
-//                               notifier.models?.electricity_meter_attachments
-//                                       ?.length ??
-//                                   0,
-//                               (index) => Image(
-//                                 image: CachedNetworkImageProvider(notifier
-//                                         .models
-//                                         ?.electricity_meter_attachments?[index]
-//                                         .url ??
-//                                     ""),
-//                                 width: 100,
-//                                 fit: BoxFit.cover,
-//                               ),
-//                             ),
-//                           ),
-//                         )
-//                       : Text(''),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   Divider(
-//                     color: Color(0x29000000),
-//                   ),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   Text(
-//                     "Property Attachments",
-//                     style: _style(),
-//                   ),
-//
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                   notifier.models?.property_meter_attachments != null
-//                       ? Container(
-//                           height: 150,
-//                           margin: EdgeInsets.only(top: 10),
-//                           child: ListView(
-//                             scrollDirection: Axis.horizontal,
-//                             shrinkWrap: true,
-//                             children: List.generate(
-//                               notifier.models?.property_meter_attachments
-//                                       ?.length ??
-//                                   0,
-//                               (index) => Image(
-//                                 image: CachedNetworkImageProvider(notifier
-//                                         .models
-//                                         ?.property_meter_attachments?[index]
-//                                         .url ??
-//                                     ""),
-//                                 width: 100,
-//                                 fit: BoxFit.cover,
-//                               ),
-//                             ),
-//                           ),
-//                         )
-//                       : Text(''),
-//                   Divider(
-//                     color: Color(0x29000000),
-//                   ),
-//                   SizedBox(
-//                     height: 4,
-//                   ),
-//                 ],
-//               )),
         ],
       )),
     );
@@ -1088,6 +927,127 @@ class _ApplicantDetailsState extends ConsumerState<ApplicantDetails> {
   }
 }
 
+
+
+class SpouseImageWidget extends StatelessWidget {
+  final String title;
+  final List<SpouseIdsWithImages>? spouseIdsWithImages;
+
+  const SpouseImageWidget(
+      {super.key, required this.title, required this.spouseIdsWithImages});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: _style(),
+        ),
+        if (spouseIdsWithImages != null)
+          ...spouseIdsWithImages!.map((spouse) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ID: ${spouse.id}',
+                    style: _style(),
+                  ),
+                  if (spouse.selectedImages != null &&
+                      spouse.selectedImages!.isNotEmpty)
+                    Wrap(
+                      children: spouse.selectedImages!.map((imagePath) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: SizedBox(
+                            height: 100, // Adjust height as needed
+                            width: 100, // Adjust width as needed
+                            child: Image.network(
+                              imagePath,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  else
+                    const Text('No images selected'),
+                ],
+              ),
+            );
+          }).toList()
+        else
+          const Text('No spouse data available'),
+        Divider(
+          color: Color(0x29000000),
+        ),
+      ],
+    );
+  }
+}
+
+class OccupantImageWidget extends StatelessWidget {
+  final String title;
+  final List<OccupantIdsWithImages>? occupantIdsWithImages;
+
+  const OccupantImageWidget(
+      {super.key, required this.title, required this.occupantIdsWithImages});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: _style(),
+        ),
+        if (occupantIdsWithImages != null)
+          ...occupantIdsWithImages!.map((occupant) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ID: ${occupant.id}',
+                    style: _style(),
+                  ),
+                  if (occupant.selectedImages != null &&
+                      occupant.selectedImages!.isNotEmpty)
+                    Wrap(
+                      children: occupant.selectedImages!.map((imagePath) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: SizedBox(
+                            height: 100, // Adjust height as needed
+                            width: 100, // Adjust width as needed
+                            child: Image.network(
+                              imagePath,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  else
+                    const Text('No images selected'),
+                ],
+              ),
+            );
+          }).toList()
+        else
+          const Text('No occupant data available'),
+        Divider(
+          color: Color(0x29000000),
+        ),
+      ],
+    );
+  }
+}
 
 class DetailImageWidget extends StatelessWidget {
   const DetailImageWidget(

@@ -41,7 +41,9 @@ class AppFlavoursConfigurations {
   };
   static const configJohannesburgPro = {
     "app_name": "Johannesburg",
-    "base_url": "http://167.172.170.109:3002/",
+    //"base_url": "https://122c-182-181-227-163.ngrok-free.app/",
+    //"base_url": "http://167.172.170.109:3002/",
+    "base_url": "http://213.136.94.46:3001/",
     "app_logo": "assets/images/logos_and_icons/joburg_logo.png",
     "app_icon": "......",
     "env": "johannesburg"
