@@ -1,9 +1,8 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/forms/water_and_electricity_information/notifier/water_and_electricity_form_notifier.dart';
+import 'package:lesedi/utils/constants.dart';
 import 'package:lesedi/utils/utils.dart';
 
 class MeterAttachments extends StatelessWidget {
@@ -133,20 +132,23 @@ class MeterAttachments extends StatelessWidget {
                 padding: EdgeInsets.only(left: 15.0, right: 15.0),
                 alignment: Alignment.center,
                 height: 150,
-                child: ListView(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: List.generate(attachments.length, (index) {
-                      return Center(
-                        child: Image.file(
-                          File(attachments[index]),
-                          width: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    })),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: attachments.length,
+                  itemBuilder: (context, index) {
+                    return Center(
+                      child: Image.file(
+                        File(attachments[index]),
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(width: 10),
+                ),
               )
-            : SizedBox(),
+            : SizedBox()
       ],
     );
   }

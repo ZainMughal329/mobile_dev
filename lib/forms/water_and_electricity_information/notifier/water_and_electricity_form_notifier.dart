@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:lesedi/utils/constants.dart';
-import 'package:lesedi/forms/declaration/view/declaration_view.dart';
-import 'package:lesedi/utils/global.dart';
 import 'package:lesedi/common_services/local_storage.dart';
 import 'package:lesedi/common_services/services_request.dart';
+import 'package:lesedi/forms/declaration/view/declaration_view.dart';
+import 'package:lesedi/utils/constants.dart';
+import 'package:lesedi/utils/global.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,8 +47,6 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
     isWaterAttachments = val;
     notifyListeners();
   }
-
-
 
   electricityAttachmentsLoading(bool val) {
     isElectricityAttachments = val;
@@ -173,7 +172,6 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 
   Future<void> getElectricAttachments({
     bool isCamera = true,
@@ -392,18 +390,15 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
     int? applicantId,
     required bool previousFormSubmitted,
   }) async {
-
     /// <<<-------------------------validating form------------------------>>>>
     if (waterMeterNumberController.text.isEmpty ||
-    waterMeterReadingController.text.isEmpty ||
-    electricityMeterNumberController.text.isEmpty ||
-    electricityMeterNumberController.text.isEmpty  ){
-
+        waterMeterReadingController.text.isEmpty ||
+        electricityMeterNumberController.text.isEmpty ||
+        electricityMeterNumberController.text.isEmpty) {
       showToastMessage("Please fill all fields");
       return;
     }
     formLoading(true);
-
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var userID = sharedPreferences.getString('userID');
@@ -428,39 +423,37 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
     /// <<<-------------------------will be called when internet is available------------------------>>>>
 
     if (MyConstants.myConst.internet ?? false) {
-
-      try{
+      try {
         var jsonResponse;
         http.Response response;
 
         /// <<<-------------------------will work if previous form is submitted------------------------>>>>
-        if(previousFormSubmitted){
-        response = await http.post(
-          Uri.parse(
-              "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
-          headers: {
-            'Content-Type': 'application/json',
-            'uuid': userID ?? "",
-            'Authentication': authToken ?? ""
-          },
+        if (previousFormSubmitted) {
+          response = await http.post(
+              Uri.parse(
+                  "${MyConstants.myConst.baseUrl}api/v1/users/update_application"),
+              headers: {
+                'Content-Type': 'application/json',
+                'uuid': userID ?? "",
+                'Authentication': authToken ?? ""
+              },
+              body: jsonEncode(data));
+        }
 
-            body: jsonEncode(data)
-        );}
         /// <<<-------------------------will work if previous form is not submitted------------------------>>>>
-        else
-          {
-            data = LocalStorage.localStorage
-                .getFormData(MyConstants.myConst.currentApplicantId??"");
-            response = await http.post(
-                Uri.parse(
-                    "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'uuid': userID ?? "",
-                  'Authentication': authToken ?? ""
-                },
-                body: jsonEncode(data));
-          }
+        else {
+          data = LocalStorage.localStorage
+              .getFormData(MyConstants.myConst.currentApplicantId ?? "");
+          response = await http.post(
+              Uri.parse(
+                  "${MyConstants.myConst.baseUrl}api/v1/users/application_form"),
+              headers: {
+                'Content-Type': 'application/json',
+                'uuid': userID ?? "",
+                'Authentication': authToken ?? ""
+              },
+              body: jsonEncode(data));
+        }
 
         print(response.headers);
 
@@ -469,7 +462,7 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
           jsonResponse = jsonDecode(response.body);
 
           if (!previousFormSubmitted) {
-            Map<dynamic,dynamic> appId={};
+            Map<dynamic, dynamic> appId = {};
             appId = jsonDecode(response.body);
             sharedPreferences.setInt('applicant_id', appId['application_id']);
             applicantId = appId['application_id'];
@@ -481,17 +474,15 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
           previousFormSubmitted = true;
           showToastMessage('Form Submitted');
           Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => Declaration(
-                  applicantId!, previousFormSubmitted)));
+              pageBuilder: (_, __, ___) =>
+                  Declaration(applicantId!, previousFormSubmitted)));
           formLoading(false);
         } else {
           formLoading(false);
           jsonResponse = json.decode(response.body);
           showToastMessage(jsonResponse['message']);
-
         }
-      }
-      on SocketException catch (e) {
+      } on SocketException catch (e) {
         Fluttertoast.showToast(msg: "Internet not available");
         formLoading(false);
         print('dsa');
@@ -507,16 +498,15 @@ class WaterAndElectricityFormNotifier extends ChangeNotifier {
         print('dsa');
         print(e);
       }
-
-    }
-    else {
+    } else {
       formLoading(false);
       print("B1 Navigated from Else");
       Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => Declaration(
-              applicantId!, previousFormSubmitted)));
+          pageBuilder: (_, __, ___) =>
+              Declaration(applicantId!, previousFormSubmitted)));
     }
   }
+
   void init() {
     getLocation();
   }
