@@ -2,7 +2,8 @@ class AppFlavoursConfigurations {
   static const configLesediPro = {
     "app_name": "Lesedi",
     // "base_url": "https://f320-182-178-225-101.ngrok-free.app/",
-    "base_url": "http://167.172.170.109/",
+    "base_url": "http://139.59.145.86/",
+    //"base_url": "http://167.172.170.109/",
     // "base_url": "http://185.193.67.250/",  old base url
     "app_logo": "assets/images/logos_and_icons/logo_lesedi.png",
     "app_icon": "...........",
@@ -10,7 +11,8 @@ class AppFlavoursConfigurations {
   };
   static const configEmfuleniPro = {
     "app_name": "Emfuleni",
-    "base_url": "http://167.172.170.109:3000/",
+    "base_url": "http://139.59.145.86:3000/",
+    //"base_url": "http://167.172.170.109:3000/",
     // "base_url": "http://185.193.67.250:3000/", old base url
     "app_logo": "assets/images/emfuleni.jpg",
     "app_icon": "......",
@@ -18,7 +20,8 @@ class AppFlavoursConfigurations {
   };
   static const configModimollePro = {
     "app_name": "Modimolle",
-    "base_url": "http://167.172.170.109:3004/",
+    "base_url": "http://139.59.145.86:3004",
+    //"base_url": "http://167.172.170.109:3004/",
     // "base_url": "http://173.249.14.72/",  old base url
     "app_logo": "assets/images/logos_and_icons/modimolle_logo.png",
     "app_icon": "......",
@@ -26,7 +29,8 @@ class AppFlavoursConfigurations {
   };
   static const configRamotesherePro = {
     "app_name": "Ramoteshere",
-    "base_url": "http://167.172.170.109:3003/",
+    "base_url": "http://139.59.145.86:3003/",
+    //"base_url": "http://167.172.170.109:3003/",
     "app_logo": "assets/images/logos_and_icons/ramoteshere_logo.png",
     "app_icon": "......",
     "env": "ramoteshere"
@@ -41,9 +45,10 @@ class AppFlavoursConfigurations {
   };
   static const configJohannesburgPro = {
     "app_name": "Johannesburg",
+    "base_url": "http://139.59.145.86:3001/",
     //"base_url": "https://122c-182-181-227-163.ngrok-free.app/",
     //"base_url": "http://167.172.170.109:3002/",
-    "base_url": "http://213.136.94.46:3001/",
+    //"base_url": "http://213.136.94.46:3001/",
     "app_logo": "assets/images/logos_and_icons/joburg_logo.png",
     "app_icon": "......",
     "env": "johannesburg"
